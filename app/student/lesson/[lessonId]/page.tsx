@@ -11,6 +11,8 @@ import FeedbackModal from '@/components/game/FeedbackModal'
 import ProgressBar from '@/components/game/ProgressBar'
 import BlockCompleteModal from '@/components/game/BlockCompleteModal'
 import IntroductionCard from '@/components/game/IntroductionCard'
+import ConnectionStatus from '@/components/layout/ConnectionStatus'
+import { getLessonCache } from '@/lib/lessonCache'
 import type { LessonContent, Question, BlockIntroduction } from '@/lib/types'
 
 export default function LessonPage() {
@@ -33,6 +35,7 @@ export default function LessonPage() {
   })
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedbackIsCorrect, setFeedbackIsCorrect] = useState(false)
+  const [feedbackExplanation, setFeedbackExplanation] = useState<string | undefined>(undefined)
   const [showBlockComplete, setShowBlockComplete] = useState(false)
   const [blockStoppedEarly, setBlockStoppedEarly] = useState(false)
   const [waitingForNext, setWaitingForNext] = useState(false)
@@ -49,13 +52,34 @@ export default function LessonPage() {
 
   const loadLesson = async (session: any) => {
     try {
-      const response = await fetch(`/api/student/lesson/${lessonId}`)
-      if (!response.ok) {
-        throw new Error('Failed to load lesson')
+      // Try to load from cache first
+      const cache = getLessonCache()
+      let content: LessonContent | null = null
+
+      try {
+        content = await cache.getCachedLesson(lessonId)
+      } catch (error) {
+        console.error('Failed to load from cache:', error)
       }
 
-      const data = await response.json()
-      const content: LessonContent = data.lesson.content
+      // If not in cache or cache failed, fetch from network
+      if (!content) {
+        const response = await fetch(`/api/student/lesson/${lessonId}`)
+        if (!response.ok) {
+          throw new Error('Failed to load lesson')
+        }
+
+        const data = await response.json()
+        content = data.lesson.content
+
+        // Cache for offline use
+        try {
+          await cache.cacheLessonContent(lessonId, content)
+        } catch (error) {
+          console.error('Failed to cache lesson:', error)
+        }
+      }
+
       setLessonContent(content)
 
       // Create attempt
@@ -127,8 +151,14 @@ export default function LessonPage() {
     // Submit answer to engine
     const result = engine.submitAnswer(answer)
 
+    // Get explanation for incorrect answers
+    const explanation = !result.isCorrect
+      ? question?.explanation || question?.feedback?.explanation
+      : undefined
+
     // Show feedback
     setFeedbackIsCorrect(result.isCorrect)
+    setFeedbackExplanation(explanation)
     setShowFeedback(true)
 
     // Save response to queue for syncing
@@ -273,6 +303,11 @@ export default function LessonPage() {
 
   return (
     <div className="min-h-screen p-6 space-y-8">
+      {/* Connection Status */}
+      <div className="fixed top-4 right-4 z-30">
+        <ConnectionStatus />
+      </div>
+
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Progress */}
         <ProgressBar
@@ -309,6 +344,7 @@ export default function LessonPage() {
         isCorrect={feedbackIsCorrect}
         show={showFeedback}
         onClose={() => setShowFeedback(false)}
+        explanation={feedbackExplanation}
       />
 
       {/* Block Complete Modal */}

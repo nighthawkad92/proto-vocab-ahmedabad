@@ -23,6 +23,8 @@ interface Response {
   student_answer: string | null
   is_correct: boolean
   answered_at: string
+  question_prompt?: string
+  correct_answer?: string
 }
 
 interface Attempt {
@@ -167,17 +169,58 @@ export default function StudentDetailPage() {
     // Load responses for this attempt
     setLoadingDetails(attemptId)
     try {
+      // Get responses
       const { data: responsesData } = await supabase
         .from('responses')
         .select('question_id, question_type, block_number, student_answer, is_correct, answered_at')
         .eq('attempt_id', attemptId)
         .order('answered_at', { ascending: true })
 
-      // Update the attempt with responses
+      // Get the attempt to find the lesson
+      const currentAttempt = attempts.find((a) => a.id === attemptId)
+      if (!currentAttempt) return
+
+      // Get lesson content to match questions
+      const { data: lessonData } = await supabase
+        .from('attempts')
+        .select(`
+          lessons:lesson_id (
+            content
+          )
+        `)
+        .eq('id', attemptId)
+        .single()
+
+      // Extract questions from lesson content
+      const lessonContent = (lessonData as any)?.lessons?.content
+      const questionMap = new Map()
+
+      if (lessonContent?.blocks) {
+        lessonContent.blocks.forEach((block: any) => {
+          block.questions?.forEach((q: any) => {
+            questionMap.set(q.id, {
+              prompt: q.prompt,
+              correctAnswer: q.correctAnswer,
+            })
+          })
+        })
+      }
+
+      // Enrich responses with question details
+      const enrichedResponses = responsesData?.map((response: any) => {
+        const questionDetails = questionMap.get(response.question_id)
+        return {
+          ...response,
+          question_prompt: questionDetails?.prompt || 'Question not found',
+          correct_answer: questionDetails?.correctAnswer || '',
+        }
+      }) as Response[]
+
+      // Update the attempt with enriched responses
       setAttempts((prev) =>
         prev.map((a) =>
           a.id === attemptId
-            ? { ...a, responses: responsesData as Response[] }
+            ? { ...a, responses: enrichedResponses }
             : a
         )
       )
@@ -224,7 +267,7 @@ export default function StudentDetailPage() {
   const overallAccuracy = calculateAccuracy(totalQuestionsCorrect, totalQuestionsAttempted)
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 relative">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="bg-white rounded-child shadow-lg p-6">
@@ -358,40 +401,25 @@ export default function StudentDetailPage() {
                     const isExpanded = expandedAttempt === attempt.id
                     const isLoading = loadingDetails === attempt.id
 
-                    // Calculate block-by-block stats
-                    const blockStats = attempt.responses
-                      ? attempt.responses.reduce((acc, response) => {
-                          if (!acc[response.block_number]) {
-                            acc[response.block_number] = { total: 0, correct: 0 }
-                          }
-                          acc[response.block_number].total++
-                          if (response.is_correct) acc[response.block_number].correct++
-                          return acc
-                        }, {} as Record<number, { total: number; correct: number }>)
-                      : {}
-
                     return (
-                      <>
-                        <tr
-                          key={attempt.id}
-                          className="hover:bg-gray-50 cursor-pointer"
-                          onClick={() => toggleAttemptDetails(attempt.id)}
-                        >
-                          <td className="px-6 py-4">
-                            <button className="text-gray-600 hover:text-gray-900 transition-transform">
-                              {isLoading ? (
-                                <span className="text-xs">⏳</span>
-                              ) : (
-                                <span
-                                  className={`transition-transform inline-block ${
-                                    isExpanded ? 'rotate-90' : ''
-                                  }`}
-                                >
-                                  ▶
-                                </span>
-                              )}
-                            </button>
-                          </td>
+                      <tr
+                        key={attempt.id}
+                        className={`hover:bg-gray-50 cursor-pointer transition-colors ${
+                          isExpanded ? 'bg-secondary-50' : ''
+                        }`}
+                        onClick={() => toggleAttemptDetails(attempt.id)}
+                      >
+                        <td className="px-6 py-4">
+                          <button className="text-gray-600 hover:text-gray-900">
+                            {isLoading ? (
+                              <span className="text-xs">⏳</span>
+                            ) : (
+                              <span className="text-lg">
+                                {isExpanded ? '◀' : '▶'}
+                              </span>
+                            )}
+                          </button>
+                        </td>
                           <td className="px-6 py-4 text-child-sm text-gray-800 font-medium">
                             {attempt.lesson.title}
                           </td>
@@ -451,128 +479,6 @@ export default function StudentDetailPage() {
                             {attempt.blocks_completed}
                           </td>
                         </tr>
-                        {isExpanded && attempt.responses && (
-                          <tr>
-                            <td colSpan={8} className="px-6 py-4 bg-gray-50">
-                              <div className="space-y-4">
-                                <h4 className="text-child-base font-bold text-gray-800 mb-3">
-                                  Detailed Performance
-                                </h4>
-
-                                {/* Block-by-block breakdown */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                  {Object.entries(blockStats).map(([blockNum, stats]) => {
-                                    const blockAccuracy = calculateAccuracy(stats.correct, stats.total)
-                                    const blockDifficulty =
-                                      Number(blockNum) === 0
-                                        ? 'EASY'
-                                        : Number(blockNum) === 1
-                                        ? 'MEDIUM'
-                                        : 'HARD'
-
-                                    return (
-                                      <div
-                                        key={blockNum}
-                                        className="bg-white rounded-lg p-4 border-2 border-gray-200"
-                                      >
-                                        <div className="flex items-center justify-between mb-2">
-                                          <span className="text-child-sm font-bold text-gray-800">
-                                            Block {blockNum}
-                                          </span>
-                                          <span className="text-child-xs font-bold text-gray-600">
-                                            {blockDifficulty}
-                                          </span>
-                                        </div>
-                                        <div className="space-y-2">
-                                          <div className="flex justify-between text-child-xs text-gray-600">
-                                            <span>Questions:</span>
-                                            <span className="font-bold">
-                                              {stats.correct}/{stats.total}
-                                            </span>
-                                          </div>
-                                          <div className="flex items-center gap-2">
-                                            <div className="flex-1 bg-gray-200 rounded-full h-2">
-                                              <div
-                                                className={`h-2 rounded-full ${
-                                                  blockAccuracy >= 80
-                                                    ? 'bg-green-500'
-                                                    : blockAccuracy >= 60
-                                                    ? 'bg-yellow-500'
-                                                    : 'bg-red-500'
-                                                }`}
-                                                style={{ width: `${blockAccuracy}%` }}
-                                              />
-                                            </div>
-                                            <span className="text-child-xs font-bold min-w-[40px]">
-                                              {blockAccuracy}%
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )
-                                  })}
-                                </div>
-
-                                {/* Question-by-question details */}
-                                <div className="mt-4">
-                                  <h5 className="text-child-sm font-bold text-gray-700 mb-2">
-                                    Question History
-                                  </h5>
-                                  <div className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
-                                    <table className="w-full text-child-xs">
-                                      <thead className="bg-gray-100">
-                                        <tr>
-                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
-                                            #
-                                          </th>
-                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
-                                            Block
-                                          </th>
-                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
-                                            Type
-                                          </th>
-                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
-                                            Result
-                                          </th>
-                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
-                                            Time
-                                          </th>
-                                        </tr>
-                                      </thead>
-                                      <tbody className="divide-y divide-gray-200">
-                                        {attempt.responses.map((response, idx) => (
-                                          <tr key={response.question_id} className="hover:bg-gray-50">
-                                            <td className="px-3 py-2 text-gray-700">{idx + 1}</td>
-                                            <td className="px-3 py-2 text-gray-700">
-                                              Block {response.block_number}
-                                            </td>
-                                            <td className="px-3 py-2 text-gray-600 capitalize">
-                                              {response.question_type.replace('-', ' ')}
-                                            </td>
-                                            <td className="px-3 py-2">
-                                              {response.is_correct ? (
-                                                <span className="text-green-600 font-bold">✓ Correct</span>
-                                              ) : (
-                                                <span className="text-red-600 font-bold">✗ Incorrect</span>
-                                              )}
-                                            </td>
-                                            <td className="px-3 py-2 text-gray-600">
-                                              {new Date(response.answered_at).toLocaleTimeString('en-IN', {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                              })}
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </>
                     )
                   })}
                 </tbody>
@@ -581,6 +487,227 @@ export default function StudentDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Sidebar for attempt details */}
+      {expandedAttempt && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+            onClick={() => setExpandedAttempt(null)}
+          />
+
+          {/* Sidebar */}
+          <div className="fixed top-0 right-0 h-full w-full md:w-2/3 lg:w-1/2 bg-white shadow-2xl z-50 overflow-y-auto transform transition-transform">
+            <div className="sticky top-0 bg-secondary-50 px-6 py-4 border-b-2 border-secondary-200 flex justify-between items-center">
+              <h3 className="text-child-lg font-display font-bold text-gray-800">
+                Attempt Details
+              </h3>
+              <button
+                onClick={() => setExpandedAttempt(null)}
+                className="text-gray-600 hover:text-gray-900 text-2xl font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {(() => {
+                const attempt = attempts.find((a) => a.id === expandedAttempt)
+                if (!attempt || !attempt.responses) return null
+
+                // Calculate block-by-block stats
+                const blockStats = attempt.responses.reduce((acc, response) => {
+                  if (!acc[response.block_number]) {
+                    acc[response.block_number] = { total: 0, correct: 0 }
+                  }
+                  acc[response.block_number].total++
+                  if (response.is_correct) acc[response.block_number].correct++
+                  return acc
+                }, {} as Record<number, { total: number; correct: number }>)
+
+                return (
+                  <>
+                    {/* Lesson Info */}
+                    <div className="bg-gradient-to-br from-secondary-50 to-white rounded-child p-4 border-2 border-secondary-200">
+                      <h4 className="text-child-base font-bold text-gray-800 mb-2">
+                        {attempt.lesson.title}
+                      </h4>
+                      <div className="grid grid-cols-2 gap-4 text-child-sm text-gray-600">
+                        <div>
+                          <span className="font-medium">Started:</span>{' '}
+                          {new Date(attempt.started_at).toLocaleString('en-IN', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </div>
+                        <div>
+                          <span className="font-medium">Status:</span>{' '}
+                          {attempt.completed_at ? (
+                            <span className="text-green-600 font-bold">✓ Completed</span>
+                          ) : (
+                            <span className="text-yellow-600 font-bold">⏳ In Progress</span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="font-medium">Accuracy:</span>{' '}
+                          <span className="font-bold">
+                            {calculateAccuracy(attempt.questions_correct, attempt.questions_attempted)}%
+                          </span>
+                        </div>
+                        <div>
+                          <span className="font-medium">Blocks:</span>{' '}
+                          <span className="font-bold">{attempt.blocks_completed}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Block-by-block breakdown */}
+                    <div>
+                      <h4 className="text-child-base font-bold text-gray-800 mb-3">
+                        Performance by Block
+                      </h4>
+                      <div className="grid grid-cols-1 gap-3">
+                        {Object.entries(blockStats).map(([blockNum, stats]) => {
+                          const blockAccuracy = calculateAccuracy(stats.correct, stats.total)
+                          const blockDifficulty =
+                            Number(blockNum) === 0
+                              ? { level: 'EASY', color: 'border-green-200 bg-green-50', emoji: '🟢' }
+                              : Number(blockNum) === 1
+                              ? { level: 'MEDIUM', color: 'border-yellow-200 bg-yellow-50', emoji: '🟡' }
+                              : { level: 'HARD', color: 'border-red-200 bg-red-50', emoji: '🔴' }
+
+                          return (
+                            <div
+                              key={blockNum}
+                              className={`rounded-lg p-4 border-2 ${blockDifficulty.color}`}
+                            >
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-child-sm font-bold text-gray-800">
+                                  Block {blockNum}
+                                </span>
+                                <span className="text-child-xs font-bold text-gray-600">
+                                  {blockDifficulty.emoji} {blockDifficulty.level}
+                                </span>
+                              </div>
+                              <div className="space-y-2">
+                                <div className="flex justify-between text-child-xs text-gray-600">
+                                  <span>Questions:</span>
+                                  <span className="font-bold">
+                                    {stats.correct}/{stats.total}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div
+                                      className={`h-2 rounded-full transition-all ${
+                                        blockAccuracy >= 80
+                                          ? 'bg-green-500'
+                                          : blockAccuracy >= 60
+                                          ? 'bg-yellow-500'
+                                          : 'bg-red-500'
+                                      }`}
+                                      style={{ width: `${blockAccuracy}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-child-xs font-bold min-w-[45px]">
+                                    {blockAccuracy}%
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Question-by-question details */}
+                    <div>
+                      <h4 className="text-child-base font-bold text-gray-800 mb-3">
+                        Question History
+                      </h4>
+                      <div className="space-y-3">
+                        {attempt.responses.map((response, idx) => (
+                          <div
+                            key={response.question_id}
+                            className={`rounded-lg p-4 border-2 ${
+                              response.is_correct
+                                ? 'border-green-200 bg-green-50'
+                                : 'border-red-200 bg-red-50'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-child-xs font-bold text-gray-600">
+                                  #{idx + 1}
+                                </span>
+                                <span className="text-child-xs text-gray-500">
+                                  Block {response.block_number}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {response.is_correct ? (
+                                  <span className="text-green-600 font-bold text-child-xs">
+                                    ✓ Correct
+                                  </span>
+                                ) : (
+                                  <span className="text-red-600 font-bold text-child-xs">
+                                    ✗ Incorrect
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <div>
+                                <p className="text-child-xs text-gray-500 mb-1 capitalize">
+                                  {response.question_type.replace('-', ' ')}
+                                </p>
+                                <p className="text-child-sm font-medium text-gray-800">
+                                  {response.question_prompt}
+                                </p>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200">
+                                <div>
+                                  <p className="text-child-xs text-gray-600 mb-1">Student Answer:</p>
+                                  <p
+                                    className={`text-child-sm font-bold ${
+                                      response.is_correct ? 'text-green-700' : 'text-red-700'
+                                    }`}
+                                  >
+                                    {response.student_answer || '(No answer)'}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-child-xs text-gray-600 mb-1">Correct Answer:</p>
+                                  <p className="text-child-sm font-bold text-blue-700">
+                                    {response.correct_answer}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="text-child-xs text-gray-500 pt-1">
+                                {new Date(response.answered_at).toLocaleTimeString('en-IN', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  second: '2-digit',
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )
+              })()}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

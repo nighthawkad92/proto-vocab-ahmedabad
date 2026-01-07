@@ -13,7 +13,9 @@ export default function ProgressBar({
   mistakes,
   maxMistakes,
 }: ProgressBarProps) {
-  const progress = (current / total) * 100
+  // Clamp current to never exceed total (fixes "Question 5 of 4" bug)
+  const displayCurrent = Math.min(current, total)
+  const progress = (displayCurrent / total) * 100
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4">
@@ -21,7 +23,7 @@ export default function ProgressBar({
       <div className="bg-white rounded-child shadow-md p-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-child-sm font-medium text-gray-700">
-            Question {current} of {total}
+            Question {displayCurrent} of {total}
           </span>
           <span className="text-child-sm font-medium text-gray-700">
             {Math.round(progress)}%

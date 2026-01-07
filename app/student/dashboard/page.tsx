@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { StudentSessionManager } from '@/lib/studentSession'
+import ConnectionStatus from '@/components/layout/ConnectionStatus'
 import type { StudentSession, LessonUnlock } from '@/lib/types'
 
 interface Lesson {
@@ -74,6 +75,11 @@ export default function StudentDashboard() {
 
   return (
     <div className="min-h-screen p-6">
+      {/* Connection Status */}
+      <div className="fixed top-4 right-4 z-30">
+        <ConnectionStatus />
+      </div>
+
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="bg-white rounded-child shadow-lg p-6">

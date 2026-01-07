@@ -14,9 +14,11 @@ export interface Question {
   imageUrl?: string
   options: string[]
   correctAnswer: string
+  explanation?: string
   feedback?: {
     correct?: string
     incorrect?: string
+    explanation?: string
   }
 }
 
