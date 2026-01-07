@@ -61,6 +61,7 @@ export default function TeacherLoginPage() {
 
       if (data.user) {
         // Create teacher record
+        // @ts-ignore - Supabase types are strict when env vars aren't set
         const { error: teacherError } = await supabase.from('teachers').insert({
           id: data.user.id,
           email,
