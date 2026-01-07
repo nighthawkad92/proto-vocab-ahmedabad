@@ -20,8 +20,16 @@ export interface Question {
   }
 }
 
+export interface BlockIntroduction {
+  concept: string
+  explanation: string
+  example: string
+  activity: string
+}
+
 export interface LessonBlock {
   blockNumber: number
+  introduction?: BlockIntroduction
   questions: Question[]
 }
 

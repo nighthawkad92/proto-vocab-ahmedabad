@@ -13,11 +13,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get all lessons for grade 3
+    // Get all lessons for grade 4
     const { data: lessons, error: lessonsError } = await supabase
       .from('lessons')
       .select('id, title, description, order')
-      .eq('grade', 3)
+      .eq('grade', 4)
       .order('order', { ascending: true })
 
     if (lessonsError) {

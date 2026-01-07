@@ -10,7 +10,8 @@ import QuestionCard from '@/components/game/QuestionCard'
 import FeedbackModal from '@/components/game/FeedbackModal'
 import ProgressBar from '@/components/game/ProgressBar'
 import BlockCompleteModal from '@/components/game/BlockCompleteModal'
-import type { LessonContent, Question } from '@/lib/types'
+import IntroductionCard from '@/components/game/IntroductionCard'
+import type { LessonContent, Question, BlockIntroduction } from '@/lib/types'
 
 export default function LessonPage() {
   const router = useRouter()
@@ -19,7 +20,10 @@ export default function LessonPage() {
 
   const [loading, setLoading] = useState(true)
   const [engine, setEngine] = useState<LessonEngine | null>(null)
+  const [lessonContent, setLessonContent] = useState<LessonContent | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null)
+  const [showIntroduction, setShowIntroduction] = useState(false)
+  const [currentIntroduction, setCurrentIntroduction] = useState<BlockIntroduction | null>(null)
   const [progress, setProgress] = useState({
     currentBlock: 0,
     totalBlocks: 0,
@@ -51,7 +55,8 @@ export default function LessonPage() {
       }
 
       const data = await response.json()
-      const lessonContent: LessonContent = data.lesson.content
+      const content: LessonContent = data.lesson.content
+      setLessonContent(content)
 
       // Create attempt
       const attemptResponse = await fetch('/api/student/attempt', {
@@ -67,9 +72,18 @@ export default function LessonPage() {
       const attemptId = attemptData.attemptId
 
       // Initialize lesson engine
-      const lessonEngine = new LessonEngine(attemptId, lessonId, lessonContent)
+      const lessonEngine = new LessonEngine(attemptId, lessonId, content)
       setEngine(lessonEngine)
-      setCurrentQuestion(lessonEngine.getCurrentQuestion())
+
+      // Check if first block has an introduction
+      const firstBlock = content.blocks[0]
+      if (firstBlock?.introduction) {
+        setCurrentIntroduction(firstBlock.introduction)
+        setShowIntroduction(true)
+      } else {
+        setCurrentQuestion(lessonEngine.getCurrentQuestion())
+      }
+
       setProgress(lessonEngine.getProgress())
 
       // Preload audio if available
@@ -151,11 +165,30 @@ export default function LessonPage() {
     if (hasNextBlock) {
       setShowBlockComplete(false)
       setBlockStoppedEarly(false)
-      setCurrentQuestion(engine.getCurrentQuestion())
+
+      // Check if next block has an introduction
+      const currentBlockNum = engine.getAttemptState().currentBlock
+      const nextBlock = lessonContent?.blocks[currentBlockNum]
+
+      if (nextBlock?.introduction) {
+        setCurrentIntroduction(nextBlock.introduction)
+        setShowIntroduction(true)
+      } else {
+        setCurrentQuestion(engine.getCurrentQuestion())
+      }
+
       setProgress(engine.getProgress())
       setWaitingForNext(false)
     } else {
       handleFinishLesson()
+    }
+  }
+
+  const handleIntroductionComplete = () => {
+    setShowIntroduction(false)
+    setCurrentIntroduction(null)
+    if (engine) {
+      setCurrentQuestion(engine.getCurrentQuestion())
     }
   }
 
@@ -200,6 +233,18 @@ export default function LessonPage() {
           <div className="text-6xl animate-bounce-gentle">📚</div>
           <p className="text-child-base text-gray-700">Loading lesson...</p>
         </div>
+      </div>
+    )
+  }
+
+  // Show introduction if available
+  if (showIntroduction && currentIntroduction) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <IntroductionCard
+          introduction={currentIntroduction}
+          onContinue={handleIntroductionComplete}
+        />
       </div>
     )
   }

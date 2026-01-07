@@ -85,7 +85,7 @@ export default function TeacherDashboard() {
         teacher_id: teacher.id,
         name: newClassName,
         class_code: classCode,
-        grade: 3,
+        grade: 4,
       })
 
       if (createError) throw createError
