@@ -26,6 +26,7 @@ interface Attempt {
   questions_attempted: number
   questions_correct: number
   blocks_completed: number
+  blocks_stopped_at: number | null
 }
 
 export default function StudentDetailPage() {
@@ -89,6 +90,7 @@ export default function StudentDetailPage() {
           questions_attempted,
           questions_correct,
           blocks_completed,
+          blocks_stopped_at,
           lessons:lesson_id (
             title
           )
@@ -106,6 +108,7 @@ export default function StudentDetailPage() {
         questions_attempted: attempt.questions_attempted || 0,
         questions_correct: attempt.questions_correct || 0,
         blocks_completed: attempt.blocks_completed || 0,
+        blocks_stopped_at: attempt.blocks_stopped_at,
       }))
 
       setAttempts(formattedAttempts || [])
@@ -119,6 +122,21 @@ export default function StudentDetailPage() {
   const calculateAccuracy = (correct: number, attempted: number) => {
     if (attempted === 0) return 0
     return Math.round((correct / attempted) * 100)
+  }
+
+  const getDifficultyLevel = (blocksCompleted: number, blocksStopped: number | null) => {
+    // Determine the highest block the student reached
+    // blocks_stopped_at indicates the block where they stopped (due to 2 mistakes)
+    // blocks_completed indicates blocks they successfully completed
+    const maxBlockReached = blocksStopped !== null ? blocksStopped : blocksCompleted
+
+    if (maxBlockReached === 0) {
+      return { level: 'EASY', color: 'bg-green-100 text-green-700', emoji: '🟢' }
+    } else if (maxBlockReached === 1) {
+      return { level: 'MEDIUM', color: 'bg-yellow-100 text-yellow-700', emoji: '🟡' }
+    } else {
+      return { level: 'HARD', color: 'bg-red-100 text-red-700', emoji: '🔴' }
+    }
   }
 
   if (loading) {
@@ -262,6 +280,9 @@ export default function StudentDetailPage() {
                       Status
                     </th>
                     <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
+                      Difficulty
+                    </th>
+                    <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
                       Questions
                     </th>
                     <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
@@ -279,6 +300,10 @@ export default function StudentDetailPage() {
                       attempt.questions_attempted
                     )
                     const isCompleted = !!attempt.completed_at
+                    const difficulty = getDifficultyLevel(
+                      attempt.blocks_completed,
+                      attempt.blocks_stopped_at
+                    )
 
                     return (
                       <tr key={attempt.id} className="hover:bg-gray-50">
@@ -303,6 +328,11 @@ export default function StudentDetailPage() {
                               ⏳ In Progress
                             </span>
                           )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-child-xs font-bold ${difficulty.color}`}>
+                            {difficulty.emoji} {difficulty.level}
+                          </span>
                         </td>
                         <td className="px-6 py-4 text-child-sm text-gray-600">
                           <span className="font-bold text-green-600">
