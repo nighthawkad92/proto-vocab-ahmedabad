@@ -63,30 +63,63 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
           {
             "id": "l1b1q1",
             "type": "multiple-choice",
-            "prompt": "How many syllables in: garden",
+            "prompt": "How many syllables in: market",
             "options": ["1 syllable", "2 syllables", "3 syllables", "4 syllables"],
             "correctAnswer": "2 syllables"
           },
           {
             "id": "l1b1q2",
             "type": "multiple-choice",
-            "prompt": "How many syllables in: holiday",
+            "prompt": "How many syllables in: garden",
             "options": ["1 syllable", "2 syllables", "3 syllables", "4 syllables"],
-            "correctAnswer": "3 syllables"
+            "correctAnswer": "2 syllables"
           },
           {
             "id": "l1b1q3",
             "type": "multiple-choice",
-            "prompt": "Break this word: remember",
-            "options": ["re-mem-ber", "rem-em-ber", "re-member", "remem-ber"],
-            "correctAnswer": "re-mem-ber"
+            "prompt": "Break this word: village",
+            "options": ["vil-lage", "vi-llage", "villa-ge", "v-illage"],
+            "correctAnswer": "vil-lage"
           },
           {
             "id": "l1b1q4",
             "type": "multiple-choice",
-            "prompt": "Break this word: important",
-            "options": ["im-por-tant", "imp-or-tant", "impor-tant", "i-mpor-tant"],
-            "correctAnswer": "im-por-tant"
+            "prompt": "Break this word: blanket",
+            "options": ["blan-ket", "blank-et", "bla-nket", "b-lanket"],
+            "correctAnswer": "blan-ket"
+          }
+        ]
+      },
+      {
+        "blockNumber": 2,
+        "questions": [
+          {
+            "id": "l1b2q1",
+            "type": "multiple-choice",
+            "prompt": "How many syllables in: remember",
+            "options": ["1 syllable", "2 syllables", "3 syllables", "4 syllables"],
+            "correctAnswer": "3 syllables"
+          },
+          {
+            "id": "l1b2q2",
+            "type": "multiple-choice",
+            "prompt": "How many syllables in: important",
+            "options": ["1 syllable", "2 syllables", "3 syllables", "4 syllables"],
+            "correctAnswer": "3 syllables"
+          },
+          {
+            "id": "l1b2q3",
+            "type": "multiple-choice",
+            "prompt": "Break this word: understand",
+            "options": ["un-der-stand", "und-er-stand", "under-stand", "u-nder-stand"],
+            "correctAnswer": "un-der-stand"
+          },
+          {
+            "id": "l1b2q4",
+            "type": "multiple-choice",
+            "prompt": "Break this word: together",
+            "options": ["to-geth-er", "tog-eth-er", "together", "to-ge-ther"],
+            "correctAnswer": "to-geth-er"
           }
         ]
       }
@@ -175,6 +208,39 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "correctAnswer": "brave"
           }
         ]
+      },
+      {
+        "blockNumber": 2,
+        "questions": [
+          {
+            "id": "l2b2q1",
+            "type": "sentence-completion",
+            "prompt": "I felt ___ by the question",
+            "options": ["confused", "table", "window", "pencil"],
+            "correctAnswer": "confused"
+          },
+          {
+            "id": "l2b2q2",
+            "type": "sentence-completion",
+            "prompt": "We must be ___ while waiting",
+            "options": ["patient", "chair", "fast", "blue"],
+            "correctAnswer": "patient"
+          },
+          {
+            "id": "l2b2q3",
+            "type": "sentence-completion",
+            "prompt": "She felt ___ after practice",
+            "options": ["confident", "tree", "yellow", "book"],
+            "correctAnswer": "confident"
+          },
+          {
+            "id": "l2b2q4",
+            "type": "sentence-completion",
+            "prompt": "He was ___ before the test",
+            "options": ["nervous", "ball", "water", "door"],
+            "correctAnswer": "nervous"
+          }
+        ]
       }
     ]
   }'::jsonb
@@ -259,6 +325,39 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "prompt": "Story: The teacher read a story. All students listened carefully and learned something new. What did the students do?",
             "options": ["Listened carefully", "Slept", "Played outside", "Ate lunch"],
             "correctAnswer": "Listened carefully"
+          }
+        ]
+      },
+      {
+        "blockNumber": 2,
+        "questions": [
+          {
+            "id": "l3b2q1",
+            "type": "multiple-choice",
+            "prompt": "Story: Suddenly, it started raining. The children quickly ran inside. They reached the classroom safely. What did the children do first?",
+            "options": ["Ran inside quickly", "Played in rain", "Sat down", "Opened books"],
+            "correctAnswer": "Ran inside quickly"
+          },
+          {
+            "id": "l3b2q2",
+            "type": "multiple-choice",
+            "prompt": "Story: The boy walked carefully on the wet floor. He did not want to fall. Finally, he reached the door safely. How did the boy walk?",
+            "options": ["Carefully", "Fast", "Jumping", "Running"],
+            "correctAnswer": "Carefully"
+          },
+          {
+            "id": "l3b2q3",
+            "type": "multiple-choice",
+            "prompt": "Story: The family worked together to clean the house. First, they swept the floor. Then, they arranged everything neatly. What did they do after sweeping?",
+            "options": ["Arranged everything neatly", "Went outside", "Ate food", "Slept"],
+            "correctAnswer": "Arranged everything neatly"
+          },
+          {
+            "id": "l3b2q4",
+            "type": "multiple-choice",
+            "prompt": "Story: The girl quietly entered the library. She immediately found her favorite book. She sat down and read peacefully. Where did this happen?",
+            "options": ["In the library", "At home", "In the park", "At school playground"],
+            "correctAnswer": "In the library"
           }
         ]
       }
@@ -347,6 +446,39 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "correctAnswer": "The dog barks loudly at night"
           }
         ]
+      },
+      {
+        "blockNumber": 2,
+        "questions": [
+          {
+            "id": "l4b2q1",
+            "type": "multiple-choice",
+            "prompt": "Make better with precision: The boy runs.",
+            "options": ["The boy runs quickly in the park", "Boy runs park", "Runs boy quickly", "The runs boy park"],
+            "correctAnswer": "The boy runs quickly in the park"
+          },
+          {
+            "id": "l4b2q2",
+            "type": "multiple-choice",
+            "prompt": "Make better with precision: The child writes.",
+            "options": ["The child writes neatly in his notebook", "Child neatly writes", "Writes child notebook", "Notebook writes child"],
+            "correctAnswer": "The child writes neatly in his notebook"
+          },
+          {
+            "id": "l4b2q3",
+            "type": "multiple-choice",
+            "prompt": "Add style: The girl answers.",
+            "options": ["The girl answers politely in the class", "Girl politely answers", "Answers girl class", "Class answers girl"],
+            "correctAnswer": "The girl answers politely in the class"
+          },
+          {
+            "id": "l4b2q4",
+            "type": "multiple-choice",
+            "prompt": "Add style: The students walk.",
+            "options": ["The students walk safely in a line", "Students safely walk", "Walk students line", "Line walk students"],
+            "correctAnswer": "The students walk safely in a line"
+          }
+        ]
       }
     ]
   }'::jsonb
@@ -431,6 +563,39 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "prompt": "Story: Ravi helped his mother clean the house. She was very happy. His mother thanked him. Who was helpful in the story?",
             "options": ["Ravi", "The teacher", "The friend", "The dog"],
             "correctAnswer": "Ravi"
+          }
+        ]
+      },
+      {
+        "blockNumber": 2,
+        "questions": [
+          {
+            "id": "l5b2q1",
+            "type": "multiple-choice",
+            "prompt": "Story: The boy lost his bag. His friend helped him find it under the table. Who is in the story and what happened?",
+            "options": ["The boy and his friend. The boy lost his bag and the friend helped find it.", "The boy lost bag.", "Friend helped.", "Under table."],
+            "correctAnswer": "The boy and his friend. The boy lost his bag and the friend helped find it."
+          },
+          {
+            "id": "l5b2q2",
+            "type": "multiple-choice",
+            "prompt": "Story: It started raining suddenly. The children ran inside quickly. They were safe and dry. What happened first and what happened next?",
+            "options": ["It started raining first, then children ran inside.", "Children played.", "Rain stopped.", "School ended."],
+            "correctAnswer": "It started raining first, then children ran inside."
+          },
+          {
+            "id": "l5b2q3",
+            "type": "multiple-choice",
+            "prompt": "Story: The farmer worked hard every day. He grew food for his village. Everyone was happy. What problem did the farmer solve?",
+            "options": ["He grew food so people could eat.", "He worked hard.", "Village was big.", "Day was long."],
+            "correctAnswer": "He grew food so people could eat."
+          },
+          {
+            "id": "l5b2q4",
+            "type": "multiple-choice",
+            "prompt": "Story: The girl was afraid of the dark. Her mother gave her a small light. Now she feels safe. What changed in the story?",
+            "options": ["The girl went from afraid to feeling safe.", "Mother came.", "Light was small.", "Dark was there."],
+            "correctAnswer": "The girl went from afraid to feeling safe."
           }
         ]
       }
