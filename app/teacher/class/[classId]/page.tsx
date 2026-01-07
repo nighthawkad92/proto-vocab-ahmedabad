@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { TeacherSessionManager } from '@/lib/teacherSession'
 
 interface Student {
   id: string
@@ -97,7 +98,7 @@ export default function ClassDetailPage() {
 
   const handleToggleLesson = async (lessonId: string, isUnlocked: boolean) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
+      const session = TeacherSessionManager.get()
 
       if (!session) return
 
@@ -114,7 +115,7 @@ export default function ClassDetailPage() {
         await supabase.from('lesson_unlocks').insert({
           class_id: classId,
           lesson_id: lessonId,
-          unlocked_by: session.user.id,
+          unlocked_by: session.teacherId,
         })
       }
 

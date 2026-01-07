@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { TeacherSessionManager } from '@/lib/teacherSession'
 
 interface Class {
   id: string
@@ -21,11 +22,11 @@ export default function TeacherDashboard() {
   const [newClassName, setNewClassName] = useState('')
 
   useEffect(() => {
-    checkAuth()
+    checkSession()
   }, [])
 
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
+  const checkSession = async () => {
+    const session = TeacherSessionManager.get()
 
     if (!session) {
       router.push('/teacher')
@@ -36,11 +37,11 @@ export default function TeacherDashboard() {
     const { data: teacherData } = await supabase
       .from('teachers')
       .select('*')
-      .eq('id', session.user.id)
+      .eq('id', session.teacherId)
       .single()
 
     setTeacher(teacherData)
-    loadClasses(session.user.id)
+    loadClasses(session.teacherId)
   }
 
   const loadClasses = async (teacherId: string) => {
@@ -98,8 +99,8 @@ export default function TeacherDashboard() {
     }
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
+  const handleLogout = () => {
+    TeacherSessionManager.clear()
     router.push('/teacher')
   }
 
@@ -115,7 +116,7 @@ export default function TeacherDashboard() {
   }
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 bg-gradient-to-b from-secondary-50 to-white">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="bg-white rounded-child shadow-lg p-6">
@@ -124,7 +125,7 @@ export default function TeacherDashboard() {
               <h1 className="text-child-lg font-display font-bold text-secondary-600">
                 Welcome, {teacher?.name}! 👩‍🏫
               </h1>
-              <p className="text-child-sm text-gray-600">{teacher?.email}</p>
+              <p className="text-child-sm text-gray-600">Teacher Dashboard</p>
             </div>
             <button
               onClick={handleLogout}

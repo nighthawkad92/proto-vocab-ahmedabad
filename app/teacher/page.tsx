@@ -1,26 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { TeacherSessionManager } from '@/lib/teacherSession'
 
 export default function TeacherLoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [teacherName, setTeacherName] = useState('Varnika')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [isSignUp, setIsSignUp] = useState(false)
-  const [teacherName, setTeacherName] = useState('')
-
-  useEffect(() => {
-    // Check if already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        router.push('/teacher/dashboard')
-      }
-    })
-  }, [router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,16 +16,25 @@ export default function TeacherLoginPage() {
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/teacher/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teacherName }),
       })
 
-      if (error) throw error
+      const data = await response.json()
 
-      if (data.session) {
-        router.push('/teacher/dashboard')
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed')
       }
+
+      // Save session
+      TeacherSessionManager.save({
+        teacherId: data.teacherId,
+        teacherName: data.teacherName,
+      })
+
+      router.push('/teacher/dashboard')
     } catch (err: any) {
       setError(err.message || 'Login failed')
     } finally {
@@ -45,43 +42,8 @@ export default function TeacherLoginPage() {
     }
   }
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-
-    try {
-      // Sign up with Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      })
-
-      if (error) throw error
-
-      if (data.user) {
-        // Create teacher record
-        // @ts-ignore - Supabase types are strict when env vars aren't set
-        const { error: teacherError } = await supabase.from('teachers').insert({
-          id: data.user.id,
-          email,
-          name: teacherName,
-        })
-
-        if (teacherError) throw teacherError
-
-        alert('Account created! Please log in.')
-        setIsSignUp(false)
-      }
-    } catch (err: any) {
-      setError(err.message || 'Sign up failed')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-secondary-50 to-white">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center space-y-4">
           <div className="text-7xl">👩‍🏫</div>
@@ -89,55 +51,24 @@ export default function TeacherLoginPage() {
             Teacher Portal
           </h1>
           <p className="text-child-base text-gray-700">
-            {isSignUp ? 'Create your account' : 'Sign in to manage your classes'}
+            Enter your name to continue
           </p>
         </div>
 
-        <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-6">
-          <div className="space-y-4">
-            {isSignUp && (
-              <div>
-                <label className="block text-child-sm font-medium text-gray-700 mb-2">
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  value={teacherName}
-                  onChange={(e) => setTeacherName(e.target.value)}
-                  placeholder="Ms. Sharma"
-                  className="w-full px-4 py-3 text-child-sm border-2 border-gray-300 rounded-child focus:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-200"
-                  required={isSignUp}
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="block text-child-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="teacher@school.com"
-                className="w-full px-4 py-3 text-child-sm border-2 border-gray-300 rounded-child focus:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-200"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-child-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-3 text-child-sm border-2 border-gray-300 rounded-child focus:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-200"
-                required
-              />
-            </div>
+        <form onSubmit={handleLogin} className="bg-white rounded-child shadow-lg p-8 space-y-6">
+          <div>
+            <label className="block text-child-sm font-medium text-gray-700 mb-2">
+              Your Name
+            </label>
+            <input
+              type="text"
+              value={teacherName}
+              onChange={(e) => setTeacherName(e.target.value)}
+              placeholder="Varnika"
+              className="w-full px-4 py-4 text-child-base border-2 border-gray-300 rounded-child focus:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-200"
+              required
+              autoFocus
+            />
           </div>
 
           {error && (
@@ -151,26 +82,14 @@ export default function TeacherLoginPage() {
             disabled={loading}
             className="w-full bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-bold text-child-base py-4 px-8 rounded-child shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50"
           >
-            {loading ? 'Please wait...' : isSignUp ? 'Create Account' : 'Sign In'}
+            {loading ? 'Please wait...' : 'Continue'}
           </button>
         </form>
 
-        <div className="text-center space-y-2">
-          <button
-            onClick={() => {
-              setIsSignUp(!isSignUp)
-              setError('')
-            }}
-            className="text-child-sm text-secondary-600 hover:text-secondary-700 underline"
-          >
-            {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
-          </button>
-
-          <div>
-            <a href="/" className="text-child-sm text-gray-500 hover:text-gray-700 underline">
-              Back to Home
-            </a>
-          </div>
+        <div className="text-center">
+          <a href="/" className="text-child-sm text-gray-500 hover:text-gray-700 underline">
+            Back to Home
+          </a>
         </div>
       </div>
     </div>
