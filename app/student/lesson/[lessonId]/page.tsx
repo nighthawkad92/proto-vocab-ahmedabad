@@ -44,10 +44,10 @@ export default function LessonPage() {
       return
     }
 
-    loadLesson()
+    loadLesson(session)
   }, [lessonId, router])
 
-  const loadLesson = async () => {
+  const loadLesson = async (session: any) => {
     try {
       const response = await fetch(`/api/student/lesson/${lessonId}`)
       if (!response.ok) {
@@ -63,13 +63,22 @@ export default function LessonPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          studentId: StudentSessionManager.load()?.studentId,
+          studentId: session.studentId,
           lessonId,
         }),
       })
 
+      if (!attemptResponse.ok) {
+        const errorData = await attemptResponse.json()
+        throw new Error(errorData.error || 'Failed to create attempt')
+      }
+
       const attemptData = await attemptResponse.json()
       const attemptId = attemptData.attemptId
+
+      if (!attemptId) {
+        throw new Error('No attempt ID returned')
+      }
 
       // Initialize lesson engine
       const lessonEngine = new LessonEngine(attemptId, lessonId, content)
@@ -87,7 +96,7 @@ export default function LessonPage() {
       setProgress(lessonEngine.getProgress())
 
       // Preload audio if available
-      const audioUrls = lessonContent.blocks
+      const audioUrls = content.blocks
         .flatMap((block) => block.questions)
         .map((q) => q.audioUrl)
         .filter((url): url is string => !!url)
