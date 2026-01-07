@@ -16,6 +16,15 @@ interface StudentInfo {
   }
 }
 
+interface Response {
+  question_id: string
+  question_type: string
+  block_number: number
+  student_answer: string | null
+  is_correct: boolean
+  answered_at: string
+}
+
 interface Attempt {
   id: string
   lesson: {
@@ -27,6 +36,7 @@ interface Attempt {
   questions_correct: number
   blocks_completed: number
   blocks_stopped_at: number | null
+  responses?: Response[]
 }
 
 export default function StudentDetailPage() {
@@ -36,7 +46,9 @@ export default function StudentDetailPage() {
 
   const [student, setStudent] = useState<StudentInfo | null>(null)
   const [attempts, setAttempts] = useState<Attempt[]>([])
+  const [expandedAttempt, setExpandedAttempt] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadingDetails, setLoadingDetails] = useState<string | null>(null)
 
   useEffect(() => {
     const session = TeacherSessionManager.get()
@@ -136,6 +148,44 @@ export default function StudentDetailPage() {
       return { level: 'MEDIUM', color: 'bg-yellow-100 text-yellow-700', emoji: '🟡' }
     } else {
       return { level: 'HARD', color: 'bg-red-100 text-red-700', emoji: '🔴' }
+    }
+  }
+
+  const toggleAttemptDetails = async (attemptId: string) => {
+    if (expandedAttempt === attemptId) {
+      setExpandedAttempt(null)
+      return
+    }
+
+    // Check if we already have the responses loaded
+    const attempt = attempts.find((a) => a.id === attemptId)
+    if (attempt?.responses) {
+      setExpandedAttempt(attemptId)
+      return
+    }
+
+    // Load responses for this attempt
+    setLoadingDetails(attemptId)
+    try {
+      const { data: responsesData } = await supabase
+        .from('responses')
+        .select('question_id, question_type, block_number, student_answer, is_correct, answered_at')
+        .eq('attempt_id', attemptId)
+        .order('answered_at', { ascending: true })
+
+      // Update the attempt with responses
+      setAttempts((prev) =>
+        prev.map((a) =>
+          a.id === attemptId
+            ? { ...a, responses: responsesData as Response[] }
+            : a
+        )
+      )
+      setExpandedAttempt(attemptId)
+    } catch (error) {
+      console.error('Failed to load attempt details:', error)
+    } finally {
+      setLoadingDetails(null)
     }
   }
 
@@ -270,6 +320,7 @@ export default function StudentDetailPage() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
+                    <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700 w-8"></th>
                     <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
                       Lesson
                     </th>
@@ -304,66 +355,224 @@ export default function StudentDetailPage() {
                       attempt.blocks_completed,
                       attempt.blocks_stopped_at
                     )
+                    const isExpanded = expandedAttempt === attempt.id
+                    const isLoading = loadingDetails === attempt.id
+
+                    // Calculate block-by-block stats
+                    const blockStats = attempt.responses
+                      ? attempt.responses.reduce((acc, response) => {
+                          if (!acc[response.block_number]) {
+                            acc[response.block_number] = { total: 0, correct: 0 }
+                          }
+                          acc[response.block_number].total++
+                          if (response.is_correct) acc[response.block_number].correct++
+                          return acc
+                        }, {} as Record<number, { total: number; correct: number }>)
+                      : {}
 
                     return (
-                      <tr key={attempt.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-child-sm text-gray-800 font-medium">
-                          {attempt.lesson.title}
-                        </td>
-                        <td className="px-6 py-4 text-child-sm text-gray-600">
-                          {new Date(attempt.started_at).toLocaleDateString('en-IN', {
-                            day: 'numeric',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </td>
-                        <td className="px-6 py-4">
-                          {isCompleted ? (
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-child-xs font-bold bg-green-100 text-green-700">
-                              ✓ Completed
+                      <>
+                        <tr
+                          key={attempt.id}
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => toggleAttemptDetails(attempt.id)}
+                        >
+                          <td className="px-6 py-4">
+                            <button className="text-gray-600 hover:text-gray-900 transition-transform">
+                              {isLoading ? (
+                                <span className="text-xs">⏳</span>
+                              ) : (
+                                <span
+                                  className={`transition-transform inline-block ${
+                                    isExpanded ? 'rotate-90' : ''
+                                  }`}
+                                >
+                                  ▶
+                                </span>
+                              )}
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 text-child-sm text-gray-800 font-medium">
+                            {attempt.lesson.title}
+                          </td>
+                          <td className="px-6 py-4 text-child-sm text-gray-600">
+                            {new Date(attempt.started_at).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </td>
+                          <td className="px-6 py-4">
+                            {isCompleted ? (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-child-xs font-bold bg-green-100 text-green-700">
+                                ✓ Completed
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-child-xs font-bold bg-yellow-100 text-yellow-700">
+                                ⏳ In Progress
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span
+                              className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-child-xs font-bold ${difficulty.color}`}
+                            >
+                              {difficulty.emoji} {difficulty.level}
                             </span>
-                          ) : (
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-child-xs font-bold bg-yellow-100 text-yellow-700">
-                              ⏳ In Progress
+                          </td>
+                          <td className="px-6 py-4 text-child-sm text-gray-600">
+                            <span className="font-bold text-green-600">
+                              {attempt.questions_correct}
                             </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-child-xs font-bold ${difficulty.color}`}>
-                            {difficulty.emoji} {difficulty.level}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-child-sm text-gray-600">
-                          <span className="font-bold text-green-600">
-                            {attempt.questions_correct}
-                          </span>
-                          <span className="text-gray-400">/</span>
-                          {attempt.questions_attempted}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
-                              <div
-                                className={`h-2 rounded-full transition-all ${
-                                  accuracy >= 80
-                                    ? 'bg-green-500'
-                                    : accuracy >= 60
-                                    ? 'bg-yellow-500'
-                                    : 'bg-red-500'
-                                }`}
-                                style={{ width: `${accuracy}%` }}
-                              />
+                            <span className="text-gray-400">/</span>
+                            {attempt.questions_attempted}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-[100px]">
+                                <div
+                                  className={`h-2 rounded-full transition-all ${
+                                    accuracy >= 80
+                                      ? 'bg-green-500'
+                                      : accuracy >= 60
+                                      ? 'bg-yellow-500'
+                                      : 'bg-red-500'
+                                  }`}
+                                  style={{ width: `${accuracy}%` }}
+                                />
+                              </div>
+                              <span className="text-child-sm font-bold text-gray-700 min-w-[45px]">
+                                {accuracy}%
+                              </span>
                             </div>
-                            <span className="text-child-sm font-bold text-gray-700 min-w-[45px]">
-                              {accuracy}%
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-child-sm text-gray-600">
-                          {attempt.blocks_completed}
-                        </td>
-                      </tr>
+                          </td>
+                          <td className="px-6 py-4 text-child-sm text-gray-600">
+                            {attempt.blocks_completed}
+                          </td>
+                        </tr>
+                        {isExpanded && attempt.responses && (
+                          <tr>
+                            <td colSpan={8} className="px-6 py-4 bg-gray-50">
+                              <div className="space-y-4">
+                                <h4 className="text-child-base font-bold text-gray-800 mb-3">
+                                  Detailed Performance
+                                </h4>
+
+                                {/* Block-by-block breakdown */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                  {Object.entries(blockStats).map(([blockNum, stats]) => {
+                                    const blockAccuracy = calculateAccuracy(stats.correct, stats.total)
+                                    const blockDifficulty =
+                                      Number(blockNum) === 0
+                                        ? 'EASY'
+                                        : Number(blockNum) === 1
+                                        ? 'MEDIUM'
+                                        : 'HARD'
+
+                                    return (
+                                      <div
+                                        key={blockNum}
+                                        className="bg-white rounded-lg p-4 border-2 border-gray-200"
+                                      >
+                                        <div className="flex items-center justify-between mb-2">
+                                          <span className="text-child-sm font-bold text-gray-800">
+                                            Block {blockNum}
+                                          </span>
+                                          <span className="text-child-xs font-bold text-gray-600">
+                                            {blockDifficulty}
+                                          </span>
+                                        </div>
+                                        <div className="space-y-2">
+                                          <div className="flex justify-between text-child-xs text-gray-600">
+                                            <span>Questions:</span>
+                                            <span className="font-bold">
+                                              {stats.correct}/{stats.total}
+                                            </span>
+                                          </div>
+                                          <div className="flex items-center gap-2">
+                                            <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                              <div
+                                                className={`h-2 rounded-full ${
+                                                  blockAccuracy >= 80
+                                                    ? 'bg-green-500'
+                                                    : blockAccuracy >= 60
+                                                    ? 'bg-yellow-500'
+                                                    : 'bg-red-500'
+                                                }`}
+                                                style={{ width: `${blockAccuracy}%` }}
+                                              />
+                                            </div>
+                                            <span className="text-child-xs font-bold min-w-[40px]">
+                                              {blockAccuracy}%
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+
+                                {/* Question-by-question details */}
+                                <div className="mt-4">
+                                  <h5 className="text-child-sm font-bold text-gray-700 mb-2">
+                                    Question History
+                                  </h5>
+                                  <div className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
+                                    <table className="w-full text-child-xs">
+                                      <thead className="bg-gray-100">
+                                        <tr>
+                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
+                                            #
+                                          </th>
+                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
+                                            Block
+                                          </th>
+                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
+                                            Type
+                                          </th>
+                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
+                                            Result
+                                          </th>
+                                          <th className="px-3 py-2 text-left font-bold text-gray-700">
+                                            Time
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-gray-200">
+                                        {attempt.responses.map((response, idx) => (
+                                          <tr key={response.question_id} className="hover:bg-gray-50">
+                                            <td className="px-3 py-2 text-gray-700">{idx + 1}</td>
+                                            <td className="px-3 py-2 text-gray-700">
+                                              Block {response.block_number}
+                                            </td>
+                                            <td className="px-3 py-2 text-gray-600 capitalize">
+                                              {response.question_type.replace('-', ' ')}
+                                            </td>
+                                            <td className="px-3 py-2">
+                                              {response.is_correct ? (
+                                                <span className="text-green-600 font-bold">✓ Correct</span>
+                                              ) : (
+                                                <span className="text-red-600 font-bold">✗ Incorrect</span>
+                                              )}
+                                            </td>
+                                            <td className="px-3 py-2 text-gray-600">
+                                              {new Date(response.answered_at).toLocaleTimeString('en-IN', {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                              })}
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
                     )
                   })}
                 </tbody>
