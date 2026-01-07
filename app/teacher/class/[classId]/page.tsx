@@ -73,7 +73,7 @@ export default function ClassDetailPage() {
       const { data: lessonsData } = await supabase
         .from('lessons')
         .select('id, title, description, order')
-        .eq('grade', 3)
+        .eq('grade', 4)
         .order('order')
 
       const { data: unlocksData } = await supabase
