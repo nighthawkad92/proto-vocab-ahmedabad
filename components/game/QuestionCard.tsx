@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import type { Question } from '@/lib/types'
+import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 
 interface QuestionCardProps {
   question: Question
@@ -59,7 +60,12 @@ export default function QuestionCard({
           {question.options.map((option, index) => (
             <div key={index} className="relative">
               <button
-                onClick={() => !disabled && onAnswer(option)}
+                onClick={() => {
+                  if (!disabled) {
+                    playSoundEffect(SoundEffect.TAP)
+                    onAnswer(option)
+                  }
+                }}
                 disabled={disabled}
                 className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-[30px] py-6 px-6 pr-16 rounded-child shadow-md active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[4rem] text-left"
               >

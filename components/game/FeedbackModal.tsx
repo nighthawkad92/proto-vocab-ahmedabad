@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 
 interface FeedbackModalProps {
   isCorrect: boolean
@@ -23,6 +24,9 @@ export default function FeedbackModal({
 
   useEffect(() => {
     if (show) {
+      // Play appropriate sound effect
+      playSoundEffect(isCorrect ? SoundEffect.CORRECT : SoundEffect.INCORRECT)
+
       // Longer timeout if there's an explanation to read
       const timeout = explanation && !isCorrect ? 3500 : 1500
       const timer = setTimeout(onClose, timeout)

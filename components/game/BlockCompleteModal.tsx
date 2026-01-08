@@ -1,6 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useEffect } from 'react'
+import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 
 interface BlockCompleteModalProps {
   show: boolean
@@ -15,6 +17,13 @@ export default function BlockCompleteModal({
   onContinue,
   onFinish,
 }: BlockCompleteModalProps) {
+  useEffect(() => {
+    if (show && !stoppedEarly) {
+      // Play completion sound only if block completed successfully
+      playSoundEffect(SoundEffect.BLOCK_COMPLETE)
+    }
+  }, [show, stoppedEarly])
+
   if (!show) return null
 
   return (
@@ -39,7 +48,10 @@ export default function BlockCompleteModal({
         <div className="space-y-3">
           {!stoppedEarly && (
             <button
-              onClick={onContinue}
+              onClick={() => {
+                playSoundEffect(SoundEffect.TAP)
+                onContinue()
+              }}
               className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-base py-5 px-8 rounded-child shadow-lg active:scale-95 transition-all min-h-[3rem]"
             >
               Continue
@@ -47,7 +59,10 @@ export default function BlockCompleteModal({
           )}
 
           <button
-            onClick={onFinish}
+            onClick={() => {
+              playSoundEffect(SoundEffect.TAP)
+              onFinish()
+            }}
             className="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium text-base py-5 px-8 rounded-child shadow-lg active:scale-95 transition-all min-h-[3rem]"
           >
             {stoppedEarly ? 'Back to Lessons' : 'Finish'}

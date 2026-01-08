@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { BlockIntroduction } from '@/lib/types'
+import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 
 interface IntroductionCardProps {
   introduction: BlockIntroduction
@@ -48,6 +49,7 @@ export default function IntroductionCard({
   const isLastStep = currentStep === steps.length - 1
 
   const handleNext = () => {
+    playSoundEffect(SoundEffect.TAP)
     if (isLastStep) {
       onContinue()
     } else {
