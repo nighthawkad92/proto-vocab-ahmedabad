@@ -152,6 +152,15 @@ export default function AddWordActivity({
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
+      {/* Question Prompt */}
+      {question.prompt && (
+        <div className="text-center mb-4">
+          <h2 className="text-2xl font-medium text-gray-800">
+            {question.prompt}
+          </h2>
+        </div>
+      )}
+
       {/* Base Sentence with Insertion Point */}
       <div className="space-y-2">
         <div className="text-center text-sm font-medium text-gray-600">

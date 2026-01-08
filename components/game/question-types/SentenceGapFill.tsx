@@ -136,6 +136,15 @@ export default function SentenceGapFill({
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
+      {/* Question Prompt */}
+      {question.prompt && (
+        <div className="text-center mb-4">
+          <h2 className="text-2xl font-medium text-gray-800">
+            {question.prompt}
+          </h2>
+        </div>
+      )}
+
       {/* Sentence with Gap */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -145,7 +154,7 @@ export default function SentenceGapFill({
         {renderSentenceWithGap()}
       </motion.div>
 
-      {/* Instructions */}
+      {/* Word Options */}
       <div className="text-center">
         <p className="text-base text-gray-600">
           {selectedWord ? 'Selected word is shown above' : 'Tap a word to fill the gap'}

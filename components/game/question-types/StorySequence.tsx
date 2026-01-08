@@ -9,6 +9,8 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -73,6 +75,7 @@ export default function StorySequence({
   )
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const [activeId, setActiveId] = useState<string | null>(null)
 
   // Position labels
   const positionLabels = ['First', 'Then', 'Next', 'After that', 'Finally']
@@ -99,6 +102,11 @@ export default function StorySequence({
     })
   )
 
+  // Handle drag start event
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string)
+  }
+
   // Handle drag end event
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -112,6 +120,8 @@ export default function StorySequence({
         return arrayMove(items, oldIndex, newIndex)
       })
     }
+
+    setActiveId(null)
   }
 
   // Check if current order is correct
@@ -157,6 +167,15 @@ export default function StorySequence({
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
+      {/* Question Prompt */}
+      {question.prompt && (
+        <div className="text-center mb-4">
+          <h2 className="text-2xl font-medium text-gray-800">
+            {question.prompt}
+          </h2>
+        </div>
+      )}
+
       {/* Story Passage */}
       {question.passage && (
         <PassageDisplay
@@ -166,20 +185,11 @@ export default function StorySequence({
         />
       )}
 
-      {/* Instructions */}
-      <div className="text-center">
-        <p className="text-base text-gray-600 mb-2">
-          Drag the events to put them in the correct order
-        </p>
-        <p className="text-sm text-gray-500">
-          Or use keyboard arrows to reorder
-        </p>
-      </div>
-
       {/* Drag and Drop Area with Position Labels */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
       >
@@ -210,6 +220,13 @@ export default function StorySequence({
             ))}
           </div>
         </SortableContext>
+        <DragOverlay>
+          {activeId ? (
+            <div className="bg-white rounded-child shadow-xl border-2 border-accent-400 p-4 text-base font-medium text-gray-800 cursor-grabbing max-w-lg">
+              {items.find((item) => item.id === activeId)?.event}
+            </div>
+          ) : null}
+        </DragOverlay>
       </DndContext>
 
       {/* Submit Button */}
@@ -221,10 +238,9 @@ export default function StorySequence({
         {hasSubmitted ? 'Submitted' : 'Check Answer'}
       </button>
 
-      {/* Accessibility hint */}
+      {/* Touch hint */}
       <div className="text-center text-xs text-gray-500">
         <p>💡 Tip: Tap and hold to drag on touch devices</p>
-        <p>Use Tab + Arrow keys for keyboard navigation</p>
       </div>
     </div>
   )

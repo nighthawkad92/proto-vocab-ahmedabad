@@ -9,6 +9,8 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -68,6 +70,7 @@ export default function SentenceRearrange({
     []
   )
   const [hasSubmitted, setHasSubmitted] = useState(false)
+  const [activeId, setActiveId] = useState<string | null>(null)
 
   // Initialize items when question changes
   useEffect(() => {
@@ -92,6 +95,11 @@ export default function SentenceRearrange({
     })
   )
 
+  // Handle drag start event
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string)
+  }
+
   // Handle drag end event
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -105,6 +113,8 @@ export default function SentenceRearrange({
         return arrayMove(items, oldIndex, newIndex)
       })
     }
+
+    setActiveId(null)
   }
 
   // Check if current order is correct
@@ -141,17 +151,20 @@ export default function SentenceRearrange({
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
-      {/* Instructions */}
-      <div className="text-center">
-        <p className="text-base text-gray-600 mb-2">
-          Drag the words to arrange them in the correct order
-        </p>
-      </div>
+      {/* Question Prompt */}
+      {question.prompt && (
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-medium text-gray-800">
+            {question.prompt}
+          </h2>
+        </div>
+      )}
 
       {/* Drag and Drop Area */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
       >
@@ -169,6 +182,13 @@ export default function SentenceRearrange({
             ))}
           </div>
         </SortableContext>
+        <DragOverlay>
+          {activeId ? (
+            <div className="bg-white rounded-child shadow-xl border-2 border-accent-400 p-4 text-xl font-medium text-gray-800 cursor-grabbing">
+              {items.find((item) => item.id === activeId)?.word}
+            </div>
+          ) : null}
+        </DragOverlay>
       </DndContext>
 
       {/* Preview Sentence */}
