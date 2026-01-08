@@ -3,6 +3,8 @@
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
+import { generateSpeech } from '@/lib/googleTTS'
+import { playAudio } from '@/lib/audioCache'
 
 interface FeedbackModalProps {
   isCorrect: boolean
@@ -26,6 +28,12 @@ export default function FeedbackModal({
     if (show) {
       // Play appropriate sound effect
       playSoundEffect(isCorrect ? SoundEffect.CORRECT : SoundEffect.INCORRECT)
+
+      // Play TTS for feedback message
+      const feedbackText = isCorrect ? 'You answered correctly.' : 'Try listening again.'
+      generateSpeech({ text: feedbackText })
+        .then(audioUrl => playAudio(audioUrl))
+        .catch(error => console.error('Failed to play feedback audio:', error))
 
       // Longer timeout if there's an explanation to read
       const timeout = explanation && !isCorrect ? 3500 : 1500

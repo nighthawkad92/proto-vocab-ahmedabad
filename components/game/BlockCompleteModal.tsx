@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
+import { generateSpeech } from '@/lib/googleTTS'
+import { playAudio } from '@/lib/audioCache'
 
 interface BlockCompleteModalProps {
   show: boolean
@@ -18,9 +20,20 @@ export default function BlockCompleteModal({
   onFinish,
 }: BlockCompleteModalProps) {
   useEffect(() => {
-    if (show && !stoppedEarly) {
-      // Play completion sound only if block completed successfully
-      playSoundEffect(SoundEffect.BLOCK_COMPLETE)
+    if (show) {
+      if (!stoppedEarly) {
+        // Play completion sound only if block completed successfully
+        playSoundEffect(SoundEffect.BLOCK_COMPLETE)
+      }
+
+      // Play TTS for completion message
+      const completionText = stoppedEarly
+        ? 'You finished this block. You can try again later.'
+        : 'You finished this block. Ready for the next block?'
+
+      generateSpeech({ text: completionText })
+        .then(audioUrl => playAudio(audioUrl))
+        .catch(error => console.error('Failed to play completion audio:', error))
     }
   }, [show, stoppedEarly])
 

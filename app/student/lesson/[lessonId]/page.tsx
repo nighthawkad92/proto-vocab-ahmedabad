@@ -141,27 +141,31 @@ export default function LessonPage() {
     }
   }
 
-  // Handler to replay current question audio
-  const handleReplayAudio = useCallback(() => {
-    if (!engine) return
-    const question = engine.getCurrentQuestion()
-    if (question?.audioUrl) {
-      playAudio(question.audioUrl).catch(console.error)
-    }
-  }, [engine])
-
-  // Handler to play audio for option text
-  const handlePlayOptionAudio = useCallback(async (text: string) => {
+  // Handler to play question prompt audio
+  const handlePlayQuestionAudio = useCallback(async (text: string) => {
     setIsPlayingAudio(true)
     try {
       const audioUrl = await generateSpeech({ text })
       await playAudio(audioUrl)
     } catch (error) {
-      console.error('Failed to play option audio:', error)
+      console.error('Failed to play question audio:', error)
     } finally {
       setIsPlayingAudio(false)
     }
   }, [])
+
+  // Auto-play question audio when question changes
+  useEffect(() => {
+    if (currentQuestion && !showIntroduction) {
+      handlePlayQuestionAudio(currentQuestion.prompt)
+    }
+  }, [currentQuestion, showIntroduction, handlePlayQuestionAudio])
+
+  // Handler to replay current question audio
+  const handleReplayAudio = useCallback(() => {
+    if (!currentQuestion) return
+    handlePlayQuestionAudio(currentQuestion.prompt)
+  }, [currentQuestion, handlePlayQuestionAudio])
 
   const handleAnswer = useCallback(async (answer: string) => {
     if (!engine || waitingForNext) return
@@ -304,7 +308,6 @@ export default function LessonPage() {
         <IntroductionCard
           introduction={currentIntroduction}
           onContinue={handleIntroductionComplete}
-          onPlayAudio={handlePlayOptionAudio}
           disabled={isPlayingAudio}
         />
       </div>
@@ -345,7 +348,6 @@ export default function LessonPage() {
           question={currentQuestion}
           onAnswer={handleAnswer}
           disabled={waitingForNext || isPlayingAudio}
-          onPlayOptionAudio={handlePlayOptionAudio}
         />
 
         {/* Back button */}

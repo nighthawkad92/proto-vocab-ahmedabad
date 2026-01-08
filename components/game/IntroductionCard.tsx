@@ -8,24 +8,15 @@ import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 interface IntroductionCardProps {
   introduction: BlockIntroduction
   onContinue: () => void
-  onPlayAudio?: (text: string) => void
   disabled?: boolean
 }
 
 export default function IntroductionCard({
   introduction,
   onContinue,
-  onPlayAudio,
   disabled = false,
 }: IntroductionCardProps) {
   const [currentStep, setCurrentStep] = useState(0)
-
-  // Auto-play audio for explanation when component mounts
-  useEffect(() => {
-    if (currentStep === 0 && onPlayAudio) {
-      onPlayAudio(introduction.explanation)
-    }
-  }, [currentStep, introduction.explanation, onPlayAudio])
 
   const steps = [
     {

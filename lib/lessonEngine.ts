@@ -74,11 +74,25 @@ export class LessonEngine {
     return shuffled
   }
 
+  private randomizeAnswerOptions(question: Question): Question {
+    // For multiple choice questions, randomize the answer options
+    if (question.type === 'multiple-choice' || question.type === 'listen-and-select') {
+      const shuffledOptions = this.shuffleArray(question.options)
+      return {
+        ...question,
+        options: shuffledOptions,
+      }
+    }
+    return question
+  }
+
   public getCurrentQuestion(): Question | null {
     if (this.currentQuestionIndex >= this.currentQuestions.length) {
       return null
     }
-    return this.currentQuestions[this.currentQuestionIndex]
+    // Return question with randomized answer options
+    const question = this.currentQuestions[this.currentQuestionIndex]
+    return this.randomizeAnswerOptions(question)
   }
 
   public submitAnswer(answer: string): {
