@@ -166,25 +166,35 @@ export default function SentenceRearrange({
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+        modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-3">
-            {items.map((item) => (
-              <DraggableCard
+          <div className="space-y-4">
+            {items.map((item, index) => (
+              <motion.div
                 key={item.id}
-                id={item.id}
-                disabled={disabled || hasSubmitted}
-                className="text-xl"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
               >
-                {item.word}
-              </DraggableCard>
+                <DraggableCard
+                  id={item.id}
+                  disabled={disabled || hasSubmitted}
+                  className="text-xl"
+                  showHandle={true}
+                >
+                  {item.word}
+                </DraggableCard>
+              </motion.div>
             ))}
           </div>
         </SortableContext>
-        <DragOverlay>
+        <DragOverlay dropAnimation={{
+          duration: 200,
+          easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+        }}>
           {activeId ? (
-            <div className="bg-white rounded-child shadow-xl border-2 border-accent-400 p-4 text-xl font-medium text-gray-800 cursor-grabbing">
+            <div className="bg-white rounded-2xl shadow-2xl border-2 border-accent-500 p-5 text-xl font-medium text-gray-800 cursor-grabbing transform rotate-3">
               {items.find((item) => item.id === activeId)?.word}
             </div>
           ) : null}
