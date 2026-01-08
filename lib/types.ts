@@ -33,12 +33,14 @@ export interface LessonBlock {
   blockNumber: number
   introduction?: BlockIntroduction
   questions: Question[]
+  rotationSets?: Question[][] // Optional: alternate question sets for retakes
 }
 
 export interface LessonContent {
   title: string
   description: string
   blocks: LessonBlock[]
+  rotationEnabled?: boolean // Whether to use rotation sets on retakes
 }
 
 // Student session

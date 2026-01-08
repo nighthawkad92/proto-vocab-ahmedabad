@@ -1,82 +1,108 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import { BlockIntroduction } from '@/lib/types'
 
 interface IntroductionCardProps {
   introduction: BlockIntroduction
   onContinue: () => void
+  onPlayAudio?: (text: string) => void
 }
 
 export default function IntroductionCard({
   introduction,
   onContinue,
+  onPlayAudio,
 }: IntroductionCardProps) {
+  const [currentStep, setCurrentStep] = useState(0)
+
+  // Auto-play audio for explanation when component mounts
+  useEffect(() => {
+    if (currentStep === 0 && onPlayAudio) {
+      onPlayAudio(introduction.explanation)
+    }
+  }, [currentStep, introduction.explanation, onPlayAudio])
+
+  const steps = [
+    {
+      title: introduction.concept,
+      content: introduction.explanation,
+      label: 'What is this?',
+    },
+    {
+      title: 'Example',
+      content: introduction.example,
+      label: 'Here is an example',
+    },
+    {
+      title: 'Now try',
+      content: introduction.activity,
+      label: 'Your turn',
+    },
+  ]
+
+  const currentStepData = steps[currentStep]
+  const isLastStep = currentStep === steps.length - 1
+
+  const handleNext = () => {
+    if (isLastStep) {
+      onContinue()
+    } else {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      key={currentStep}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       className="w-full max-w-3xl mx-auto"
     >
-      <div className="bg-gradient-to-br from-secondary-50 to-white rounded-child shadow-xl p-8 space-y-6 border-4 border-secondary-200">
-        {/* Icon and Title */}
-        <div className="text-center space-y-3">
-          <div className="text-7xl">💡</div>
-          <h2 className="text-child-xl font-display font-bold text-secondary-700">
-            Let's Learn Something New!
+      <div className="bg-white rounded-child shadow-xl p-8 space-y-6">
+        {/* Progress dots */}
+        <div className="flex justify-center gap-2">
+          {steps.map((_, index) => (
+            <div
+              key={index}
+              className={`w-3 h-3 rounded-full transition-colors ${
+                index === currentStep ? 'bg-accent-500' : 'bg-gray-300'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Step label */}
+        <div className="text-center">
+          <p className="text-base font-medium text-gray-600">
+            {currentStepData.label}
+          </p>
+        </div>
+
+        {/* Title */}
+        <div className="text-center">
+          <h2 className="text-[32px] font-body font-medium text-gray-800 leading-tight">
+            {currentStepData.title}
           </h2>
-          <p className="text-child-lg font-bold text-secondary-600">
-            {introduction.concept}
+        </div>
+
+        {/* Content */}
+        <div className="bg-gray-50 rounded-child p-6">
+          <p className="text-lg text-gray-800 leading-relaxed text-center">
+            {currentStepData.content}
           </p>
-        </div>
-
-        {/* Explanation */}
-        <div className="bg-white rounded-child p-6 border-2 border-secondary-200">
-          <p className="text-child-base text-gray-800 leading-relaxed">
-            {introduction.explanation}
-          </p>
-        </div>
-
-        {/* Example */}
-        <div className="bg-primary-50 rounded-child p-6 border-2 border-primary-200">
-          <div className="flex items-start gap-3">
-            <span className="text-3xl">📝</span>
-            <div>
-              <p className="text-child-sm font-bold text-primary-700 mb-2">
-                Example:
-              </p>
-              <p className="text-child-base text-gray-800">
-                {introduction.example}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Activity */}
-        <div className="bg-accent-50 rounded-child p-6 border-2 border-accent-200">
-          <div className="flex items-start gap-3">
-            <span className="text-3xl">✨</span>
-            <div>
-              <p className="text-child-sm font-bold text-accent-700 mb-2">
-                Let's Try:
-              </p>
-              <p className="text-child-base text-gray-800">
-                {introduction.activity}
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Continue Button */}
-        <motion.button
-          onClick={onContinue}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="w-full bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-bold text-child-lg py-6 px-8 rounded-child shadow-lg hover:shadow-xl transition-all"
+        <button
+          onClick={handleNext}
+          className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all min-h-[3rem]"
         >
-          I'm Ready! Let's Start! 🚀
-        </motion.button>
+          {isLastStep ? 'Start' : 'Next'}
+        </button>
       </div>
     </motion.div>
   )

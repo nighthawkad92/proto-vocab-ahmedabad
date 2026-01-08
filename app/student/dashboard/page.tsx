@@ -85,16 +85,16 @@ export default function StudentDashboard() {
         <div className="bg-white rounded-child shadow-lg p-6">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-child-lg font-display font-bold text-primary-600">
-                Hello, {session?.studentName}! 👋
+              <h1 className="text-child-lg font-body font-medium text-gray-800">
+                Hello, {session?.studentName}.
               </h1>
-              <p className="text-child-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Class: {session?.classCode}
               </p>
             </div>
             <button
               onClick={handleLogout}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors tap-feedback"
+              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-child text-base font-medium transition-colors active:scale-95 min-h-[3rem]"
             >
               Logout
             </button>
@@ -124,35 +124,33 @@ export default function StudentDashboard() {
                     key={lesson.id}
                     className={`bg-white rounded-child shadow-lg p-6 transition-all ${
                       isUnlocked
-                        ? 'hover:shadow-xl cursor-pointer'
+                        ? 'border-2 border-accent-400'
                         : 'opacity-60'
                     }`}
-                    onClick={() => isUnlocked && handleStartLesson(lesson.id)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="text-3xl">
-                            {isUnlocked ? '✅' : '🔒'}
-                          </span>
-                          <h3 className="text-child-base font-display font-semibold text-gray-800">
+                          <h3 className="text-base font-medium text-gray-800">
                             {lesson.title}
                           </h3>
+                          {!isUnlocked && (
+                            <span className="text-sm text-gray-500">
+                              (Locked)
+                            </span>
+                          )}
                         </div>
-                        <p className="text-child-sm text-gray-600 ml-12">
+                        <p className="text-base text-gray-600">
                           {lesson.description}
                         </p>
                       </div>
 
                       {isUnlocked && (
                         <button
-                          className="px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-bold text-child-sm rounded-child shadow-md hover:shadow-lg transition-all tap-feedback"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleStartLesson(lesson.id)
-                          }}
+                          className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white font-medium text-base rounded-child shadow-md active:scale-95 transition-all min-h-[3rem]"
+                          onClick={() => handleStartLesson(lesson.id)}
                         >
-                          Start →
+                          Start
                         </button>
                       )}
                     </div>

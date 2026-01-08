@@ -6,6 +6,7 @@ import { StudentSessionManager } from '@/lib/studentSession'
 import { LessonEngine } from '@/lib/lessonEngine'
 import { OfflineQueue, AttemptStateManager } from '@/lib/offlineQueue'
 import { playAudio, preloadLessonAudio } from '@/lib/audioCache'
+import { generateSpeech } from '@/lib/googleTTS'
 import QuestionCard from '@/components/game/QuestionCard'
 import FeedbackModal from '@/components/game/FeedbackModal'
 import ProgressBar from '@/components/game/ProgressBar'
@@ -63,14 +64,16 @@ export default function LessonPage() {
       }
 
       // If not in cache or cache failed, fetch from network
+      let attemptNumber = 1
       if (!content) {
-        const response = await fetch(`/api/student/lesson/${lessonId}`)
+        const response = await fetch(`/api/student/lesson/${lessonId}?studentId=${session.studentId}`)
         if (!response.ok) {
           throw new Error('Failed to load lesson')
         }
 
         const data = await response.json()
         content = data.lesson.content
+        attemptNumber = data.attemptNumber || 1
 
         // Cache for offline use
         try {
@@ -104,8 +107,8 @@ export default function LessonPage() {
         throw new Error('No attempt ID returned')
       }
 
-      // Initialize lesson engine
-      const lessonEngine = new LessonEngine(attemptId, lessonId, content)
+      // Initialize lesson engine with attempt number for rotation sets
+      const lessonEngine = new LessonEngine(attemptId, lessonId, content, attemptNumber)
       setEngine(lessonEngine)
 
       // Check if first block has an introduction
@@ -137,19 +140,33 @@ export default function LessonPage() {
     }
   }
 
+  // Handler to replay current question audio
+  const handleReplayAudio = useCallback(() => {
+    if (!engine) return
+    const question = engine.getCurrentQuestion()
+    if (question?.audioUrl) {
+      playAudio(question.audioUrl).catch(console.error)
+    }
+  }, [engine])
+
+  // Handler to play audio for option text
+  const handlePlayOptionAudio = useCallback(async (text: string) => {
+    try {
+      const audioUrl = await generateSpeech({ text })
+      await playAudio(audioUrl)
+    } catch (error) {
+      console.error('Failed to play option audio:', error)
+    }
+  }, [])
+
   const handleAnswer = useCallback(async (answer: string) => {
     if (!engine || waitingForNext) return
 
     setWaitingForNext(true)
 
-    // Play audio for the question if available
-    const question = engine.getCurrentQuestion()
-    if (question?.audioUrl) {
-      playAudio(question.audioUrl).catch(console.error)
-    }
-
-    // Submit answer to engine
+    // Submit answer to engine (removed auto-play audio per UX spec)
     const result = engine.submitAnswer(answer)
+    const question = engine.getCurrentQuestion()
 
     // Get explanation for incorrect answers
     const explanation = !result.isCorrect
@@ -283,6 +300,7 @@ export default function LessonPage() {
         <IntroductionCard
           introduction={currentIntroduction}
           onContinue={handleIntroductionComplete}
+          onPlayAudio={handlePlayOptionAudio}
         />
       </div>
     )
@@ -322,19 +340,20 @@ export default function LessonPage() {
           question={currentQuestion}
           onAnswer={handleAnswer}
           disabled={waitingForNext}
+          onPlayOptionAudio={handlePlayOptionAudio}
         />
 
         {/* Back button */}
         <div className="flex justify-center">
           <button
             onClick={() => {
-              if (confirm('Are you sure you want to leave this lesson?')) {
+              if (confirm('Exit now? Progress is saved.')) {
                 router.push('/student/dashboard')
               }
             }}
-            className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors tap-feedback"
+            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-child text-base font-medium transition-colors active:scale-95 min-h-[3rem]"
           >
-            ← Back to Lessons
+            Back to Lessons
           </button>
         </div>
       </div>
@@ -345,6 +364,7 @@ export default function LessonPage() {
         show={showFeedback}
         onClose={() => setShowFeedback(false)}
         explanation={feedbackExplanation}
+        onReplayAudio={handleReplayAudio}
       />
 
       {/* Block Complete Modal */}
