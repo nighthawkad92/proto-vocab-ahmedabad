@@ -504,5 +504,5 @@ FROM lessons l,
      jsonb_array_elements(l.content->'blocks') b,
      jsonb_array_elements(b.value->'questions') q
 WHERE l."order" BETWEEN 2 AND 5
-GROUP BY l.title, l."order", b.value->>'blockNumber'
+GROUP BY l.title, l."order", b.value->>'blockNumber', b.value->'questions'
 ORDER BY l."order"::int, (b.value->>'blockNumber')::int;
