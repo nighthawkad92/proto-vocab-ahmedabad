@@ -3,7 +3,7 @@
 -- Based on: Grade 4 English PAL-Integrated Lesson Plans PDF
 --
 -- Usage: Run this file in Supabase SQL Editor to update Lessons 2-5
--- Note: This will DELETE and recreate Lessons 2-5
+-- Note: This will DELETE and recreate Lessons 2-5, and remove the test lesson
 --
 -- Lesson Distribution:
 -- - Lesson 2: Vocabulary in Context (4 sentence-gap-fill questions)
@@ -11,6 +11,16 @@
 -- - Lesson 4: Sentence Expansion (8 questions: 4 sentence-rearrange + 4 add-word)
 -- - Lesson 5: Reading-Writing Connection (4 story-sequence questions)
 -- Total: 20 questions integrated
+
+-- ============================================================================
+-- CLEANUP: REMOVE TEST LESSON
+-- ============================================================================
+
+-- Remove the standalone "Test Lesson - New Question Types"
+-- All questions from this test lesson are now integrated into Lessons 2-5
+DELETE FROM lessons
+WHERE title = 'Test Lesson - New Question Types'
+   OR (title LIKE '%Test Lesson%' AND "order" = 0);
 
 -- ============================================================================
 -- LESSON 2: VOCABULARY IN CONTEXT

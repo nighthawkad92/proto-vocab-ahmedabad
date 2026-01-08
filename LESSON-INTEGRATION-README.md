@@ -44,9 +44,10 @@ seed-lessons-2-5-integrated-master.sql
 ```
 
 This will:
-1. Delete existing Lessons 2-5
-2. Create new Lessons 2-5 with integrated test questions
-3. Run verification queries
+1. Remove the standalone "Test Lesson - New Question Types"
+2. Delete existing Lessons 2-5
+3. Create new Lessons 2-5 with integrated test questions
+4. Run verification queries
 
 ### Option 2: Load Individual Lessons
 If you only want to update specific lessons:
@@ -200,10 +201,10 @@ ORDER BY l."order";
 ## Next Steps
 
 1. **Load the content:** Run `seed-lessons-2-5-integrated-master.sql` in Supabase
+   - This automatically removes the test lesson and integrates all questions
 2. **Teacher unlock:** Teachers should unlock Lessons 2-5 for students
 3. **Test the flow:** Students work through lessons in order: 2 → 3 → 4 → 5
 4. **Verify progression:** Check that difficulty increases appropriately
-5. **Archive test lesson:** The standalone "Test Lesson - New Question Types" can be archived or deleted
 
 ---
 
