@@ -7,6 +7,8 @@ export async function GET(
 ) {
   try {
     const { lessonId } = params
+    const { searchParams } = new URL(request.url)
+    const studentId = searchParams.get('studentId')
 
     // Get lesson with content
     const { data: lesson, error } = await supabase
@@ -22,7 +24,22 @@ export async function GET(
       )
     }
 
-    return NextResponse.json({ lesson })
+    // Count previous attempts for this student and lesson
+    let attemptNumber = 1
+    if (studentId) {
+      const { count } = await supabase
+        .from('attempts')
+        .select('id', { count: 'exact', head: true })
+        .eq('student_id', studentId)
+        .eq('lesson_id', lessonId)
+
+      attemptNumber = (count || 0) + 1
+    }
+
+    return NextResponse.json({
+      lesson,
+      attemptNumber
+    })
   } catch (error) {
     console.error('Error fetching lesson:', error)
     return NextResponse.json(

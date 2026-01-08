@@ -7,8 +7,9 @@ export class LessonEngine {
   private lessonContent: LessonContent
   private currentQuestions: Question[]
   private currentQuestionIndex: number
+  private attemptNumber: number
 
-  constructor(attemptId: string, lessonId: string, lessonContent: LessonContent) {
+  constructor(attemptId: string, lessonId: string, lessonContent: LessonContent, attemptNumber: number = 1) {
     this.attemptState = {
       attemptId,
       lessonId,
@@ -22,15 +23,43 @@ export class LessonEngine {
     this.lessonContent = lessonContent
     this.currentQuestions = []
     this.currentQuestionIndex = 0
+    this.attemptNumber = attemptNumber
     this.initializeBlock(0)
+  }
+
+  private selectQuestions(block: { questions: Question[]; rotationSets?: Question[][] }): Question[] {
+    // Check if rotation is enabled and rotation sets are available
+    if (!this.lessonContent.rotationEnabled || !block.rotationSets || block.rotationSets.length === 0) {
+      return block.questions
+    }
+
+    // Calculate rotation index: 0 = default, 1 = rotation set 1, 2 = rotation set 2
+    const rotationIndex = (this.attemptNumber - 1) % 3
+
+    if (rotationIndex === 0) {
+      // Use default question set
+      return block.questions
+    } else if (rotationIndex === 1 && block.rotationSets[0]) {
+      // Use rotation set 1
+      return block.rotationSets[0]
+    } else if (rotationIndex === 2 && block.rotationSets[1]) {
+      // Use rotation set 2
+      return block.rotationSets[1]
+    }
+
+    // Fallback to default if rotation set is missing
+    return block.questions
   }
 
   private initializeBlock(blockNumber: number) {
     const block = this.lessonContent.blocks[blockNumber]
     if (!block) return
 
-    // Randomize questions in the block
-    this.currentQuestions = this.shuffleArray([...block.questions])
+    // Select appropriate question set based on attempt number
+    const questionSet = this.selectQuestions(block)
+
+    // Randomize questions in the selected set
+    this.currentQuestions = this.shuffleArray([...questionSet])
     this.currentQuestionIndex = 0
     this.attemptState.currentBlock = blockNumber
     this.attemptState.mistakesInBlock = 0
@@ -148,12 +177,14 @@ export class LessonEngine {
   // Restore from saved state (for offline sync)
   public static fromState(
     lessonContent: LessonContent,
-    savedState: AttemptState
+    savedState: AttemptState,
+    attemptNumber: number = 1
   ): LessonEngine {
     const engine = new LessonEngine(
       savedState.attemptId,
       savedState.lessonId,
-      lessonContent
+      lessonContent,
+      attemptNumber
     )
     engine.attemptState = { ...savedState }
     engine.initializeBlock(savedState.currentBlock)
