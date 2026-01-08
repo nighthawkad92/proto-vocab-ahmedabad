@@ -45,6 +45,9 @@ export interface LevelIntroduction {
   activity: string
 }
 
+// Alias for backward compatibility
+export type BlockIntroduction = LevelIntroduction
+
 export interface LessonLevel {
   levelNumber: number
   introduction?: LevelIntroduction

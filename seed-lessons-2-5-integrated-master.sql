@@ -6,10 +6,10 @@
 -- Note: This will DELETE and recreate Lessons 2-5, and remove the test lesson
 --
 -- Lesson Distribution:
--- - Lesson 2: Vocabulary in Context (4 sentence-gap-fill questions)
--- - Lesson 3: Reading Short Paragraphs (4 reading-comprehension questions)
--- - Lesson 4: Sentence Expansion (8 questions: 4 sentence-rearrange + 4 add-word)
--- - Lesson 5: Reading-Writing Connection (4 story-sequence questions)
+-- - Lesson 2: Vocabulary in Context (4 sentence-gap-fill questions across 3 levels)
+-- - Lesson 3: Reading Short Paragraphs (4 reading-comprehension questions across 3 levels)
+-- - Lesson 4: Sentence Expansion (8 questions: 4 sentence-rearrange + 4 add-word across 4 levels)
+-- - Lesson 5: Reading-Writing Connection (4 story-sequence questions across 3 levels)
 -- Total: 20 questions integrated
 
 -- ============================================================================
@@ -37,9 +37,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Vocabulary in Context",
     "description": "Learn word meanings and use them in sentences",
     "rotationEnabled": false,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Understanding Words in Context",
           "explanation": "Words have meanings. We use them to tell about things we see, feel, and do. When we pick the right word, others understand us better!",
@@ -48,7 +48,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l2b0q1",
+            "id": "l2l0q1",
             "type": "sentence-gap-fill",
             "prompt": "Choose the word that best completes the sentence",
             "baseSentence": "I am ___ after playing outside.",
@@ -58,7 +58,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "explanation": "After playing, we feel hungry because we used energy."
           },
           {
-            "id": "l2b0q2",
+            "id": "l2l0q2",
             "type": "sentence-gap-fill",
             "prompt": "Choose the word that makes the most sense",
             "baseSentence": "The road is ___ because of the rain.",
@@ -70,7 +70,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "introduction": {
           "concept": "Feelings and Behavior Words",
           "explanation": "Some words tell us how people feel or act. These words help us understand why someone does something.",
@@ -79,7 +79,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l2b1q1",
+            "id": "l2l1q1",
             "type": "sentence-gap-fill",
             "prompt": "Choose the best word to complete the sentence",
             "baseSentence": "Be ___ while crossing the road.",
@@ -91,7 +91,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "introduction": {
           "concept": "Thinking and Emotion Words",
           "explanation": "Some words describe how our mind works or how we feel inside. These words are more difficult, but they help us talk about our thoughts!",
@@ -100,7 +100,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l2b2q1",
+            "id": "l2l2q1",
             "type": "sentence-gap-fill",
             "prompt": "Choose the word that fits best",
             "baseSentence": "I felt ___ by the difficult question.",
@@ -130,9 +130,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Reading Short Paragraphs",
     "description": "Read stories and answer questions about them",
     "rotationEnabled": false,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Reading and Understanding Stories",
           "explanation": "When we read, we can find out WHO is in the story and WHAT they did. Reading carefully helps us remember!",
@@ -141,7 +141,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l3b0q1",
+            "id": "l3l0q1",
             "type": "reading-comprehension",
             "prompt": "Read the story and answer: Who is in the story?",
             "passage": "Ravi went to the park. He played with his ball.",
@@ -151,7 +151,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "explanation": "The story says ''Ravi went to the park''."
           },
           {
-            "id": "l3b0q2",
+            "id": "l3l0q2",
             "type": "reading-comprehension",
             "prompt": "Read the story and answer: What did the dog do?",
             "passage": "The dog was in the garden. He saw a ball. The dog ran to catch the ball.",
@@ -163,7 +163,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "introduction": {
           "concept": "Understanding What Happened First",
           "explanation": "Stories have a beginning, middle, and end. We need to remember what happened first, then next.",
@@ -172,7 +172,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l3b1q1",
+            "id": "l3l1q1",
             "type": "reading-comprehension",
             "prompt": "Read the story and answer: What did the farmer do first?",
             "passage": "The farmer woke up early in the morning. He went to his field. He watered the vegetable plants. The sun was shining brightly.",
@@ -184,7 +184,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "introduction": {
           "concept": "Understanding Why Things Happen",
           "explanation": "Sometimes the story tells us WHY someone felt happy or sad. We need to read carefully to find the reason!",
@@ -193,7 +193,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l3b2q1",
+            "id": "l3l2q1",
             "type": "reading-comprehension",
             "prompt": "Read the story and answer: Why did Meena feel happy?",
             "passage": "Meena was worried about her lost bag. She looked everywhere but could not find it. Her brother helped her search. Finally, they found it under the bed. Meena felt very happy and thanked her brother.",
@@ -228,9 +228,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Sentence Expansion",
     "description": "Build sentences and make them more interesting",
     "rotationEnabled": false,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Building Sentences in the Right Order",
           "explanation": "Words need to be in the right order to make sense. When we put them correctly, everyone understands!",
@@ -239,7 +239,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l4b0q1",
+            "id": "l4l0q1",
             "type": "sentence-rearrange",
             "prompt": "Arrange the words to make a sentence",
             "scrambledItems": ["runs", "dog", "The"],
@@ -248,7 +248,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "explanation": "Sentences start with ''The'', then the subject ''dog'', then the verb ''runs''."
           },
           {
-            "id": "l4b0q2",
+            "id": "l4l0q2",
             "type": "sentence-rearrange",
             "prompt": "Arrange the words to make a sentence",
             "scrambledItems": ["flies", "The", "bird", "fast"],
@@ -259,7 +259,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "introduction": {
           "concept": "Adding Describing Words",
           "explanation": "We can make sentences better by adding words that describe. Describing words tell us WHAT KIND of thing we''re talking about!",
@@ -268,7 +268,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l4b1q1",
+            "id": "l4l1q1",
             "type": "add-word",
             "prompt": "Add a describing word to make the sentence better",
             "exampleSentence": "The big dog runs",
@@ -281,7 +281,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "explanation": "Describing words tell us more about the dog. ''The big dog runs'' sounds better!"
           },
           {
-            "id": "l4b1q2",
+            "id": "l4l1q2",
             "type": "add-word",
             "prompt": "Add a word to describe the cat",
             "exampleSentence": "The lazy cat sleeps",
@@ -296,7 +296,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "introduction": {
           "concept": "Making Longer Sentences",
           "explanation": "Sentences can have describing words AND words that tell HOW something happens. This makes them even better!",
@@ -305,7 +305,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l4b2q1",
+            "id": "l4l2q1",
             "type": "sentence-rearrange",
             "prompt": "Arrange the words to make a sentence",
             "scrambledItems": ["boy", "quickly", "runs", "The", "big"],
@@ -314,7 +314,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "explanation": "Adjectives (big) come before nouns (boy). Adverbs (quickly) usually come after verbs (runs)."
           },
           {
-            "id": "l4b2q2",
+            "id": "l4l2q2",
             "type": "add-word",
             "prompt": "Add a word to tell HOW the boy runs",
             "exampleSentence": "The boy runs quickly",
@@ -329,7 +329,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 3,
+        "levelNumber": 3,
         "introduction": {
           "concept": "Adding Where and When",
           "explanation": "We can also add words that tell WHERE or WHEN something happens. This gives more information!",
@@ -338,7 +338,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l4b3q1",
+            "id": "l4l3q1",
             "type": "sentence-rearrange",
             "prompt": "Arrange the words to make a sentence",
             "scrambledItems": ["in", "runs", "boy", "the", "The", "park"],
@@ -347,7 +347,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "explanation": "The subject comes first, then verb, then prepositional phrase (in the park)."
           },
           {
-            "id": "l4b3q2",
+            "id": "l4l3q2",
             "type": "add-word",
             "prompt": "Make this sentence more interesting by adding a word",
             "exampleSentence": "The girl sings beautifully at the function",
@@ -380,9 +380,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Reading and Writing Connection",
     "description": "Read stories and put events in the right order",
     "rotationEnabled": false,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Understanding Story Order",
           "explanation": "Stories happen in order: First this, then that, finally this. When we put events in the right order, the story makes sense!",
@@ -391,7 +391,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l5b0q1",
+            "id": "l5l0q1",
             "type": "story-sequence",
             "prompt": "Put the events in the correct order",
             "passage": "Ravi woke up in the morning. He brushed his teeth. Then he ate breakfast and went to school.",
@@ -405,7 +405,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
             "explanation": "First he woke up, then brushed teeth, then ate breakfast and went to school."
           },
           {
-            "id": "l5b0q2",
+            "id": "l5l0q2",
             "type": "story-sequence",
             "prompt": "Put the story events in order",
             "passage": "The girl went to the park. She played on the swing. Then she went home.",
@@ -421,7 +421,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "introduction": {
           "concept": "Following Longer Stories",
           "explanation": "Some stories have more steps. We need to remember what happened first, second, third, and so on.",
@@ -430,7 +430,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l5b1q1",
+            "id": "l5l1q1",
             "type": "story-sequence",
             "prompt": "Put the events in the correct order",
             "passage": "A farmer wanted to grow vegetables. He planted seeds in his field. He watered them every day. The plants grew tall and he harvested the vegetables.",
@@ -447,7 +447,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "introduction": {
           "concept": "Understanding Stories with Problems and Solutions",
           "explanation": "Some stories tell about a problem and how it was solved. We need to understand: what was the problem? what happened? how did it end?",
@@ -456,7 +456,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         },
         "questions": [
           {
-            "id": "l5b2q1",
+            "id": "l5l2q1",
             "type": "story-sequence",
             "prompt": "Put the story events in order",
             "passage": "Meena was worried about her math test. She studied hard every night. On test day, the teacher gave out the papers. Meena answered all the questions carefully. She got a good score and felt very happy.",
@@ -488,7 +488,7 @@ SELECT
   grade,
   "order",
   description,
-  jsonb_array_length(content->'blocks') as block_count
+  jsonb_array_length(content->'levels') as level_count
 FROM lessons
 WHERE "order" BETWEEN 2 AND 5
 ORDER BY "order";
@@ -497,12 +497,12 @@ ORDER BY "order";
 SELECT
   l.title as lesson,
   l."order",
-  b.value->>'blockNumber' as block,
+  b.value->>'levelNumber' as level,
   jsonb_array_length(b.value->'questions') as question_count,
   jsonb_agg(q.value->>'type') as question_types
 FROM lessons l,
-     jsonb_array_elements(l.content->'blocks') b,
+     jsonb_array_elements(l.content->'levels') b,
      jsonb_array_elements(b.value->'questions') q
 WHERE l."order" BETWEEN 2 AND 5
-GROUP BY l.title, l."order", b.value->>'blockNumber', b.value->'questions'
-ORDER BY l."order"::int, (b.value->>'blockNumber')::int;
+GROUP BY l.title, l."order", b.value->>'levelNumber', b.value->'questions'
+ORDER BY l."order"::int, (b.value->>'levelNumber')::int;

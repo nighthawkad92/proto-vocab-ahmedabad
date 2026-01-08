@@ -123,8 +123,8 @@ export default function LessonPage() {
       setProgress(lessonEngine.getProgress())
 
       // Preload audio if available
-      const audioUrls = content.blocks
-        .flatMap((block) => block.questions)
+      const audioUrls = content.levels
+        .flatMap((level) => level.questions)
         .map((q) => q.audioUrl)
         .filter((url): url is string => !!url)
 

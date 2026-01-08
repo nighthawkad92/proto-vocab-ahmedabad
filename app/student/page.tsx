@@ -71,7 +71,7 @@ export default function StudentLoginPage() {
         <div className="text-center space-y-4">
           <div className="text-7xl">👨‍🎓</div>
           <h1 className="text-child-xl font-display font-bold text-primary-600">
-            Welcome Student!
+            Welcome Student
           </h1>
           <p className="text-child-base text-gray-700">
             Enter your class code to start learning
