@@ -17,8 +17,8 @@ interface DraggableCardProps {
  *
  * Features:
  * - Touch-optimized (≥48px touch targets)
+ * - Mouse drag support
  * - Visual feedback (pressed state, drag ghost)
- * - Accessible (keyboard navigation)
  * - Works with @dnd-kit/sortable
  */
 export default function DraggableCard({

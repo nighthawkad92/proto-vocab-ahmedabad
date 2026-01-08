@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import {
   DndContext,
   closestCenter,
-  KeyboardSensor,
   PointerSensor,
   TouchSensor,
   useSensor,
@@ -14,7 +13,6 @@ import {
 import {
   arrayMove,
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers'
@@ -83,21 +81,14 @@ export default function SentenceRearrange({
   }, [question.id, question.scrambledItems])
 
   // Configure sensors for drag-and-drop
-  // Touch sensor for mobile/tablet, Pointer for desktop, Keyboard for accessibility
+  // PointerSensor for mouse/desktop, TouchSensor for mobile/tablet
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8, // 8px movement required to start drag (prevents accidental drags)
-      },
-    }),
+    useSensor(PointerSensor),
     useSensor(TouchSensor, {
       activationConstraint: {
         delay: 150, // 150ms delay for touch to distinguish from scroll
         tolerance: 5,
       },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
     })
   )
 
@@ -155,9 +146,6 @@ export default function SentenceRearrange({
         <p className="text-base text-gray-600 mb-2">
           Drag the words to arrange them in the correct order
         </p>
-        <p className="text-sm text-gray-500">
-          Or use keyboard arrows to reorder
-        </p>
       </div>
 
       {/* Drag and Drop Area */}
@@ -206,10 +194,9 @@ export default function SentenceRearrange({
         {hasSubmitted ? 'Submitted' : 'Check Answer'}
       </button>
 
-      {/* Accessibility hint */}
+      {/* Touch hint */}
       <div className="text-center text-xs text-gray-500">
         <p>💡 Tip: Tap and hold to drag on touch devices</p>
-        <p>Use Tab + Arrow keys for keyboard navigation</p>
       </div>
     </div>
   )
