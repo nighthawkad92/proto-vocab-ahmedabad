@@ -6,30 +6,30 @@ import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 import { generateSpeech } from '@/lib/googleTTS'
 import { playAudio } from '@/lib/audioCache'
 
-interface BlockCompleteModalProps {
+interface LevelCompleteModalProps {
   show: boolean
   stoppedEarly: boolean
   onContinue: () => void
   onFinish: () => void
 }
 
-export default function BlockCompleteModal({
+export default function LevelCompleteModal({
   show,
   stoppedEarly,
   onContinue,
   onFinish,
-}: BlockCompleteModalProps) {
+}: LevelCompleteModalProps) {
   useEffect(() => {
     if (show) {
       if (!stoppedEarly) {
-        // Play completion sound only if block completed successfully
-        playSoundEffect(SoundEffect.BLOCK_COMPLETE)
+        // Play completion sound only if level completed successfully
+        playSoundEffect(SoundEffect.LEVEL_COMPLETE)
       }
 
       // Play TTS for completion message
       const completionText = stoppedEarly
-        ? 'You finished this block. You can try again later.'
-        : 'You finished this block. Ready for the next block?'
+        ? 'You finished this level. You can try again later.'
+        : 'You finished this level. Ready for the next level?'
 
       generateSpeech({ text: completionText })
         .then(audioUrl => playAudio(audioUrl))
