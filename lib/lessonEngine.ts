@@ -1,6 +1,6 @@
 import type { LessonContent, Question, AttemptState, ResponseRecord } from './types'
 
-const MAX_MISTAKES_PER_BLOCK = 2
+const MAX_MISTAKES_PER_LEVEL = 2
 
 export class LessonEngine {
   private attemptState: AttemptState
@@ -13,24 +13,24 @@ export class LessonEngine {
     this.attemptState = {
       attemptId,
       lessonId,
-      currentBlock: 0,
-      mistakesInBlock: 0,
+      currentLevel: 0,
+      mistakesInLevel: 0,
       questionsAttempted: 0,
       questionsCorrect: 0,
-      blocksCompleted: 0,
+      levelsCompleted: 0,
       responses: [],
     }
     this.lessonContent = lessonContent
     this.currentQuestions = []
     this.currentQuestionIndex = 0
     this.attemptNumber = attemptNumber
-    this.initializeBlock(0)
+    this.initializeLevel(0)
   }
 
-  private selectQuestions(block: { questions: Question[]; rotationSets?: Question[][] }): Question[] {
+  private selectQuestions(level: { questions: Question[]; rotationSets?: Question[][] }): Question[] {
     // Check if rotation is enabled and rotation sets are available
-    if (!this.lessonContent.rotationEnabled || !block.rotationSets || block.rotationSets.length === 0) {
-      return block.questions
+    if (!this.lessonContent.rotationEnabled || !level.rotationSets || level.rotationSets.length === 0) {
+      return level.questions
     }
 
     // Calculate rotation index: 0 = default, 1 = rotation set 1, 2 = rotation set 2
@@ -38,31 +38,31 @@ export class LessonEngine {
 
     if (rotationIndex === 0) {
       // Use default question set
-      return block.questions
-    } else if (rotationIndex === 1 && block.rotationSets[0]) {
+      return level.questions
+    } else if (rotationIndex === 1 && level.rotationSets[0]) {
       // Use rotation set 1
-      return block.rotationSets[0]
-    } else if (rotationIndex === 2 && block.rotationSets[1]) {
+      return level.rotationSets[0]
+    } else if (rotationIndex === 2 && level.rotationSets[1]) {
       // Use rotation set 2
-      return block.rotationSets[1]
+      return level.rotationSets[1]
     }
 
     // Fallback to default if rotation set is missing
-    return block.questions
+    return level.questions
   }
 
-  private initializeBlock(blockNumber: number) {
-    const block = this.lessonContent.blocks[blockNumber]
-    if (!block) return
+  private initializeLevel(levelNumber: number) {
+    const level = this.lessonContent.levels[levelNumber]
+    if (!level) return
 
     // Select appropriate question set based on attempt number
-    const questionSet = this.selectQuestions(block)
+    const questionSet = this.selectQuestions(level)
 
     // Randomize questions in the selected set
     this.currentQuestions = this.shuffleArray([...questionSet])
     this.currentQuestionIndex = 0
-    this.attemptState.currentBlock = blockNumber
-    this.attemptState.mistakesInBlock = 0
+    this.attemptState.currentLevel = levelNumber
+    this.attemptState.mistakesInLevel = 0
   }
 
   private shuffleArray<T>(array: T[]): T[] {
@@ -97,16 +97,16 @@ export class LessonEngine {
 
   public submitAnswer(answer: string): {
     isCorrect: boolean
-    shouldStopBlock: boolean
-    isBlockComplete: boolean
+    shouldStopLevel: boolean
+    isLevelComplete: boolean
     isLessonComplete: boolean
   } {
     const question = this.getCurrentQuestion()
     if (!question) {
       return {
         isCorrect: false,
-        shouldStopBlock: false,
-        isBlockComplete: true,
+        shouldStopLevel: false,
+        isLevelComplete: true,
         isLessonComplete: this.isLessonComplete(),
       }
     }
@@ -117,7 +117,7 @@ export class LessonEngine {
     const response: ResponseRecord = {
       questionId: question.id,
       questionType: question.type,
-      blockNumber: this.attemptState.currentBlock,
+      levelNumber: this.attemptState.currentLevel,
       studentAnswer: answer,
       isCorrect,
       answeredAt: new Date().toISOString(),
@@ -129,40 +129,40 @@ export class LessonEngine {
     if (isCorrect) {
       this.attemptState.questionsCorrect++
     } else {
-      this.attemptState.mistakesInBlock++
+      this.attemptState.mistakesInLevel++
     }
 
-    // Check if block should stop (2 mistakes)
-    const shouldStopBlock = this.attemptState.mistakesInBlock >= MAX_MISTAKES_PER_BLOCK
+    // Check if level should stop (2 mistakes)
+    const shouldStopLevel = this.attemptState.mistakesInLevel >= MAX_MISTAKES_PER_LEVEL
 
     // Move to next question
     this.currentQuestionIndex++
 
-    // Check if block is complete
-    const isBlockComplete =
-      shouldStopBlock || this.currentQuestionIndex >= this.currentQuestions.length
+    // Check if level is complete
+    const isLevelComplete =
+      shouldStopLevel || this.currentQuestionIndex >= this.currentQuestions.length
 
     return {
       isCorrect,
-      shouldStopBlock,
-      isBlockComplete,
-      isLessonComplete: isBlockComplete && this.isLessonComplete(),
+      shouldStopLevel,
+      isLevelComplete,
+      isLessonComplete: isLevelComplete && this.isLessonComplete(),
     }
   }
 
-  public moveToNextBlock(): boolean {
-    const nextBlockNumber = this.attemptState.currentBlock + 1
-    if (nextBlockNumber >= this.lessonContent.blocks.length) {
-      return false // No more blocks
+  public moveToNextLevel(): boolean {
+    const nextLevelNumber = this.attemptState.currentLevel + 1
+    if (nextLevelNumber >= this.lessonContent.levels.length) {
+      return false // No more levels
     }
 
-    this.attemptState.blocksCompleted++
-    this.initializeBlock(nextBlockNumber)
+    this.attemptState.levelsCompleted++
+    this.initializeLevel(nextLevelNumber)
     return true
   }
 
   public isLessonComplete(): boolean {
-    return this.attemptState.currentBlock >= this.lessonContent.blocks.length - 1
+    return this.attemptState.currentLevel >= this.lessonContent.levels.length - 1
   }
 
   public getAttemptState(): AttemptState {
@@ -170,17 +170,17 @@ export class LessonEngine {
   }
 
   public getProgress(): {
-    currentBlock: number
-    totalBlocks: number
-    questionsInCurrentBlock: number
-    currentQuestionInBlock: number
+    currentLevel: number
+    totalLevels: number
+    questionsInCurrentLevel: number
+    currentQuestionInLevel: number
     accuracy: number
   } {
     return {
-      currentBlock: this.attemptState.currentBlock,
-      totalBlocks: this.lessonContent.blocks.length,
-      questionsInCurrentBlock: this.currentQuestions.length,
-      currentQuestionInBlock: this.currentQuestionIndex,
+      currentLevel: this.attemptState.currentLevel,
+      totalLevels: this.lessonContent.levels.length,
+      questionsInCurrentLevel: this.currentQuestions.length,
+      currentQuestionInLevel: this.currentQuestionIndex,
       accuracy:
         this.attemptState.questionsAttempted > 0
           ? (this.attemptState.questionsCorrect / this.attemptState.questionsAttempted) * 100
@@ -201,7 +201,7 @@ export class LessonEngine {
       attemptNumber
     )
     engine.attemptState = { ...savedState }
-    engine.initializeBlock(savedState.currentBlock)
+    engine.initializeLevel(savedState.currentLevel)
     return engine
   }
 }

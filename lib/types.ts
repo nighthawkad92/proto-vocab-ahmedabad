@@ -38,16 +38,16 @@ export interface Question {
   gapPosition?: number              // For sentence-gap-fill
 }
 
-export interface BlockIntroduction {
+export interface LevelIntroduction {
   concept: string
   explanation: string
   example: string
   activity: string
 }
 
-export interface LessonBlock {
-  blockNumber: number
-  introduction?: BlockIntroduction
+export interface LessonLevel {
+  levelNumber: number
+  introduction?: LevelIntroduction
   questions: Question[]
   rotationSets?: Question[][] // Optional: alternate question sets for retakes
 }
@@ -55,7 +55,7 @@ export interface LessonBlock {
 export interface LessonContent {
   title: string
   description: string
-  blocks: LessonBlock[]
+  levels: LessonLevel[]
   rotationEnabled?: boolean // Whether to use rotation sets on retakes
 }
 
@@ -71,18 +71,18 @@ export interface StudentSession {
 export interface AttemptState {
   attemptId: string
   lessonId: string
-  currentBlock: number
-  mistakesInBlock: number
+  currentLevel: number
+  mistakesInLevel: number
   questionsAttempted: number
   questionsCorrect: number
-  blocksCompleted: number
+  levelsCompleted: number
   responses: ResponseRecord[]
 }
 
 export interface ResponseRecord {
   questionId: string
   questionType: string
-  blockNumber: number
+  levelNumber: number
   studentAnswer: string | null
   isCorrect: boolean
   answeredAt: string

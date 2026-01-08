@@ -25,7 +25,7 @@ export default function FeedbackModal({
       playSoundEffect(isCorrect ? SoundEffect.CORRECT : SoundEffect.INCORRECT)
 
       // Play TTS for feedback message
-      const feedbackText = isCorrect ? 'You answered correctly.' : 'Try again.'
+      const feedbackText = isCorrect ? 'You answered correctly.' : 'Keep practicing.'
       generateSpeech({ text: feedbackText })
         .then(audioUrl => playAudio(audioUrl))
         .catch(error => console.error('Failed to play feedback audio:', error))
@@ -91,7 +91,7 @@ export default function FeedbackModal({
 
             {/* Feedback text - simple and direct */}
             <h2 className="text-child-lg font-body font-medium mb-4 text-gray-800">
-              {isCorrect ? 'You answered correctly.' : 'Try again.'}
+              {isCorrect ? 'You answered correctly.' : 'Keep practicing.'}
             </h2>
           </motion.div>
         </motion.div>
