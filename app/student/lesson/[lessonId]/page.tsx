@@ -36,7 +36,6 @@ export default function LessonPage() {
   })
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedbackIsCorrect, setFeedbackIsCorrect] = useState(false)
-  const [feedbackExplanation, setFeedbackExplanation] = useState<string | undefined>(undefined)
   const [showBlockComplete, setShowBlockComplete] = useState(false)
   const [blockStoppedEarly, setBlockStoppedEarly] = useState(false)
   const [waitingForNext, setWaitingForNext] = useState(false)
@@ -161,12 +160,6 @@ export default function LessonPage() {
     }
   }, [currentQuestion, showIntroduction, handlePlayQuestionAudio])
 
-  // Handler to replay current question audio
-  const handleReplayAudio = useCallback(() => {
-    if (!currentQuestion) return
-    handlePlayQuestionAudio(currentQuestion.prompt)
-  }, [currentQuestion, handlePlayQuestionAudio])
-
   const handleAnswer = useCallback(async (answer: string) => {
     if (!engine || waitingForNext) return
 
@@ -174,16 +167,9 @@ export default function LessonPage() {
 
     // Submit answer to engine (removed auto-play audio per UX spec)
     const result = engine.submitAnswer(answer)
-    const question = engine.getCurrentQuestion()
-
-    // Get explanation for incorrect answers
-    const explanation = !result.isCorrect
-      ? question?.explanation || question?.feedback?.explanation
-      : undefined
 
     // Show feedback
     setFeedbackIsCorrect(result.isCorrect)
-    setFeedbackExplanation(explanation)
     setShowFeedback(true)
 
     // Save response to queue for syncing
@@ -370,8 +356,6 @@ export default function LessonPage() {
         isCorrect={feedbackIsCorrect}
         show={showFeedback}
         onClose={() => setShowFeedback(false)}
-        explanation={feedbackExplanation}
-        onReplayAudio={handleReplayAudio}
       />
 
       {/* Block Complete Modal */}
