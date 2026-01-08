@@ -8,12 +8,14 @@ interface IntroductionCardProps {
   introduction: BlockIntroduction
   onContinue: () => void
   onPlayAudio?: (text: string) => void
+  disabled?: boolean
 }
 
 export default function IntroductionCard({
   introduction,
   onContinue,
   onPlayAudio,
+  disabled = false,
 }: IntroductionCardProps) {
   const [currentStep, setCurrentStep] = useState(0)
 
@@ -99,7 +101,8 @@ export default function IntroductionCard({
         {/* Continue Button */}
         <button
           onClick={handleNext}
-          className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all min-h-[3rem]"
+          disabled={disabled}
+          className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
         >
           {isLastStep ? 'Start' : 'Next'}
         </button>

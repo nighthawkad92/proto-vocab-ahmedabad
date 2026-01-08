@@ -40,6 +40,7 @@ export default function LessonPage() {
   const [showBlockComplete, setShowBlockComplete] = useState(false)
   const [blockStoppedEarly, setBlockStoppedEarly] = useState(false)
   const [waitingForNext, setWaitingForNext] = useState(false)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
 
   useEffect(() => {
     const session = StudentSessionManager.load()
@@ -151,11 +152,14 @@ export default function LessonPage() {
 
   // Handler to play audio for option text
   const handlePlayOptionAudio = useCallback(async (text: string) => {
+    setIsPlayingAudio(true)
     try {
       const audioUrl = await generateSpeech({ text })
       await playAudio(audioUrl)
     } catch (error) {
       console.error('Failed to play option audio:', error)
+    } finally {
+      setIsPlayingAudio(false)
     }
   }, [])
 
@@ -301,6 +305,7 @@ export default function LessonPage() {
           introduction={currentIntroduction}
           onContinue={handleIntroductionComplete}
           onPlayAudio={handlePlayOptionAudio}
+          disabled={isPlayingAudio}
         />
       </div>
     )
@@ -339,7 +344,7 @@ export default function LessonPage() {
         <QuestionCard
           question={currentQuestion}
           onAnswer={handleAnswer}
-          disabled={waitingForNext}
+          disabled={waitingForNext || isPlayingAudio}
           onPlayOptionAudio={handlePlayOptionAudio}
         />
 

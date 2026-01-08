@@ -57,6 +57,27 @@ export class AudioCache {
     try {
       audio.currentTime = 0 // Reset to start
       await audio.play()
+
+      // Wait for audio to finish playing
+      return new Promise((resolve, reject) => {
+        const handleEnded = () => {
+          cleanup()
+          resolve()
+        }
+
+        const handleError = (error: Event) => {
+          cleanup()
+          reject(error)
+        }
+
+        const cleanup = () => {
+          audio!.removeEventListener('ended', handleEnded)
+          audio!.removeEventListener('error', handleError)
+        }
+
+        audio.addEventListener('ended', handleEnded, { once: true })
+        audio.addEventListener('error', handleError, { once: true })
+      })
     } catch (error) {
       console.error('Failed to play audio:', url, error)
       throw error
