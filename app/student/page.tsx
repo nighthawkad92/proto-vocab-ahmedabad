@@ -94,7 +94,7 @@ export default function StudentLoginPage() {
                 onChange={(e) => setClassCode(e.target.value.toUpperCase())}
                 placeholder="ABC123"
                 maxLength={6}
-                className="w-full px-6 py-4 text-child-base text-center uppercase font-bold border-4 border-primary-300 rounded-child focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-200 transition-all"
+                className="w-full px-6 py-4 text-child-base text-center uppercase font-bold border-2 border-primary-300 rounded-child focus:border-primary-500 focus:outline-none focus:ring-4 focus:ring-primary-200 transition-all"
                 disabled={loading}
                 required
               />
@@ -113,7 +113,7 @@ export default function StudentLoginPage() {
                 value={studentName}
                 onChange={(e) => setStudentName(e.target.value)}
                 placeholder="Raj"
-                className="w-full px-6 py-4 text-child-base border-4 border-secondary-300 rounded-child focus:border-secondary-500 focus:outline-none focus:ring-4 focus:ring-secondary-200 transition-all"
+                className="w-full px-6 py-4 text-child-base border-2 border-secondary-300 rounded-child focus:border-secondary-500 focus:outline-none focus:ring-4 focus:ring-secondary-200 transition-all"
                 disabled={loading}
                 required
               />
@@ -121,7 +121,7 @@ export default function StudentLoginPage() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border-4 border-red-200 rounded-child p-4">
+            <div className="bg-red-50 border-2 border-red-200 rounded-child p-4">
               <p className="text-child-sm text-red-700 text-center">{error}</p>
             </div>
           )}
@@ -129,9 +129,9 @@ export default function StudentLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-bold text-child-base py-6 px-8 rounded-child shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold text-child-base py-6 px-8 rounded-child shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Starting...' : "Let's Learn! 🎉"}
+            {loading ? 'Starting...' : "Let's Learn"}
           </button>
         </form>
 

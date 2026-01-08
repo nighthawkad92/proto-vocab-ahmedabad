@@ -116,20 +116,20 @@ export default function TeacherDashboard() {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-b from-secondary-50 to-white">
+    <div className="min-h-screen p-6 bg-secondary-50">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="bg-white rounded-child shadow-lg p-6">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-child-lg font-display font-bold text-secondary-600">
-                Welcome, {teacher?.name}! 👩‍🏫
+                Welcome, {teacher?.name}
               </h1>
               <p className="text-child-sm text-gray-600">Teacher Dashboard</p>
             </div>
             <button
               onClick={handleLogout}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors"
+              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors active:scale-95"
             >
               Logout
             </button>
@@ -144,7 +144,7 @@ export default function TeacherDashboard() {
             </h2>
             <button
               onClick={() => setShowCreateClass(!showCreateClass)}
-              className="px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-bold text-child-sm rounded-child shadow-md hover:shadow-lg transition-all"
+              className="px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-bold text-child-sm rounded-child shadow-md hover:shadow-lg transition-all active:scale-95"
             >
               + New Class
             </button>
@@ -169,14 +169,14 @@ export default function TeacherDashboard() {
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white font-bold rounded-child transition-colors"
+                    className="px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white font-bold rounded-child transition-colors active:scale-95"
                   >
                     Create
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowCreateClass(false)}
-                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child transition-colors"
+                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child transition-colors active:scale-95"
                   >
                     Cancel
                   </button>

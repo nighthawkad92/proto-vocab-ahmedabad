@@ -6,7 +6,7 @@ export default function Home() {
       <div className="max-w-4xl w-full space-y-8">
         <div className="text-center space-y-4">
           <h1 className="text-child-xl font-display font-bold text-primary-600">
-            Welcome to PAL Vocabulary! 🎓
+            Welcome to PAL Vocabulary
           </h1>
           <p className="text-child-base text-gray-700">
             Choose your role to get started

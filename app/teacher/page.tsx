@@ -43,7 +43,7 @@ export default function TeacherLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-secondary-50 to-white">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-secondary-50">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center space-y-4">
           <div className="text-7xl">👩‍🏫</div>
@@ -80,7 +80,7 @@ export default function TeacherLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-bold text-child-base py-4 px-8 rounded-child shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50"
+            className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold text-child-base py-4 px-8 rounded-child shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50"
           >
             {loading ? 'Please wait...' : 'Continue'}
           </button>

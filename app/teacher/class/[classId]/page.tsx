@@ -155,7 +155,7 @@ export default function ClassDetailPage() {
             </div>
             <button
               onClick={() => router.push('/teacher/dashboard')}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors"
+              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors active:scale-95"
             >
               ← Back
             </button>

@@ -10,11 +10,11 @@ import { generateSpeech } from '@/lib/googleTTS'
 import QuestionCard from '@/components/game/QuestionCard'
 import FeedbackModal from '@/components/game/FeedbackModal'
 import ProgressBar from '@/components/game/ProgressBar'
-import BlockCompleteModal from '@/components/game/BlockCompleteModal'
+import LevelCompleteModal from '@/components/game/LevelCompleteModal'
 import IntroductionCard from '@/components/game/IntroductionCard'
 import ConnectionStatus from '@/components/layout/ConnectionStatus'
 import { getLessonCache } from '@/lib/lessonCache'
-import type { LessonContent, Question, BlockIntroduction } from '@/lib/types'
+import type { LessonContent, Question, LevelIntroduction } from '@/lib/types'
 
 export default function LessonPage() {
   const router = useRouter()
@@ -26,18 +26,18 @@ export default function LessonPage() {
   const [lessonContent, setLessonContent] = useState<LessonContent | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null)
   const [showIntroduction, setShowIntroduction] = useState(false)
-  const [currentIntroduction, setCurrentIntroduction] = useState<BlockIntroduction | null>(null)
+  const [currentIntroduction, setCurrentIntroduction] = useState<LevelIntroduction | null>(null)
   const [progress, setProgress] = useState({
-    currentBlock: 0,
-    totalBlocks: 0,
-    questionsInCurrentBlock: 0,
-    currentQuestionInBlock: 0,
+    currentLevel: 0,
+    totalLevels: 0,
+    questionsInCurrentLevel: 0,
+    currentQuestionInLevel: 0,
     accuracy: 0,
   })
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedbackIsCorrect, setFeedbackIsCorrect] = useState(false)
-  const [showBlockComplete, setShowBlockComplete] = useState(false)
-  const [blockStoppedEarly, setBlockStoppedEarly] = useState(false)
+  const [showLevelComplete, setShowLevelComplete] = useState(false)
+  const [levelStoppedEarly, setLevelStoppedEarly] = useState(false)
   const [waitingForNext, setWaitingForNext] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
 
@@ -112,9 +112,9 @@ export default function LessonPage() {
       setEngine(lessonEngine)
 
       // Check if first block has an introduction
-      const firstBlock = content.blocks[0]
-      if (firstBlock?.introduction) {
-        setCurrentIntroduction(firstBlock.introduction)
+      const firstLevel = content.levels[0]
+      if (firstLevel?.introduction) {
+        setCurrentIntroduction(firstLevel.introduction)
         setShowIntroduction(true)
       } else {
         setCurrentQuestion(lessonEngine.getCurrentQuestion())
@@ -196,9 +196,9 @@ export default function LessonPage() {
       setShowFeedback(false)
 
       // Check if block is complete
-      if (result.isBlockComplete) {
-        setBlockStoppedEarly(result.shouldStopBlock)
-        setShowBlockComplete(true)
+      if (result.isLevelComplete) {
+        setLevelStoppedEarly(result.shouldStopLevel)
+        setShowLevelComplete(true)
       } else {
         // Move to next question
         setCurrentQuestion(engine.getCurrentQuestion())
@@ -207,21 +207,21 @@ export default function LessonPage() {
     }, 1500)
   }, [engine, waitingForNext])
 
-  const handleContinueToNextBlock = () => {
+  const handleContinueToNextLevel = () => {
     if (!engine) return
 
-    const hasNextBlock = engine.moveToNextBlock()
+    const hasNextLevel = engine.moveToNextLevel()
 
-    if (hasNextBlock) {
-      setShowBlockComplete(false)
-      setBlockStoppedEarly(false)
+    if (hasNextLevel) {
+      setShowLevelComplete(false)
+      setLevelStoppedEarly(false)
 
-      // Check if next block has an introduction
-      const currentBlockNum = engine.getAttemptState().currentBlock
-      const nextBlock = lessonContent?.blocks[currentBlockNum]
+      // Check if next level has an introduction
+      const currentLevelNum = engine.getAttemptState().currentLevel
+      const nextLevel = lessonContent?.levels[currentLevelNum]
 
-      if (nextBlock?.introduction) {
-        setCurrentIntroduction(nextBlock.introduction)
+      if (nextLevel?.introduction) {
+        setCurrentIntroduction(nextLevel.introduction)
         setShowIntroduction(true)
       } else {
         setCurrentQuestion(engine.getCurrentQuestion())
@@ -306,7 +306,7 @@ export default function LessonPage() {
         <div className="text-center space-y-4">
           <div className="text-6xl">✅</div>
           <p className="text-child-base text-gray-700">
-            Block complete! Moving to next block...
+            Level complete! Moving to next level...
           </p>
         </div>
       </div>
@@ -323,9 +323,9 @@ export default function LessonPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Progress */}
         <ProgressBar
-          current={progress.currentQuestionInBlock + 1}
-          total={progress.questionsInCurrentBlock}
-          mistakes={engine?.getAttemptState().mistakesInBlock || 0}
+          current={progress.currentQuestionInLevel + 1}
+          total={progress.questionsInCurrentLevel}
+          mistakes={engine?.getAttemptState().mistakesInLevel || 0}
           maxMistakes={2}
         />
 
@@ -344,7 +344,7 @@ export default function LessonPage() {
                 router.push('/student/dashboard')
               }
             }}
-            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-child text-base font-medium transition-colors active:scale-95 min-h-[3rem]"
+            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-child text-child-sm font-medium transition-colors active:scale-95 min-h-[3rem]"
           >
             Back to Lessons
           </button>
@@ -358,11 +358,11 @@ export default function LessonPage() {
         onClose={() => setShowFeedback(false)}
       />
 
-      {/* Block Complete Modal */}
-      <BlockCompleteModal
-        show={showBlockComplete}
-        stoppedEarly={blockStoppedEarly}
-        onContinue={handleContinueToNextBlock}
+      {/* Level Complete Modal */}
+      <LevelCompleteModal
+        show={showLevelComplete}
+        stoppedEarly={levelStoppedEarly}
+        onContinue={handleContinueToNextLevel}
         onFinish={handleFinishLesson}
       />
     </div>

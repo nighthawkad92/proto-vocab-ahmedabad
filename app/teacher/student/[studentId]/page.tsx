@@ -251,7 +251,7 @@ export default function StudentDetailPage() {
           <p className="text-child-base text-gray-700">Student not found</p>
           <button
             onClick={() => router.back()}
-            className="px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white rounded-child text-child-sm font-bold"
+            className="px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white rounded-child text-child-sm font-bold active:scale-95"
           >
             Go Back
           </button>
@@ -303,7 +303,7 @@ export default function StudentDetailPage() {
             </div>
             <button
               onClick={() => router.back()}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors"
+              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors active:scale-95"
             >
               ← Back
             </button>
@@ -312,7 +312,7 @@ export default function StudentDetailPage() {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-gradient-to-br from-primary-50 to-white rounded-child shadow-lg p-6 border-2 border-primary-200">
+          <div className="bg-primary-50 rounded-child shadow-lg p-6 border-2 border-primary-200">
             <div className="text-3xl mb-2">📝</div>
             <div className="text-child-base font-bold text-gray-800">Total Attempts</div>
             <div className="text-child-xl font-display font-bold text-primary-600">
@@ -320,7 +320,7 @@ export default function StudentDetailPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-secondary-50 to-white rounded-child shadow-lg p-6 border-2 border-secondary-200">
+          <div className="bg-secondary-50 rounded-child shadow-lg p-6 border-2 border-secondary-200">
             <div className="text-3xl mb-2">✅</div>
             <div className="text-child-base font-bold text-gray-800">Completed</div>
             <div className="text-child-xl font-display font-bold text-secondary-600">
@@ -328,7 +328,7 @@ export default function StudentDetailPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-accent-50 to-white rounded-child shadow-lg p-6 border-2 border-accent-200">
+          <div className="bg-accent-50 rounded-child shadow-lg p-6 border-2 border-accent-200">
             <div className="text-3xl mb-2">🎯</div>
             <div className="text-child-base font-bold text-gray-800">Accuracy</div>
             <div className="text-child-xl font-display font-bold text-accent-600">
@@ -336,7 +336,7 @@ export default function StudentDetailPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-white rounded-child shadow-lg p-6 border-2 border-green-200">
+          <div className="bg-green-50 rounded-child shadow-lg p-6 border-2 border-green-200">
             <div className="text-3xl mb-2">💯</div>
             <div className="text-child-base font-bold text-gray-800">Questions Correct</div>
             <div className="text-child-xl font-display font-bold text-green-600">
@@ -529,7 +529,7 @@ export default function StudentDetailPage() {
                 return (
                   <>
                     {/* Lesson Info */}
-                    <div className="bg-gradient-to-br from-secondary-50 to-white rounded-child p-4 border-2 border-secondary-200">
+                    <div className="bg-secondary-50 rounded-child p-4 border-2 border-secondary-200">
                       <h4 className="text-child-base font-bold text-gray-800 mb-2">
                         {attempt.lesson.title}
                       </h4>
