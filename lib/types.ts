@@ -5,6 +5,11 @@ export type QuestionType =
   | 'sentence-completion'
   | 'picture-word-match'
   | 'listen-and-select'
+  | 'sentence-rearrange'      // NEW: Drag/tap to arrange words into correct sentence
+  | 'story-sequence'          // NEW: Order story events chronologically
+  | 'add-word'                // NEW: Add adjectives/adverbs to expand sentences
+  | 'sentence-gap-fill'       // NEW: Fill blank with context-appropriate word
+  | 'reading-comprehension'   // NEW: Read passage, answer Who/What/Where questions
 
 export interface Question {
   id: string
@@ -20,6 +25,16 @@ export interface Question {
     incorrect?: string
     explanation?: string
   }
+  // Extended fields for new question types
+  scrambledItems?: string[]        // For sentence-rearrange, story-sequence
+  correctOrder?: number[]           // For sentence-rearrange, story-sequence
+  passage?: string                  // For reading-comprehension
+  questionType?: 'who' | 'what' | 'where' | 'when' | 'why' | 'how'  // For reading-comprehension
+  baseSentence?: string             // For add-word
+  wordType?: 'adjective' | 'adverb' | 'prepositional-phrase'  // For add-word
+  insertPosition?: number           // For add-word
+  correctAnswers?: string[]         // For add-word (multiple valid answers)
+  gapPosition?: number              // For sentence-gap-fill
 }
 
 export interface BlockIntroduction {

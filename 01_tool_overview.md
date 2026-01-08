@@ -1,12 +1,12 @@
-# PAL Vocabulary Support Tool — MVP Overview
+# PAL Vocabulary Support Tool — Overview
 
 ## Purpose
-A lightweight, web-based supplemental learning tool for Class 3 students in Ahmedabad, Gujarat, India.
+A lightweight, web-based supplemental learning tool for Grade 4 students in Ahmedabad, Gujarat, India.
 The tool supports students who struggle with in-class English instruction by reinforcing vocabulary,
 decoding, reading, and writing skills at home using a tablet and slow internet.
 
 ## Target Audience
-- Primary: Students aged 8–10 (Class 3)
+- Primary: Students aged 8–10 (Grade 4, below-grade-level learners)
 - Secondary: English teachers using PAL-style remediation
 - Context: Non–first-language English learners
 
