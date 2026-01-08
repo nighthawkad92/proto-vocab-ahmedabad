@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 import { generateSpeech } from '@/lib/googleTTS'
 import { playAudio } from '@/lib/audioCache'
@@ -10,19 +10,14 @@ interface FeedbackModalProps {
   isCorrect: boolean
   show: boolean
   onClose: () => void
-  explanation?: string
-  onReplayAudio?: () => void // New: replay audio for incorrect answers
 }
 
 export default function FeedbackModal({
   isCorrect,
   show,
   onClose,
-  explanation,
-  onReplayAudio,
 }: FeedbackModalProps) {
   const shouldReduceMotion = useReducedMotion()
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
 
   useEffect(() => {
     if (show) {
@@ -30,26 +25,17 @@ export default function FeedbackModal({
       playSoundEffect(isCorrect ? SoundEffect.CORRECT : SoundEffect.INCORRECT)
 
       // Play TTS for feedback message
-      const feedbackText = isCorrect ? 'You answered correctly.' : 'Try listening again.'
+      const feedbackText = isCorrect ? 'You answered correctly.' : 'Try again.'
       generateSpeech({ text: feedbackText })
         .then(audioUrl => playAudio(audioUrl))
         .catch(error => console.error('Failed to play feedback audio:', error))
 
-      // Longer timeout if there's an explanation to read
-      const timeout = explanation && !isCorrect ? 3500 : 1500
+      // Fixed timeout for all feedback
+      const timeout = 1500
       const timer = setTimeout(onClose, timeout)
       return () => clearTimeout(timer)
     }
-  }, [show, onClose, explanation, isCorrect])
-
-  const handleReplayAudio = () => {
-    if (onReplayAudio) {
-      setIsPlayingAudio(true)
-      onReplayAudio()
-      // Reset playing state after animation
-      setTimeout(() => setIsPlayingAudio(false), 1000)
-    }
-  }
+  }, [show, onClose, isCorrect])
 
   return (
     <AnimatePresence>
@@ -103,43 +89,10 @@ export default function FeedbackModal({
               )}
             </div>
 
-            {/* Feedback text - neutral, specific, max 12 words */}
+            {/* Feedback text - simple and direct */}
             <h2 className="text-child-lg font-body font-medium mb-4 text-gray-800">
-              {isCorrect ? 'You answered correctly.' : 'Try listening again.'}
+              {isCorrect ? 'You answered correctly.' : 'Try again.'}
             </h2>
-
-            {/* Show explanation for incorrect answers */}
-            {!isCorrect && explanation && (
-              <div className="mt-4 p-4 bg-gray-50 rounded-child text-left">
-                <p className="text-base font-medium text-gray-700 leading-relaxed">
-                  {explanation}
-                </p>
-              </div>
-            )}
-
-            {/* Replay audio button for incorrect answers */}
-            {!isCorrect && onReplayAudio && (
-              <button
-                onClick={handleReplayAudio}
-                className="mt-6 flex items-center justify-center gap-2 mx-auto px-6 py-3 bg-accent-500 text-white rounded-child font-medium text-base active:scale-95 transition-transform min-h-[3rem]"
-                aria-label="Replay question audio"
-              >
-                <svg
-                  className={`w-6 h-6 ${isPlayingAudio ? 'animate-pulse' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                  />
-                </svg>
-                <span>Replay audio</span>
-              </button>
-            )}
           </motion.div>
         </motion.div>
       )}
