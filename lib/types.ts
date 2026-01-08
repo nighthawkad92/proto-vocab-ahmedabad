@@ -34,6 +34,7 @@ export interface Question {
   wordType?: 'adjective' | 'adverb' | 'prepositional-phrase'  // For add-word
   insertPosition?: number           // For add-word
   correctAnswers?: string[]         // For add-word (multiple valid answers)
+  exampleSentence?: string          // For add-word (shows completed example before exercise)
   gapPosition?: number              // For sentence-gap-fill
 }
 

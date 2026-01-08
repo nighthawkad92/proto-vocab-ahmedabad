@@ -16,7 +16,12 @@ interface AddWordActivityProps {
  * Add Word Activity Component
  * Used in: Lesson 4 (Sentence Expansion)
  *
+ * Pedagogical Pattern: "I do, You do"
+ * 1. Shows completed example first (if provided)
+ * 2. Then presents base sentence for student to expand
+ *
  * Functionality:
+ * - Display completed example sentence (optional)
  * - Display base sentence with insertion point
  * - Word bank below (adjectives/adverbs)
  * - Tap word to insert
@@ -28,13 +33,14 @@ interface AddWordActivityProps {
  * {
  *   type: "add-word",
  *   prompt: "Add a describing word to make the sentence better",
- *   baseSentence: "The dog runs",
+ *   exampleSentence: "The big dog runs",  // Shows first as example
+ *   baseSentence: "The cat sleeps",       // Student expands this
  *   wordType: "adjective",
- *   insertPosition: 1,  // Between "The" and "dog"
+ *   insertPosition: 1,  // Between "The" and "cat"
  *   options: ["big", "small", "fast", "brown"],
  *   correctAnswers: ["big", "small", "brown"],  // Multiple valid
  *   correctAnswer: "big",
- *   explanation: "Describing words tell us more about the dog."
+ *   explanation: "Describing words tell us more about the cat."
  * }
  */
 export default function AddWordActivity({
@@ -159,6 +165,25 @@ export default function AddWordActivity({
             {question.prompt}
           </h2>
         </div>
+      )}
+
+      {/* Example Sentence (Show completed example first) */}
+      {question.exampleSentence && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-green-50 rounded-child p-6 border-2 border-green-300"
+        >
+          <div className="text-center text-sm font-semibold text-green-700 mb-2">
+            ✓ Example (already completed):
+          </div>
+          <p className="text-center text-xl font-medium text-gray-800">
+            {question.exampleSentence}
+          </p>
+          <div className="text-center text-xs text-green-600 mt-2">
+            Now you try making a sentence like this!
+          </div>
+        </motion.div>
       )}
 
       {/* Base Sentence with Insertion Point */}
