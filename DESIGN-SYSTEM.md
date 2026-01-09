@@ -168,7 +168,6 @@ child: 1.5rem (24px) /* Standard rounded corners */
 - Touch target for icons: 48px minimum
 
 ### Visual Restrictions (DO NOT)
-- Add decorative imagery
 - Use gradients, shadows, or glass effects (except functional shadows)
 - Introduce new layouts mid-lesson
 - Use parallax or complex animations
@@ -399,7 +398,7 @@ Audit every screen for mental effort and minimize cognitive burden.
 - Combine audio + text + animation simultaneously
 - Show multiple concepts at once
 - Change interaction patterns within a lesson
-- Add decorative or distracting elements
+- Add distracting elements
 
 ---
 
