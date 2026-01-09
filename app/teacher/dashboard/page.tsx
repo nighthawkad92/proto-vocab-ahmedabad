@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { TeacherSessionManager } from '@/lib/teacherSession'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 
 interface Class {
   id: string
@@ -127,12 +129,13 @@ export default function TeacherDashboard() {
               </h1>
               <p className="text-child-sm text-gray-600">Teacher Dashboard</p>
             </div>
-            <button
+            <Button
               onClick={handleLogout}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors active:scale-95"
+              variant="optional"
+              size="md"
             >
               Logout
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -142,44 +145,42 @@ export default function TeacherDashboard() {
             <h2 className="text-child-lg font-display font-semibold text-gray-800">
               Your Classes
             </h2>
-            <button
+            <Button
               onClick={() => setShowCreateClass(!showCreateClass)}
-              className="px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-bold text-child-sm rounded-child shadow-md hover:shadow-lg transition-all active:scale-95"
+              variant="secondary"
+              size="md"
             >
               + New Class
-            </button>
+            </Button>
           </div>
 
           {showCreateClass && (
             <form onSubmit={handleCreateClass} className="bg-white rounded-child shadow-lg p-6 mb-4">
               <div className="space-y-4">
-                <div>
-                  <label className="block text-child-sm font-medium text-gray-700 mb-2">
-                    Class Name
-                  </label>
-                  <input
-                    type="text"
-                    value={newClassName}
-                    onChange={(e) => setNewClassName(e.target.value)}
-                    placeholder="e.g., Class 3-A"
-                    className="w-full px-4 py-3 text-child-sm border-2 border-gray-300 rounded-child focus:border-secondary-500 focus:outline-none"
-                    required
-                  />
-                </div>
+                <Input
+                  type="text"
+                  value={newClassName}
+                  onChange={(e) => setNewClassName(e.target.value)}
+                  label="Class Name"
+                  placeholder="e.g., Class 3-A"
+                  required
+                />
                 <div className="flex gap-3">
-                  <button
+                  <Button
                     type="submit"
-                    className="px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white font-bold rounded-child transition-colors active:scale-95"
+                    variant="secondary"
+                    size="md"
                   >
                     Create
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => setShowCreateClass(false)}
-                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child transition-colors active:scale-95"
+                    variant="optional"
+                    size="md"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>
@@ -212,9 +213,13 @@ export default function TeacherDashboard() {
                     <p className="text-child-sm text-gray-600">
                       {cls.student_count} student{cls.student_count !== 1 ? 's' : ''}
                     </p>
-                    <button className="w-full px-4 py-2 bg-secondary-50 hover:bg-secondary-100 text-secondary-700 font-medium text-child-sm rounded-child transition-colors">
+                    <Button
+                      variant="optional"
+                      size="sm"
+                      className="w-full"
+                    >
                       Manage Class →
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}

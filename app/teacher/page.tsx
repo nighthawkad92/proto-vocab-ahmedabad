@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { TeacherSessionManager } from '@/lib/teacherSession'
 import { LoginBackground } from '@/components/ui/LoginBackground'
+import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
 
 export default function TeacherLoginPage() {
   const router = useRouter()
@@ -58,34 +60,29 @@ export default function TeacherLoginPage() {
         </div>
 
         <form onSubmit={handleLogin} className="bg-white rounded-child shadow-lg p-8 space-y-6">
-          <div>
-            <label className="block text-child-sm font-medium text-gray-700 mb-2">
-              Your Name
-            </label>
-            <input
-              type="text"
-              value={teacherName}
-              onChange={(e) => setTeacherName(e.target.value)}
-              placeholder="Varnika"
-              className="w-full px-4 py-4 text-child-base border-2 border-gray-300 rounded-child focus:border-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-200"
-              required
-              autoFocus
-            />
-          </div>
+          <Input
+            id="teacherName"
+            type="text"
+            value={teacherName}
+            onChange={(e) => setTeacherName(e.target.value)}
+            label="Your Name"
+            placeholder="Varnika"
+            disabled={loading}
+            required
+            autoFocus
+            error={error}
+          />
 
-          {error && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-child p-4">
-              <p className="text-child-sm text-red-700">{error}</p>
-            </div>
-          )}
-
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold text-child-base py-4 px-8 rounded-child shadow-lg hover:shadow-xl active:scale-95 transition-all disabled:opacity-50"
+            loading={loading}
+            size="lg"
+            className="w-full"
+            variant="secondary"
           >
             {loading ? 'Please wait...' : 'Continue'}
-          </button>
+          </Button>
         </form>
 
         <div className="text-center">
