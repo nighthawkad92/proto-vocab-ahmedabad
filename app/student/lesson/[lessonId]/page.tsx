@@ -40,6 +40,10 @@ export default function LessonPage() {
   const [feedbackState, setFeedbackState] = useState<FeedbackState>({ type: null })
   const [showLevelComplete, setShowLevelComplete] = useState(false)
   const [levelStoppedEarly, setLevelStoppedEarly] = useState(false)
+  const [completedLevelNum, setCompletedLevelNum] = useState<number>(0)
+  const [completedLevelName, setCompletedLevelName] = useState<string | undefined>()
+  const [nextLevelNum, setNextLevelNum] = useState<number | undefined>()
+  const [nextLevelName, setNextLevelName] = useState<string | undefined>()
   const [waitingForNext, setWaitingForNext] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
 
@@ -276,6 +280,24 @@ export default function LessonPage() {
 
     // Check if level is complete
     if (result.isLevelComplete) {
+      // Get completed level info
+      const justCompletedLevel = engine.getAttemptState().currentLevel // 0-based
+      const completedLevelNum = justCompletedLevel + 1 // Convert to 1-based
+      const completedLevel = lessonContent?.levels[justCompletedLevel]
+      const completedLevelName = completedLevel?.introduction?.concept
+
+      // Get next level info
+      const nextLevelIndex = justCompletedLevel + 1
+      const nextLevel = lessonContent?.levels[nextLevelIndex]
+      const nextLevelNum = nextLevel ? nextLevelIndex + 1 : undefined
+      const nextLevelName = nextLevel?.introduction?.concept
+
+      // Set state
+      setCompletedLevelNum(completedLevelNum)
+      setCompletedLevelName(completedLevelName)
+      setNextLevelNum(nextLevelNum)
+      setNextLevelName(nextLevelName)
+
       setLevelStoppedEarly(result.shouldStopLevel)
       setShowLevelComplete(true)
     } else {
@@ -283,7 +305,7 @@ export default function LessonPage() {
       setCurrentQuestion(engine.getCurrentQuestion())
       setWaitingForNext(false)
     }
-  }, [engine, waitingForNext, currentQuestion])
+  }, [engine, waitingForNext, currentQuestion, lessonContent])
 
   const handleContinueToNextLevel = () => {
     if (!engine) return
@@ -463,6 +485,10 @@ export default function LessonPage() {
       <LevelCompleteModal
         show={showLevelComplete}
         stoppedEarly={levelStoppedEarly}
+        currentLevel={completedLevelNum}
+        nextLevel={nextLevelNum}
+        currentLevelName={completedLevelName}
+        nextLevelName={nextLevelName}
         onContinue={handleContinueToNextLevel}
         onFinish={handleFinishLesson}
       />

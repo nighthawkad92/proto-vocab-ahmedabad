@@ -10,6 +10,10 @@ import { Button } from '@/components/ui/Button'
 interface LevelCompleteModalProps {
   show: boolean
   stoppedEarly: boolean
+  currentLevel: number
+  nextLevel?: number
+  currentLevelName?: string
+  nextLevelName?: string
   onContinue: () => void
   onFinish: () => void
 }
@@ -17,9 +21,27 @@ interface LevelCompleteModalProps {
 export default function LevelCompleteModal({
   show,
   stoppedEarly,
+  currentLevel,
+  nextLevel,
+  currentLevelName,
+  nextLevelName,
   onContinue,
   onFinish,
 }: LevelCompleteModalProps) {
+  // Generate dynamic title text
+  const titleText = currentLevelName
+    ? `You finished level ${currentLevel}: ${currentLevelName}`
+    : `You finished level ${currentLevel}`
+
+  // Generate dynamic description text
+  const descriptionText = stoppedEarly
+    ? 'You can try again later.'
+    : nextLevel
+      ? nextLevelName
+        ? `Ready to try level ${nextLevel}: ${nextLevelName}`
+        : `Ready to try level ${nextLevel}`
+      : 'Ready for the next level?'
+
   useEffect(() => {
     if (show) {
       if (!stoppedEarly) {
@@ -28,15 +50,13 @@ export default function LevelCompleteModal({
       }
 
       // Play TTS for completion message
-      const completionText = stoppedEarly
-        ? 'You finished this level. You can try again later.'
-        : 'You finished this level. Ready for the next level?'
+      const completionText = `${titleText}. ${descriptionText}`
 
       generateSpeech({ text: completionText })
         .then(audioUrl => playAudio(audioUrl))
         .catch(error => console.error('Failed to play completion audio:', error))
     }
-  }, [show, stoppedEarly])
+  }, [show, stoppedEarly, titleText, descriptionText])
 
   if (!show) return null
 
@@ -64,12 +84,10 @@ export default function LevelCompleteModal({
 
         <div className="space-y-2">
           <h2 className="text-child-lg font-body font-medium text-gray-800">
-            {stoppedEarly ? 'You finished this level.' : 'You finished this level.'}
+            {titleText}
           </h2>
           <p className="text-base text-gray-600">
-            {stoppedEarly
-              ? 'You can try again later.'
-              : 'Ready for the next level?'}
+            {descriptionText}
           </p>
         </div>
 
@@ -84,7 +102,7 @@ export default function LevelCompleteModal({
               size="lg"
               className="w-full"
             >
-              Continue
+              I'm ready
             </Button>
           )}
 
