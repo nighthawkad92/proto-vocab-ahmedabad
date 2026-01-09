@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Local Storage - PAL Vocabulary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #1a202c;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .warning {
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .warning-title {
+            color: #c53030;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-text {
+            color: #742a2a;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info {
+            background: #ebf8ff;
+            border: 2px solid #4299e1;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .info-title {
+            color: #2c5282;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .info-text {
+            color: #2a4365;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        ul {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin: 8px 0;
+            color: #2a4365;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        button {
+            flex: 1;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .result.success {
+            background: #f0fff4;
+            border: 2px solid #68d391;
+            color: #22543d;
+            display: block;
+        }
+
+        .result-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .storage-list {
+            margin-top: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: rgba(0,0,0,0.05);
+            padding: 12px;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ Clear Local Storage</h1>
+
+        <div class="warning">
+            <div class="warning-title">
+                ⚠️ Warning
+            </div>
+            <div class="warning-text">
+                This will permanently delete all locally stored data from your browser for this app, including:
+                <ul>
+                    <li>Student login sessions</li>
+                    <li>Teacher login sessions</li>
+                    <li>Offline lesson progress</li>
+                    <li>Cached lesson data</li>
+                    <li>Pending sync queue</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info">
+            <div class="info-title">ℹ️ What happens after clearing?</div>
+            <div class="info-text">
+                <ul>
+                    <li>You will be logged out from all sessions</li>
+                    <li>Any unsaved progress will be lost</li>
+                    <li>The app will work normally after refresh</li>
+                    <li>You can log back in and start fresh</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="storageInfo" style="margin: 24px 0; padding: 12px; background: #f7fafc; border-radius: 8px; font-size: 14px; color: #4a5568;">
+            <strong>Current storage items:</strong>
+            <div id="storageCount" style="margin-top: 8px;"></div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-danger" onclick="clearStorage()">
+                🗑️ Clear All Data
+            </button>
+            <button class="btn-secondary" onclick="window.location.href='/'">
+                ← Go Back
+            </button>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // Show current storage info
+        function updateStorageInfo() {
+            const keys = Object.keys(localStorage);
+            const palKeys = keys.filter(k => k.startsWith('pal_'));
+            const count = palKeys.length;
+
+            document.getElementById('storageCount').innerHTML =
+                count > 0
+                    ? `Found <strong>${count}</strong> PAL app storage item(s)<div class="storage-list">${palKeys.map(k => `• ${k}`).join('<br>')}</div>`
+                    : '✓ No PAL app data found in storage';
+        }
+
+        updateStorageInfo();
+
+        function clearStorage() {
+            const result = document.getElementById('result');
+
+            try {
+                // Get all keys before deletion
+                const allKeys = Object.keys(localStorage);
+                const palKeys = allKeys.filter(key => key.startsWith('pal_'));
+
+                if (palKeys.length === 0) {
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <div class="result-title">✓ Already Clean</div>
+                        No PAL app data found in localStorage.
+                    `;
+                    return;
+                }
+
+                // Delete all PAL-related keys
+                palKeys.forEach(key => {
+                    localStorage.removeItem(key);
+                });
+
+                // Clear IndexedDB if it exists
+                if ('indexedDB' in window) {
+                    indexedDB.deleteDatabase('pal_lesson_cache');
+                }
+
+                result.className = 'result success';
+                result.innerHTML = `
+                    <div class="result-title">✅ Success!</div>
+                    <p>Deleted ${palKeys.length} item(s) from localStorage:</p>
+                    <div class="storage-list">
+                        ${palKeys.map(k => `• ${k}`).join('<br>')}
+                    </div>
+                    <p style="margin-top: 16px;">
+                        <strong>Next steps:</strong><br>
+                        • Refresh the page to reset the app<br>
+                        • You can now log in with fresh credentials
+                    </p>
+                `;
+
+                updateStorageInfo();
+
+            } catch (error) {
+                result.className = 'result';
+                result.style.background = '#fff5f5';
+                result.style.border = '2px solid #fc8181';
+                result.style.color = '#742a2a';
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <div class="result-title">❌ Error</div>
+                    Failed to clear storage: ${error.message}
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
