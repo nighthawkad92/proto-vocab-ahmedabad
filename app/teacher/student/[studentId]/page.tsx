@@ -19,7 +19,7 @@ interface StudentInfo {
 interface Response {
   question_id: string
   question_type: string
-  block_number: number
+  level_number: number
   student_answer: string | null
   is_correct: boolean
   answered_at: string
@@ -36,8 +36,8 @@ interface Attempt {
   completed_at: string | null
   questions_attempted: number
   questions_correct: number
-  blocks_completed: number
-  blocks_stopped_at: number | null
+  levels_completed: number
+  levels_stopped_at: number | null
   responses?: Response[]
 }
 
@@ -103,8 +103,8 @@ export default function StudentDetailPage() {
           completed_at,
           questions_attempted,
           questions_correct,
-          blocks_completed,
-          blocks_stopped_at,
+          levels_completed,
+          levels_stopped_at,
           lessons:lesson_id (
             title
           )
@@ -121,8 +121,8 @@ export default function StudentDetailPage() {
         completed_at: attempt.completed_at,
         questions_attempted: attempt.questions_attempted || 0,
         questions_correct: attempt.questions_correct || 0,
-        blocks_completed: attempt.blocks_completed || 0,
-        blocks_stopped_at: attempt.blocks_stopped_at,
+        levels_completed: attempt.levels_completed || 0,
+        levels_stopped_at: attempt.levels_stopped_at,
       }))
 
       setAttempts(formattedAttempts || [])
@@ -138,15 +138,15 @@ export default function StudentDetailPage() {
     return Math.round((correct / attempted) * 100)
   }
 
-  const getDifficultyLevel = (blocksCompleted: number, blocksStopped: number | null) => {
+  const getDifficultyLevel = (levelsCompleted: number, levelsStopped: number | null) => {
     // Determine the highest level the student reached
-    // blocks_stopped_at indicates the level where they stopped (due to 2 mistakes)
-    // blocks_completed indicates levels they successfully completed
-    const maxBlockReached = blocksStopped !== null ? blocksStopped : blocksCompleted
+    // levels_stopped_at indicates the level where they stopped (due to 2 mistakes)
+    // levels_completed indicates levels they successfully completed
+    const maxLevelReached = levelsStopped !== null ? levelsStopped : levelsCompleted
 
-    if (maxBlockReached === 0) {
+    if (maxLevelReached === 0) {
       return { level: 'EASY', color: 'bg-green-100 text-green-700', emoji: '🟢' }
-    } else if (maxBlockReached === 1) {
+    } else if (maxLevelReached === 1) {
       return { level: 'MEDIUM', color: 'bg-yellow-100 text-yellow-700', emoji: '🟡' }
     } else {
       return { level: 'HARD', color: 'bg-red-100 text-red-700', emoji: '🔴' }
@@ -172,7 +172,7 @@ export default function StudentDetailPage() {
       // Get responses
       const { data: responsesData } = await supabase
         .from('responses')
-        .select('question_id, question_type, block_number, student_answer, is_correct, answered_at')
+        .select('question_id, question_type, level_number, student_answer, is_correct, answered_at')
         .eq('attempt_id', attemptId)
         .order('answered_at', { ascending: true })
 
@@ -397,8 +397,8 @@ export default function StudentDetailPage() {
                     )
                     const isCompleted = !!attempt.completed_at
                     const difficulty = getDifficultyLevel(
-                      attempt.blocks_completed,
-                      attempt.blocks_stopped_at
+                      attempt.levels_completed,
+                      attempt.levels_stopped_at
                     )
                     const isExpanded = expandedAttempt === attempt.id
                     const isLoading = loadingDetails === attempt.id
@@ -478,7 +478,7 @@ export default function StudentDetailPage() {
                             </div>
                           </td>
                           <td className="px-6 py-4 text-child-sm text-gray-600">
-                            {attempt.blocks_completed}
+                            {attempt.levels_completed}
                           </td>
                         </tr>
                     )
@@ -519,12 +519,12 @@ export default function StudentDetailPage() {
                 if (!attempt || !attempt.responses) return null
 
                 // Calculate level-by-level stats
-                const blockStats = attempt.responses.reduce((acc, response) => {
-                  if (!acc[response.block_number]) {
-                    acc[response.block_number] = { total: 0, correct: 0 }
+                const levelStats = attempt.responses.reduce((acc, response) => {
+                  if (!acc[response.level_number]) {
+                    acc[response.level_number] = { total: 0, correct: 0 }
                   }
-                  acc[response.block_number].total++
-                  if (response.is_correct) acc[response.block_number].correct++
+                  acc[response.level_number].total++
+                  if (response.is_correct) acc[response.level_number].correct++
                   return acc
                 }, {} as Record<number, { total: number; correct: number }>)
 
@@ -561,7 +561,7 @@ export default function StudentDetailPage() {
                         </div>
                         <div>
                           <span className="font-medium">Levels:</span>{' '}
-                          <span className="font-bold">{attempt.blocks_completed}</span>
+                          <span className="font-bold">{attempt.levels_completed}</span>
                         </div>
                       </div>
                     </div>
@@ -572,26 +572,26 @@ export default function StudentDetailPage() {
                         Performance by Level
                       </h4>
                       <div className="grid grid-cols-1 gap-3">
-                        {Object.entries(blockStats).map(([blockNum, stats]) => {
-                          const blockAccuracy = calculateAccuracy(stats.correct, stats.total)
-                          const blockDifficulty =
-                            Number(blockNum) === 0
+                        {Object.entries(levelStats).map(([levelNum, stats]) => {
+                          const levelAccuracy = calculateAccuracy(stats.correct, stats.total)
+                          const levelDifficulty =
+                            Number(levelNum) === 0
                               ? { level: 'EASY', color: 'border-green-200 bg-green-50', emoji: '🟢' }
-                              : Number(blockNum) === 1
+                              : Number(levelNum) === 1
                               ? { level: 'MEDIUM', color: 'border-yellow-200 bg-yellow-50', emoji: '🟡' }
                               : { level: 'HARD', color: 'border-red-200 bg-red-50', emoji: '🔴' }
 
                           return (
                             <div
-                              key={blockNum}
-                              className={`rounded-lg p-4 border-2 ${blockDifficulty.color}`}
+                              key={levelNum}
+                              className={`rounded-lg p-4 border-2 ${levelDifficulty.color}`}
                             >
                               <div className="flex items-center justify-between mb-3">
                                 <span className="text-child-sm font-bold text-gray-800">
-                                  Level {blockNum}
+                                  Level {levelNum}
                                 </span>
                                 <span className="text-child-xs font-bold text-gray-600">
-                                  {blockDifficulty.emoji} {blockDifficulty.level}
+                                  {levelDifficulty.emoji} {levelDifficulty.level}
                                 </span>
                               </div>
                               <div className="space-y-2">
@@ -605,17 +605,17 @@ export default function StudentDetailPage() {
                                   <div className="flex-1 bg-gray-200 rounded-full h-2">
                                     <div
                                       className={`h-2 rounded-full transition-all ${
-                                        blockAccuracy >= 80
+                                        levelAccuracy >= 80
                                           ? 'bg-green-500'
-                                          : blockAccuracy >= 60
+                                          : levelAccuracy >= 60
                                           ? 'bg-yellow-500'
                                           : 'bg-red-500'
                                       }`}
-                                      style={{ width: `${blockAccuracy}%` }}
+                                      style={{ width: `${levelAccuracy}%` }}
                                     />
                                   </div>
                                   <span className="text-child-xs font-bold min-w-[45px]">
-                                    {blockAccuracy}%
+                                    {levelAccuracy}%
                                   </span>
                                 </div>
                               </div>
@@ -646,7 +646,7 @@ export default function StudentDetailPage() {
                                   #{idx + 1}
                                 </span>
                                 <span className="text-child-xs text-gray-500">
-                                  Level {response.block_number}
+                                  Level {response.level_number}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">

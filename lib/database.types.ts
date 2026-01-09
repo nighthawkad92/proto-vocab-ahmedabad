@@ -142,8 +142,8 @@ export interface Database {
           completed_at: string | null
           questions_attempted: number
           questions_correct: number
-          blocks_completed: number
-          blocks_stopped_at: number | null
+          levels_completed: number
+          levels_stopped_at: number | null
         }
         Insert: {
           id?: string
@@ -153,8 +153,8 @@ export interface Database {
           completed_at?: string | null
           questions_attempted?: number
           questions_correct?: number
-          blocks_completed?: number
-          blocks_stopped_at?: number | null
+          levels_completed?: number
+          levels_stopped_at?: number | null
         }
         Update: {
           id?: string
@@ -164,8 +164,8 @@ export interface Database {
           completed_at?: string | null
           questions_attempted?: number
           questions_correct?: number
-          blocks_completed?: number
-          blocks_stopped_at?: number | null
+          levels_completed?: number
+          levels_stopped_at?: number | null
         }
       }
       responses: {
@@ -174,7 +174,7 @@ export interface Database {
           attempt_id: string
           question_id: string
           question_type: string
-          block_number: number
+          level_number: number
           student_answer: string | null
           is_correct: boolean
           answered_at: string
@@ -184,7 +184,7 @@ export interface Database {
           attempt_id: string
           question_id: string
           question_type: string
-          block_number: number
+          level_number: number
           student_answer?: string | null
           is_correct: boolean
           answered_at?: string
@@ -194,7 +194,7 @@ export interface Database {
           attempt_id?: string
           question_id?: string
           question_type?: string
-          block_number?: number
+          level_number?: number
           student_answer?: string | null
           is_correct?: boolean
           answered_at?: string

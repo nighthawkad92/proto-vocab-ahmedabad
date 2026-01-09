@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
         attempt_id: attemptId,
         question_id: response.questionId,
         question_type: response.questionType,
-        block_number: response.blockNumber,
+        level_number: response.levelNumber,
         student_answer: response.studentAnswer,
         is_correct: response.isCorrect,
         answered_at: response.answeredAt,
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
         completedAt,
         questionsAttempted,
         questionsCorrect,
-        blocksCompleted,
-        blocks_stopped_at,
+        levelsCompleted,
+        levels_stopped_at,
       } = queueItem.data
 
       // @ts-ignore - Supabase types are strict when env vars aren't set
@@ -40,8 +40,8 @@ export async function POST(request: NextRequest) {
           completed_at: completedAt,
           questions_attempted: questionsAttempted,
           questions_correct: questionsCorrect,
-          blocks_completed: blocksCompleted,
-          blocks_stopped_at: blocks_stopped_at,
+          levels_completed: levelsCompleted,
+          levels_stopped_at: levels_stopped_at,
         })
         .eq('id', attemptId)
 

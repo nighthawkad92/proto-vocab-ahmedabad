@@ -24,7 +24,7 @@ export default function LevelCompleteModal({
     if (show) {
       if (!stoppedEarly) {
         // Play completion sound only if level completed successfully
-        playSoundEffect(SoundEffect.BLOCK_COMPLETE)
+        playSoundEffect(SoundEffect.LEVEL_COMPLETE)
       }
 
       // Play TTS for completion message

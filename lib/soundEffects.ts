@@ -5,7 +5,7 @@ export enum SoundEffect {
   CORRECT = 'correct',
   INCORRECT = 'incorrect',
   TAP = 'tap',
-  BLOCK_COMPLETE = 'block_complete',
+  LEVEL_COMPLETE = 'level_complete',
 }
 
 class SoundEffectsManager {
@@ -18,7 +18,7 @@ class SoundEffectsManager {
     [SoundEffect.CORRECT]: '/sounds/correct.wav',
     [SoundEffect.INCORRECT]: '/sounds/incorrect.wav',
     [SoundEffect.TAP]: '/sounds/tap.wav',
-    [SoundEffect.BLOCK_COMPLETE]: '/sounds/block-complete.wav',
+    [SoundEffect.LEVEL_COMPLETE]: '/sounds/level-complete.wav',
   }
 
   private constructor() {

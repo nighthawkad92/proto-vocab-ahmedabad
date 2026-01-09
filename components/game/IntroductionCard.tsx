@@ -2,11 +2,11 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { BlockIntroduction } from '@/lib/types'
+import { LevelIntroduction } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 
 interface IntroductionCardProps {
-  introduction: BlockIntroduction
+  introduction: LevelIntroduction
   onContinue: () => void
   disabled?: boolean
 }
