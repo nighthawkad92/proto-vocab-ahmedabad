@@ -107,11 +107,11 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
                 style={{ width: itemWidth > 0 ? `${itemWidth}px` : 'auto' }}
               >
                 {/* Image Container */}
-                <div className="relative aspect-[4/3] rounded-child overflow-hidden mb-4 bg-white shadow-child">
+                <div className="relative aspect-[4/3] rounded-child overflow-hidden mb-4 bg-transparent">
                   <img
                     src={getLessonImage(lesson.title)}
                     alt={lesson.title}
-                    className={`w-full h-full object-cover transition-all ${
+                    className={`w-full h-full object-contain transition-all ${
                       !isUnlocked ? 'grayscale opacity-60' : ''
                     }`}
                     onError={(e) => {
