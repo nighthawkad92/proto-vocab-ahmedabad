@@ -127,12 +127,9 @@ export default function StudentLoginPage() {
         </form>
 
         <div className="text-center">
-          <Button
-            variant="text"
-            onClick={() => router.push('/teacher')}
-          >
+          <a href="/teacher" className="text-child-sm text-gray-500 hover:text-gray-700 underline">
             Teacher Login
-          </Button>
+          </a>
         </div>
       </div>
     </div>
