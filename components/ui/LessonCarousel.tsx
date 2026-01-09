@@ -172,7 +172,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
               <img
                 src="/icons/Children Mobile App (Community) - Design System (Community)/angle-left.svg"
                 alt=""
-                className="w-6 h-6"
+                className="w-6 h-6 brightness-0 invert"
               />
             }
             iconPosition="only"
@@ -187,7 +187,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
               <img
                 src="/icons/Children Mobile App (Community) - Design System (Community)/angle-right.svg"
                 alt=""
-                className="w-6 h-6"
+                className="w-6 h-6 brightness-0 invert"
               />
             }
             iconPosition="only"
