@@ -187,7 +187,7 @@ export default function ReadingComprehension({
                 border-2 transition-all text-left
                 ${
                   isSelected
-                    ? 'bg-primary-500 text-white border-primary-600 shadow-lg scale-105'
+                    ? 'bg-secondary-600 text-white border-secondary-700 shadow-lg scale-105'
                     : 'bg-white text-gray-800 border-gray-300 hover:border-accent-400 hover:shadow-lg'
                 }
                 ${disabled || hasSubmitted ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'}
