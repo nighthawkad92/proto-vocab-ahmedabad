@@ -6,6 +6,7 @@ import { StudentSessionManager } from '@/lib/studentSession'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { LoginBackground } from '@/components/ui/LoginBackground'
+import { VocabPalLogo } from '@/components/ui/VocabPalLogo'
 
 export default function StudentLoginPage() {
   const router = useRouter()
@@ -72,11 +73,8 @@ export default function StudentLoginPage() {
     <div className="min-h-screen bg-secondary-50 flex items-center justify-center p-4 relative">
       <LoginBackground />
       <div className="max-w-md w-full space-y-8 relative z-10">
-        <div className="text-center space-y-4">
-          <div className="text-7xl">👨‍🎓</div>
-          <h1 className="text-child-2xl font-display font-bold text-primary-600">
-            Welcome Student
-          </h1>
+        <div className="text-center">
+          <VocabPalLogo className="mb-6" />
           <p className="text-child-base text-gray-700">
             Enter your class code to start learning
           </p>
