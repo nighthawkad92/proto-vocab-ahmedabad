@@ -195,9 +195,11 @@ export default function StudentDetailPage() {
       const lessonContent = (lessonData as any)?.lessons?.content
       const questionMap = new Map()
 
-      if (lessonContent?.blocks) {
-        lessonContent.blocks.forEach((block: any) => {
-          block.questions?.forEach((q: any) => {
+      // Handle both legacy 'blocks' and new 'levels' structure
+      const levelsOrBlocks = lessonContent?.levels || lessonContent?.blocks
+      if (levelsOrBlocks) {
+        levelsOrBlocks.forEach((level: any) => {
+          level.questions?.forEach((q: any) => {
             questionMap.set(q.id, {
               prompt: q.prompt,
               correctAnswer: q.correctAnswer,
