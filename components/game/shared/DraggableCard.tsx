@@ -125,7 +125,7 @@ export default function DraggableCard({
             exit={{ scaleY: 0 }}
             className="
               absolute left-0 top-0 bottom-0 w-1
-              bg-accent-500 rounded-l-2xl
+              bg-primary-500 rounded-l-2xl
             "
           />
         )}

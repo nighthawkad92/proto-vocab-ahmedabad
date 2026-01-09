@@ -52,7 +52,7 @@ export default function PassageDisplay({
           <button
             onClick={handleReadAgain}
             disabled={disabled}
-            className="flex items-center gap-2 px-4 py-2 bg-accent-500 text-white rounded-child font-medium text-sm hover:bg-accent-600 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[2.5rem]"
+            className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-child font-medium text-sm hover:bg-primary-600 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[2.5rem]"
           >
             <svg
               className="w-5 h-5"

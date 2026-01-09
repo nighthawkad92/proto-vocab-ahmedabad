@@ -64,7 +64,7 @@ export default function IntroductionCard({
             <div
               key={index}
               className={`w-3 h-3 rounded-full transition-colors ${
-                index === currentStep ? 'bg-accent-500' : 'bg-gray-300'
+                index === currentStep ? 'bg-primary-500' : 'bg-gray-300'
               }`}
             />
           ))}
@@ -95,7 +95,7 @@ export default function IntroductionCard({
         <button
           onClick={handleNext}
           disabled={disabled}
-          className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
+          className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
         >
           {isLastStep ? 'Start' : 'Next'}
         </button>

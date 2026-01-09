@@ -239,7 +239,7 @@ export default function AddWordActivity({
       <button
         onClick={handleSubmit}
         disabled={disabled || hasSubmitted || !selectedWord}
-        className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
+        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
       >
         {hasSubmitted ? 'Submitted' : selectedWord ? 'Check Answer' : 'Select a word first'}
       </button>

@@ -176,7 +176,7 @@ export default function ReadingComprehension({
                 border-2 transition-all text-left
                 ${
                   isSelected
-                    ? 'bg-accent-500 text-white border-accent-600 shadow-lg scale-105'
+                    ? 'bg-primary-500 text-white border-primary-600 shadow-lg scale-105'
                     : 'bg-white text-gray-800 border-gray-300 hover:border-accent-400 hover:shadow-lg'
                 }
                 ${disabled || hasSubmitted ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'}
@@ -193,7 +193,7 @@ export default function ReadingComprehension({
       <button
         onClick={handleSubmit}
         disabled={disabled || hasSubmitted || !selectedAnswer}
-        className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
+        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
       >
         {hasSubmitted ? 'Submitted' : selectedAnswer ? 'Check Answer' : 'Select an answer first'}
       </button>

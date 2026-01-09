@@ -61,7 +61,7 @@ export default function DesignSystemPage() {
                     flex items-center gap-3
                     ${
                       activeSection === section.id
-                        ? 'bg-accent-500 text-white shadow-md'
+                        ? 'bg-primary-500 text-white shadow-md'
                         : 'text-gray-700 hover:bg-gray-100'
                     }
                   `}
@@ -477,7 +477,7 @@ function InteractionSection() {
       <div className="space-y-4">
         <div className="bg-gray-50 rounded-xl p-6">
           <h4 className="text-lg font-bold text-gray-800 mb-3">Touch Feedback</h4>
-          <button className="bg-accent-500 text-white px-8 py-4 rounded-child active:scale-95 transition-transform duration-75 font-medium">
+          <button className="bg-primary-500 text-white px-8 py-4 rounded-child active:scale-95 transition-transform duration-75 font-medium">
             Tap Me (scales to 95%)
           </button>
           <p className="text-gray-600 mt-3">
@@ -666,15 +666,15 @@ function AccessibilitySection() {
           <div className="space-y-4">
             <div>
               <div className="flex items-center gap-4 mb-2">
-                <div className="w-12 h-12 bg-accent-500 rounded-lg" />
+                <div className="w-12 h-12 bg-primary-500 rounded-lg" />
                 <span className="text-gray-700">≥ 48px target size</span>
               </div>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-12 h-12 bg-accent-500 rounded-lg" />
+                <div className="w-12 h-12 bg-primary-500 rounded-lg" />
                 <div className="w-2 bg-gray-300" />
-                <div className="w-12 h-12 bg-accent-500 rounded-lg" />
+                <div className="w-12 h-12 bg-primary-500 rounded-lg" />
               </div>
               <span className="text-gray-700">≥ 8px spacing</span>
             </div>
@@ -1075,12 +1075,12 @@ function ComponentsSection() {
         {/* Button Pattern */}
         <div className="bg-gray-50 rounded-xl p-6">
           <h3 className="text-xl font-bold text-gray-800 mb-4">Standard Button</h3>
-          <button className="bg-accent-500 hover:bg-accent-600 text-white font-medium py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all min-h-[3rem]">
+          <button className="bg-primary-500 hover:bg-accent-600 text-white font-medium py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all min-h-[3rem]">
             Primary Action Button
           </button>
           <pre className="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm mt-4">
 {`className="
-  bg-accent-500 hover:bg-accent-600
+  bg-primary-500 hover:bg-accent-600
   text-white font-medium
   py-6 px-8 rounded-child shadow-lg
   active:scale-95 transition-all
@@ -1110,7 +1110,7 @@ function ComponentsSection() {
             <div className="bg-white rounded-child shadow-2xl p-8 max-w-md">
               <h4 className="text-2xl font-bold mb-3 text-gray-800">Modal Content</h4>
               <p className="text-gray-700 mb-4">Centered modal with overlay background.</p>
-              <button className="bg-accent-500 hover:bg-accent-600 text-white font-medium py-4 px-6 rounded-child">
+              <button className="bg-primary-500 hover:bg-accent-600 text-white font-medium py-4 px-6 rounded-child">
                 Close
               </button>
             </div>
@@ -1151,7 +1151,7 @@ function ComponentsSection() {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
               <div
-                className="bg-accent-500 h-4 rounded-full transition-all duration-500"
+                className="bg-primary-500 h-4 rounded-full transition-all duration-500"
                 style={{ width: '30%' }}
               />
             </div>

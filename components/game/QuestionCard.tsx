@@ -97,7 +97,7 @@ export default function QuestionCard({
                     }
                   }}
                   disabled={disabled}
-                  className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-[30px] py-6 px-6 rounded-child shadow-md active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[4rem] text-left"
+                  className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium text-[30px] py-6 px-6 rounded-child shadow-md active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[4rem] text-left"
                 >
                   {option}
                 </button>
