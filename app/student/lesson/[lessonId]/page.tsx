@@ -142,7 +142,7 @@ export default function LessonPage() {
       const lessonEngine = new LessonEngine(attemptId, lessonId, content, attemptNumber)
       setEngine(lessonEngine)
 
-      // Check if first block has an introduction
+      // Check if first level has an introduction
       const firstLevel = content.levels[0]
       if (firstLevel?.introduction) {
         setCurrentIntroduction(firstLevel.introduction)
@@ -227,7 +227,7 @@ export default function LessonPage() {
     setTimeout(() => {
       setShowFeedback(false)
 
-      // Check if block is complete
+      // Check if level is complete
       if (result.isLevelComplete) {
         setLevelStoppedEarly(result.shouldStopLevel)
         setShowLevelComplete(true)

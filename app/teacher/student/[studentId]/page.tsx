@@ -139,9 +139,9 @@ export default function StudentDetailPage() {
   }
 
   const getDifficultyLevel = (blocksCompleted: number, blocksStopped: number | null) => {
-    // Determine the highest block the student reached
-    // blocks_stopped_at indicates the block where they stopped (due to 2 mistakes)
-    // blocks_completed indicates blocks they successfully completed
+    // Determine the highest level the student reached
+    // blocks_stopped_at indicates the level where they stopped (due to 2 mistakes)
+    // blocks_completed indicates levels they successfully completed
     const maxBlockReached = blocksStopped !== null ? blocksStopped : blocksCompleted
 
     if (maxBlockReached === 0) {
@@ -385,7 +385,7 @@ export default function StudentDetailPage() {
                       Accuracy
                     </th>
                     <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
-                      Blocks
+                      Levels
                     </th>
                   </tr>
                 </thead>
@@ -518,7 +518,7 @@ export default function StudentDetailPage() {
                 const attempt = attempts.find((a) => a.id === expandedAttempt)
                 if (!attempt || !attempt.responses) return null
 
-                // Calculate block-by-block stats
+                // Calculate level-by-level stats
                 const blockStats = attempt.responses.reduce((acc, response) => {
                   if (!acc[response.block_number]) {
                     acc[response.block_number] = { total: 0, correct: 0 }
@@ -560,16 +560,16 @@ export default function StudentDetailPage() {
                           </span>
                         </div>
                         <div>
-                          <span className="font-medium">Blocks:</span>{' '}
+                          <span className="font-medium">Levels:</span>{' '}
                           <span className="font-bold">{attempt.blocks_completed}</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Block-by-block breakdown */}
+                    {/* Level-by-level breakdown */}
                     <div>
                       <h4 className="text-child-base font-bold text-gray-800 mb-3">
-                        Performance by Block
+                        Performance by Level
                       </h4>
                       <div className="grid grid-cols-1 gap-3">
                         {Object.entries(blockStats).map(([blockNum, stats]) => {
@@ -588,7 +588,7 @@ export default function StudentDetailPage() {
                             >
                               <div className="flex items-center justify-between mb-3">
                                 <span className="text-child-sm font-bold text-gray-800">
-                                  Block {blockNum}
+                                  Level {blockNum}
                                 </span>
                                 <span className="text-child-xs font-bold text-gray-600">
                                   {blockDifficulty.emoji} {blockDifficulty.level}
@@ -646,7 +646,7 @@ export default function StudentDetailPage() {
                                   #{idx + 1}
                                 </span>
                                 <span className="text-child-xs text-gray-500">
-                                  Block {response.block_number}
+                                  Level {response.block_number}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">
