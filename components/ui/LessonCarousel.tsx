@@ -25,6 +25,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
   const [itemsToShow, setItemsToShow] = useState(2.5)
   const [containerWidth, setContainerWidth] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
 
   // Update layout on window resize and initial mount
   useEffect(() => {
@@ -32,7 +33,11 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
       const width = containerRef.current?.offsetWidth || 0
       setContainerWidth(width)
 
-      if (window.innerWidth >= 1024) {
+      // Detect desktop (1024px and above)
+      const desktop = window.innerWidth >= 1024
+      setIsDesktop(desktop)
+
+      if (desktop) {
         setItemsToShow(2.5)
       } else if (window.innerWidth >= 768) {
         setItemsToShow(2)
@@ -94,10 +99,10 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
           className="flex gap-6"
           animate={{ x: offset }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          drag={lessons.length > 1 ? "x" : false}
+          drag={!isDesktop && lessons.length > 1 ? "x" : false}
           dragConstraints={{ left: maxDrag, right: 0 }}
           onDragEnd={handleDragEnd}
-          style={{ cursor: lessons.length > 1 ? 'grab' : 'default' }}
+          style={{ cursor: !isDesktop && lessons.length > 1 ? 'grab' : 'default' }}
         >
           {lessons.map((lesson, index) => {
             const isUnlocked = unlocks[lesson.id]
