@@ -72,6 +72,16 @@ export default function LessonPage() {
         }
 
         const data = await response.json()
+        console.log('API Response:', data)
+
+        if (!data.lesson) {
+          throw new Error('No lesson data returned from API')
+        }
+
+        if (!data.lesson.content) {
+          throw new Error('Lesson content is missing or null')
+        }
+
         content = data.lesson.content
         attemptNumber = data.attemptNumber || 1
 
@@ -81,6 +91,10 @@ export default function LessonPage() {
         } catch (error) {
           console.error('Failed to cache lesson:', error)
         }
+      }
+
+      if (!content) {
+        throw new Error('Lesson content is null after loading')
       }
 
       setLessonContent(content)
@@ -135,7 +149,8 @@ export default function LessonPage() {
       setLoading(false)
     } catch (error) {
       console.error('Failed to load lesson:', error)
-      alert('Failed to load lesson. Please try again.')
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      alert(`Failed to load lesson: ${errorMessage}`)
       router.push('/student/dashboard')
     }
   }
