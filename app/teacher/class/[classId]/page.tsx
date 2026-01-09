@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { TeacherSessionManager } from '@/lib/teacherSession'
+import { Button } from '@/components/ui/Button'
 
 interface Student {
   id: string
@@ -153,12 +154,13 @@ export default function ClassDetailPage() {
                 <span>{students.length} students</span>
               </div>
             </div>
-            <button
+            <Button
               onClick={() => router.push('/teacher/dashboard')}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors active:scale-95"
+              variant="optional"
+              size="md"
             >
               ← Back
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -207,16 +209,14 @@ export default function ClassDetailPage() {
                   <p className="text-child-sm text-gray-600">{lesson.description}</p>
                 </div>
 
-                <button
+                <Button
                   onClick={() => handleToggleLesson(lesson.id, lesson.is_unlocked)}
-                  className={`px-6 py-3 font-bold text-child-sm rounded-child transition-all ${
-                    lesson.is_unlocked
-                      ? 'bg-secondary-100 text-secondary-700 hover:bg-secondary-200'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  variant="optional"
+                  size="md"
+                  className={lesson.is_unlocked ? 'bg-secondary-100 text-secondary-700 hover:bg-secondary-200 border-secondary-300' : ''}
                 >
                   {lesson.is_unlocked ? '✅ Unlocked' : '🔒 Locked'}
-                </button>
+                </Button>
               </div>
             ))}
           </div>

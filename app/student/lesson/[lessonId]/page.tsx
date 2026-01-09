@@ -15,6 +15,7 @@ import IntroductionCard from '@/components/game/IntroductionCard'
 import ConnectionStatus from '@/components/layout/ConnectionStatus'
 import { Header } from '@/components/navigation/Header'
 import { Loader } from '@/components/ui/Loader'
+import { Button } from '@/components/ui/Button'
 import { getLessonCache } from '@/lib/lessonCache'
 import type { LessonContent, Question, LevelIntroduction } from '@/lib/types'
 
@@ -367,16 +368,17 @@ export default function LessonPage() {
 
         {/* Back button */}
         <div className="flex justify-center">
-          <button
+          <Button
             onClick={() => {
               if (confirm('Exit now? Progress is saved.')) {
                 router.push('/student/dashboard')
               }
             }}
-            className="px-6 py-3 bg-secondary-500 hover:bg-gray-600 text-white rounded-child text-child-sm font-medium transition-colors active:scale-95 min-h-[3rem]"
+            variant="secondary"
+            size="md"
           >
             Back to Lessons
-          </button>
+          </Button>
         </div>
       </div>
 

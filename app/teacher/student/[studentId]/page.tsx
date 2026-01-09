@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { TeacherSessionManager } from '@/lib/teacherSession'
+import { Button } from '@/components/ui/Button'
 
 interface StudentInfo {
   id: string
@@ -251,12 +252,13 @@ export default function StudentDetailPage() {
         <div className="text-center space-y-4">
           <div className="text-6xl">❌</div>
           <p className="text-child-base text-gray-700">Student not found</p>
-          <button
+          <Button
             onClick={() => router.back()}
-            className="px-6 py-3 bg-secondary-600 hover:bg-secondary-700 text-white rounded-child text-child-sm font-bold active:scale-95"
+            variant="secondary"
+            size="md"
           >
             Go Back
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -303,12 +305,13 @@ export default function StudentDetailPage() {
                 </p>
               </div>
             </div>
-            <button
+            <Button
               onClick={() => router.back()}
-              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-child text-child-sm font-medium transition-colors active:scale-95"
+              variant="optional"
+              size="md"
             >
               ← Back
-            </button>
+            </Button>
           </div>
         </div>
 
