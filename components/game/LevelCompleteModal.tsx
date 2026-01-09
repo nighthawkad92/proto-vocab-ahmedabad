@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 import { generateSpeech } from '@/lib/googleTTS'
 import { playAudio } from '@/lib/audioCache'
+import { Button } from '@/components/ui/Button'
 
 interface LevelCompleteModalProps {
   show: boolean
@@ -60,26 +61,30 @@ export default function LevelCompleteModal({
 
         <div className="space-y-3">
           {!stoppedEarly && (
-            <button
+            <Button
               onClick={() => {
                 playSoundEffect(SoundEffect.TAP)
                 onContinue()
               }}
-              className="w-full bg-accent-500 hover:bg-accent-600 text-white font-medium text-base py-5 px-8 rounded-child shadow-lg active:scale-95 transition-all min-h-[3rem]"
+              variant="primary"
+              size="lg"
+              className="w-full"
             >
               Continue
-            </button>
+            </Button>
           )}
 
-          <button
+          <Button
             onClick={() => {
               playSoundEffect(SoundEffect.TAP)
               onFinish()
             }}
-            className="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium text-base py-5 px-8 rounded-child shadow-lg active:scale-95 transition-all min-h-[3rem]"
+            variant="optional"
+            size="lg"
+            className="w-full"
           >
             {stoppedEarly ? 'Back to Lessons' : 'Finish'}
-          </button>
+          </Button>
         </div>
       </motion.div>
     </div>

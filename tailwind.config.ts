@@ -45,23 +45,52 @@ const config: Config = {
           800: '#9a3412',
           900: '#7c2d12',
         },
+        achievement: {
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#F59E0B',
+          600: '#D97706',
+          700: '#B45309',
+          800: '#92400E',
+          900: '#78350F',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Poppins', 'system-ui', 'sans-serif'],
       },
       fontSize: {
-        'child-xs': '1rem',
-        'child-sm': '1.25rem',
-        'child-base': '1.5rem',
-        'child-lg': '1.875rem',
-        'child-xl': '2.25rem',
+        'child-xs': ['12px', { lineHeight: '16px' }],      // Paragraph XSmall
+        'child-sm': ['14px', { lineHeight: '20px' }],      // Paragraph Small
+        'child-base': ['16px', { lineHeight: '24px' }],    // Paragraph Medium
+        'child-lg': ['18px', { lineHeight: '28px' }],      // Paragraph Large
+        'child-xl': ['20px', { lineHeight: '28px' }],      // H4
+        'child-2xl': ['28px', { lineHeight: '28px' }],     // H3
+        'child-3xl': ['40px', { lineHeight: '40px' }],     // H2
+        'child-4xl': ['48px', { lineHeight: '48px' }],     // H1
       },
       spacing: {
         'tap': '3rem',
+        'child-gutter': '16px',
+        'child-margin': '12px',
       },
       borderRadius: {
         'child': '1.5rem',
+      },
+      boxShadow: {
+        'child-sm': '0 2px 4px rgba(0,0,0,0.06)',
+        'child': '0 4px 8px rgba(0,0,0,0.08)',
+        'child-md': '0 6px 12px rgba(0,0,0,0.1)',
+        'child-lg': '0 10px 20px rgba(0,0,0,0.12)',
+        'child-xl': '0 15px 30px rgba(0,0,0,0.15)',
+        'child-inner': 'inset 0 2px 4px rgba(0,0,0,0.06)',
+      },
+      gridTemplateColumns: {
+        'child-mobile': 'repeat(4, 1fr)',
+        'child-tablet': 'repeat(6, 1fr)',
       },
     },
   },

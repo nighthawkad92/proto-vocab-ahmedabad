@@ -4,6 +4,18 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { StudentSessionManager } from '@/lib/studentSession'
 import ConnectionStatus from '@/components/layout/ConnectionStatus'
+import { Header } from '@/components/navigation/Header'
+import { BottomNav } from '@/components/navigation/BottomNav'
+import { Button } from '@/components/ui/Button'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Loader } from '@/components/ui/Loader'
+import {
+  BookOpenIcon,
+  ChartBarIcon,
+  TrophyIcon,
+  UserCircleIcon,
+  Bars3Icon,
+} from '@heroicons/react/24/outline'
 import type { StudentSession, LessonUnlock } from '@/lib/types'
 
 interface Lesson {
@@ -62,43 +74,66 @@ export default function StudentDashboard() {
     router.push(`/student/lesson/${lessonId}`)
   }
 
+  const navItems = [
+    {
+      id: 'lessons',
+      label: 'Lessons',
+      icon: <BookOpenIcon className="w-6 h-6" />,
+      href: '/student/dashboard',
+      color: 'secondary',
+    },
+    {
+      id: 'progress',
+      label: 'Progress',
+      icon: <ChartBarIcon className="w-6 h-6" />,
+      href: '/student/progress',
+      color: 'primary',
+    },
+    {
+      id: 'badges',
+      label: 'Badges',
+      icon: <TrophyIcon className="w-6 h-6" />,
+      href: '/student/badges',
+      color: 'achievement',
+    },
+    {
+      id: 'profile',
+      label: 'Profile',
+      icon: <UserCircleIcon className="w-6 h-6" />,
+      href: '/student/profile',
+      color: 'accent',
+    },
+  ]
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="text-6xl animate-bounce-gentle">📚</div>
-          <p className="text-child-base text-gray-700">Loading your lessons...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader message="Loading your lessons" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen bg-gray-50 pb-24">
       {/* Connection Status */}
-      <div className="fixed top-4 right-4 z-30">
+      <div className="fixed top-20 right-4 z-30">
         <ConnectionStatus />
       </div>
 
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="bg-white rounded-child shadow-lg p-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-child-lg font-body font-medium text-gray-800">
-                Hello, {session?.studentName}.
-              </h1>
-              <p className="text-child-sm text-gray-600">
-                Class: {session?.classCode}
-              </p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-child text-child-sm font-medium transition-colors active:scale-95 min-h-[3rem]"
-            >
-              Logout
-            </button>
-          </div>
+      <Header
+        variant="simple"
+        onMenu={handleLogout}
+      />
+
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Greeting Card */}
+        <div className="bg-white rounded-child shadow-child p-6">
+          <h1 className="text-child-xl font-semibold text-gray-800">
+            Hello, {session?.studentName}
+          </h1>
+          <p className="text-child-base text-gray-600">
+            Class: {session?.classCode}
+          </p>
         </div>
 
         {/* Lessons */}
@@ -108,11 +143,12 @@ export default function StudentDashboard() {
           </h2>
 
           {lessons.length === 0 ? (
-            <div className="bg-white rounded-child shadow p-8 text-center">
-              <div className="text-6xl mb-4">📖</div>
-              <p className="text-child-base text-gray-600">
-                No lessons yet. Ask your teacher to unlock lessons for you.
-              </p>
+            <div className="bg-white rounded-child shadow-child">
+              <EmptyState
+                icon="📖"
+                title="No Lessons Yet"
+                description="Your teacher will assign lessons soon. Check back later."
+              />
             </div>
           ) : (
             <div className="grid gap-4">
@@ -122,20 +158,20 @@ export default function StudentDashboard() {
                 return (
                   <div
                     key={lesson.id}
-                    className={`bg-white rounded-child shadow-lg p-6 transition-all ${
+                    className={`bg-white rounded-child shadow-child p-6 transition-all ${
                       isUnlocked
                         ? 'border-2 border-accent-400'
                         : 'opacity-60'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-child-sm font-medium text-gray-800">
+                          <h3 className="text-child-base font-medium text-gray-800">
                             {lesson.title}
                           </h3>
                           {!isUnlocked && (
-                            <span className="text-child-xs text-gray-500">
+                            <span className="text-child-sm text-gray-500">
                               (Locked)
                             </span>
                           )}
@@ -143,25 +179,22 @@ export default function StudentDashboard() {
                         <p className="text-child-sm text-gray-600">
                           {lesson.description}
                         </p>
+                        {!isUnlocked && (
+                          <p className="text-child-xs text-gray-500 mt-2">
+                            Ask your teacher to unlock this lesson
+                          </p>
+                        )}
                       </div>
 
                       {isUnlocked && (
-                        <button
-                          className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white font-medium text-child-sm rounded-child shadow-md active:scale-95 transition-all min-h-[3rem]"
+                        <Button
                           onClick={() => handleStartLesson(lesson.id)}
+                          size="md"
                         >
                           Start
-                        </button>
+                        </Button>
                       )}
                     </div>
-
-                    {!isUnlocked && (
-                      <div className="ml-12 mt-2">
-                        <p className="text-child-xs text-gray-500">
-                          Ask your teacher to unlock this lesson
-                        </p>
-                      </div>
-                    )}
                   </div>
                 )
               })}
@@ -169,6 +202,8 @@ export default function StudentDashboard() {
           )}
         </div>
       </div>
+
+      <BottomNav items={navItems} />
     </div>
   )
 }

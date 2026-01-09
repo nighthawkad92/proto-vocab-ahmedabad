@@ -13,6 +13,8 @@ import ProgressBar from '@/components/game/ProgressBar'
 import LevelCompleteModal from '@/components/game/LevelCompleteModal'
 import IntroductionCard from '@/components/game/IntroductionCard'
 import ConnectionStatus from '@/components/layout/ConnectionStatus'
+import { Header } from '@/components/navigation/Header'
+import { Loader } from '@/components/ui/Loader'
 import { getLessonCache } from '@/lib/lessonCache'
 import type { LessonContent, Question, LevelIntroduction } from '@/lib/types'
 
@@ -308,11 +310,8 @@ export default function LessonPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="text-6xl animate-bounce-gentle">📚</div>
-          <p className="text-child-base text-gray-700">Loading lesson...</p>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader message="Loading lesson" />
       </div>
     )
   }
