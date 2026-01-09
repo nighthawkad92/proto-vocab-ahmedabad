@@ -220,59 +220,96 @@ function VisualSection() {
 
       <div className="mb-8">
         <h3 className="text-2xl font-bold text-gray-800 mb-4">Color System</h3>
+        <p className="text-gray-600 mb-6">Based on Children Mobile App Design System - Optimized for ages 8-10</p>
 
         <div className="space-y-6">
           <div>
             <h4 className="text-lg font-bold text-gray-700 mb-3">Primary Colors (Green)</h4>
             <div className="grid grid-cols-5 gap-2">
-              <ColorSwatch color="primary-50" hex="#f0fdf4" />
-              <ColorSwatch color="primary-100" hex="#dcfce7" />
-              <ColorSwatch color="primary-200" hex="#bbf7d0" />
-              <ColorSwatch color="primary-300" hex="#86efac" />
-              <ColorSwatch color="primary-400" hex="#4ade80" />
+              <ColorSwatch color="primary-50" hex="#F6FEF7" />
+              <ColorSwatch color="primary-100" hex="#CEF8D5" />
+              <ColorSwatch color="primary-200" hex="#86E99F" />
+              <ColorSwatch color="primary-300" hex="#36CE7C" />
+              <ColorSwatch color="primary-400" hex="#24C26D" />
             </div>
             <div className="grid grid-cols-5 gap-2 mt-2">
-              <ColorSwatch color="primary-500" hex="#22c55e" label="Main" />
-              <ColorSwatch color="primary-600" hex="#16a34a" />
-              <ColorSwatch color="primary-700" hex="#15803d" />
-              <ColorSwatch color="primary-800" hex="#166534" />
-              <ColorSwatch color="primary-900" hex="#14532d" />
+              <ColorSwatch color="primary-500" hex="#02A959" label="Main" />
+              <ColorSwatch color="primary-600" hex="#028E4B" />
+              <ColorSwatch color="primary-700" hex="#02743D" />
+              <ColorSwatch color="primary-800" hex="#025A2F" />
+              <ColorSwatch color="primary-900" hex="#01321A" />
             </div>
           </div>
 
           <div>
-            <h4 className="text-lg font-bold text-gray-700 mb-3">Secondary Colors (Red)</h4>
+            <h4 className="text-lg font-bold text-gray-700 mb-3">Secondary Colors (Yellow)</h4>
             <div className="grid grid-cols-5 gap-2">
-              <ColorSwatch color="secondary-50" hex="#fef2f2" />
-              <ColorSwatch color="secondary-100" hex="#fee2e2" />
-              <ColorSwatch color="secondary-200" hex="#fecaca" />
-              <ColorSwatch color="secondary-300" hex="#fca5a5" />
-              <ColorSwatch color="secondary-400" hex="#f87171" />
+              <ColorSwatch color="secondary-50" hex="#FFFBF5" />
+              <ColorSwatch color="secondary-100" hex="#FEF3E2" />
+              <ColorSwatch color="secondary-200" hex="#FDE7C4" />
+              <ColorSwatch color="secondary-300" hex="#FBD698" />
+              <ColorSwatch color="secondary-400" hex="#F8BF5D" />
             </div>
             <div className="grid grid-cols-5 gap-2 mt-2">
-              <ColorSwatch color="secondary-500" hex="#ef4444" label="Accent" />
-              <ColorSwatch color="secondary-600" hex="#dc2626" />
-              <ColorSwatch color="secondary-700" hex="#b91c1c" />
-              <ColorSwatch color="secondary-800" hex="#991b1b" />
-              <ColorSwatch color="secondary-900" hex="#7f1d1d" />
+              <ColorSwatch color="secondary-500" hex="#F59E0B" label="Secondary" />
+              <ColorSwatch color="secondary-600" hex="#D88B09" />
+              <ColorSwatch color="secondary-700" hex="#BA7808" />
+              <ColorSwatch color="secondary-800" hex="#895806" />
+              <ColorSwatch color="secondary-900" hex="#583904" />
             </div>
           </div>
 
           <div>
-            <h4 className="text-lg font-bold text-gray-700 mb-3">Accent Colors (Orange)</h4>
+            <h4 className="text-lg font-bold text-gray-700 mb-3">Tertiary Colors (Blue)</h4>
             <div className="grid grid-cols-5 gap-2">
-              <ColorSwatch color="accent-50" hex="#fef3c7" />
-              <ColorSwatch color="accent-100" hex="#fde68a" />
-              <ColorSwatch color="accent-200" hex="#fcd34d" />
-              <ColorSwatch color="accent-300" hex="#fbbf24" />
-              <ColorSwatch color="accent-400" hex="#f59e0b" />
+              <ColorSwatch color="tertiary-50" hex="#F5FAFE" />
+              <ColorSwatch color="tertiary-100" hex="#CFE7FC" />
+              <ColorSwatch color="tertiary-200" hex="#B7DBFA" />
+              <ColorSwatch color="tertiary-300" hex="#8CC4F7" />
+              <ColorSwatch color="tertiary-400" hex="#61AEF4" />
             </div>
             <div className="grid grid-cols-5 gap-2 mt-2">
-              <ColorSwatch color="accent-500" hex="#f97316" label="Primary Action" />
-              <ColorSwatch color="accent-600" hex="#ea580c" />
-              <ColorSwatch color="accent-700" hex="#c2410c" />
-              <ColorSwatch color="accent-800" hex="#9a3412" />
-              <ColorSwatch color="accent-900" hex="#7c2d12" />
+              <ColorSwatch color="tertiary-500" hex="#2E94F1" label="Informational" />
+              <ColorSwatch color="tertiary-600" hex="#478CAE" />
+              <ColorSwatch color="tertiary-700" hex="#0C65B6" />
+              <ColorSwatch color="tertiary-800" hex="#094A86" />
+              <ColorSwatch color="tertiary-900" hex="#06325B" />
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-bold text-gray-700 mb-3">Error Colors (Red)</h4>
+            <div className="grid grid-cols-5 gap-2">
+              <ColorSwatch color="error-50" hex="#FFFAFA" />
+              <ColorSwatch color="error-100" hex="#FFE5E5" />
+              <ColorSwatch color="error-200" hex="#FFC2C2" />
+              <ColorSwatch color="error-300" hex="#FF9494" />
+              <ColorSwatch color="error-400" hex="#F76969" />
+            </div>
+            <div className="grid grid-cols-5 gap-2 mt-2">
+              <ColorSwatch color="error-500" hex="#EF4444" label="Error" />
+              <ColorSwatch color="error-600" hex="#CF2A2A" />
+              <ColorSwatch color="error-700" hex="#AE2424" />
+              <ColorSwatch color="error-800" hex="#861919" />
+              <ColorSwatch color="error-900" hex="#490E0E" />
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-bold text-gray-700 mb-3">Neutral Colors (Gray + Black/White)</h4>
+            <div className="grid grid-cols-5 gap-2">
+              <ColorSwatch color="neutral-50" hex="#F9F9FA" />
+              <ColorSwatch color="neutral-100" hex="#F4F5F5" />
+              <ColorSwatch color="neutral-200" hex="#ECEEF0" />
+              <ColorSwatch color="neutral-300" hex="#DEE1E5" />
+              <ColorSwatch color="neutral-400" hex="#CFD3DA" />
+            </div>
+            <div className="grid grid-cols-5 gap-2 mt-2">
+              <ColorSwatch color="neutral-500" hex="#B7BDC7" label="Neutral" />
+              <ColorSwatch color="neutral-600" hex="#969DAC" />
+              <ColorSwatch color="neutral-700" hex="#737E91" />
+              <ColorSwatch color="neutral-800" hex="#515967" />
+              <ColorSwatch color="neutral-900" hex="#414853" />
             </div>
           </div>
         </div>

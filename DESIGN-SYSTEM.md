@@ -51,67 +51,90 @@ Optimize for clarity, low cognitive load, and low-spec tablets.
 
 ### Color System
 
+Based on the Children Mobile App Design System color palette optimized for ages 8-10.
+
 #### Primary Colors (Green spectrum)
 ```css
-primary-50:  #f0fdf4
-primary-100: #dcfce7
-primary-200: #bbf7d0
-primary-300: #86efac
-primary-400: #4ade80
-primary-500: #22c55e /* Main brand color */
-primary-600: #16a34a
-primary-700: #15803d
-primary-800: #166534
-primary-900: #14532d
+primary-50:  #F6FEF7 /* Lightest green tint */
+primary-100: #CEF8D5
+primary-200: #86E99F
+primary-300: #36CE7C
+primary-400: #24C26D
+primary-500: #02A959 /* Main brand color */
+primary-600: #028E4B
+primary-700: #02743D
+primary-800: #025A2F
+primary-900: #01321A /* Darkest green shade */
 ```
 
-#### Secondary Colors (Red spectrum)
+#### Secondary Colors (Yellow/Orange spectrum)
 ```css
-secondary-50:  #fef2f2
-secondary-100: #fee2e2
-secondary-200: #fecaca
-secondary-300: #fca5a5
-secondary-400: #f87171
-secondary-500: #ef4444 /* Accent/emphasis states */
-secondary-600: #dc2626
-secondary-700: #b91c1c
-secondary-800: #991b1b
-secondary-900: #7f1d1d
+secondary-50:  #FFFBF5 /* Lightest yellow tint */
+secondary-100: #FEF3E2
+secondary-200: #FDE7C4
+secondary-300: #FBD698
+secondary-400: #F8BF5D
+secondary-500: #F59E0B /* Main secondary color */
+secondary-600: #D88B09
+secondary-700: #BA7808
+secondary-800: #895806
+secondary-900: #583904 /* Darkest yellow shade */
 ```
 
-#### Accent Colors (Orange/Yellow spectrum)
+#### Tertiary Colors (Blue spectrum)
 ```css
-accent-50:  #fef3c7
-accent-100: #fde68a
-accent-200: #fcd34d
-accent-300: #fbbf24
-accent-400: #f59e0b
-accent-500: #f97316 /* Primary action color */
-accent-600: #ea580c
-accent-700: #c2410c
-accent-800: #9a3412
-accent-900: #7c2d12
+tertiary-50:  #F5FAFE /* Lightest blue tint */
+tertiary-100: #CFE7FC
+tertiary-200: #B7DBFA
+tertiary-300: #8CC4F7
+tertiary-400: #61AEF4
+tertiary-500: #2E94F1 /* Main tertiary color */
+tertiary-600: #478CAE
+tertiary-700: #0C65B6
+tertiary-800: #094A86
+tertiary-900: #06325B /* Darkest blue shade */
 ```
 
-#### Neutral Colors
+#### Error Colors (Red spectrum)
 ```css
-gray-50:  #f9fafb
-gray-100: #f3f4f6 /* Background */
-gray-200: #e5e7eb /* Borders */
-gray-300: #d1d5db
-gray-400: #9ca3af
-gray-500: #6b7280
-gray-600: #4b5563
-gray-700: #374151
-gray-800: #1f2937 /* Body text */
-gray-900: #111827
+error-50:  #FFFAFA /* Lightest red tint */
+error-100: #FFE5E5
+error-200: #FFC2C2
+error-300: #FF9494
+error-400: #F76969
+error-500: #EF4444 /* Main error color */
+error-600: #CF2A2A
+error-700: #AE2424
+error-800: #861919
+error-900: #490E0E /* Darkest red shade */
+```
+
+#### Neutral Colors (Gray spectrum + White/Black)
+```css
+neutral-50:  #F9F9FA /* Lightest gray - Backgrounds */
+neutral-100: #F4F5F5 /* Light backgrounds */
+neutral-200: #ECEEF0 /* Borders */
+neutral-300: #DEE1E5 /* Dividers */
+neutral-400: #CFD3DA /* Disabled states */
+neutral-500: #B7BDC7 /* Placeholder text */
+neutral-600: #969DAC /* Secondary text */
+neutral-700: #737E91 /* Body text */
+neutral-800: #515967 /* Primary text */
+neutral-900: #414853 /* Darkest gray - Headings */
+
+White: #FFFFFF
+Black: #000000
 ```
 
 ### Color Usage Rules
 - **High contrast**: WCAG AA minimum (4.5:1 for text)
-- **Background**: Neutral light colors (gray-50, gray-100, white)
-- **Primary action**: Accent-500 (#f97316)
-- **Success feedback**: Gray tones (no bright colors for feedback)
+- **Background**: Neutral light colors (neutral-50, neutral-100, white)
+- **Primary action**: Primary-500 (#02A959 - Green)
+- **Secondary action**: Secondary-500 (#F59E0B - Yellow)
+- **Informational**: Tertiary-500 (#2E94F1 - Blue)
+- **Error states**: Error-500 (#EF4444 - Red)
+- **Success feedback**: Neutral tones (no bright colors for feedback)
+- **Text**: Use neutral-700 to neutral-900 for body text and headings
 - **Never rely on color alone**: Always pair with icons or text
 
 ### Typography
