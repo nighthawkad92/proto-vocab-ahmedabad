@@ -20,7 +20,7 @@ export default function ProgressBar({
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4">
       {/* Question Progress */}
-      <div className="bg-white rounded-child shadow-md p-4">
+      <div className="bg-transparent p-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-base font-medium text-gray-700">
             Question {displayCurrent} of {total}

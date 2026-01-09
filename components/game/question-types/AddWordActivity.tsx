@@ -243,13 +243,6 @@ export default function AddWordActivity({
       >
         {hasSubmitted ? 'Submitted' : selectedWord ? 'Check Answer' : 'Select a word first'}
       </button>
-
-      {/* Hint about multiple correct answers */}
-      {question.correctAnswers && question.correctAnswers.length > 1 && !hasSubmitted && (
-        <div className="text-center text-sm text-gray-500">
-          <p>💡 Hint: Multiple words may work well in this sentence</p>
-        </div>
-      )}
     </div>
   )
 }

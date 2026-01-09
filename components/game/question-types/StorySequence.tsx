@@ -250,11 +250,6 @@ export default function StorySequence({
       >
         {hasSubmitted ? 'Submitted' : 'Check Answer'}
       </button>
-
-      {/* Touch hint */}
-      <div className="text-center text-xs text-gray-500">
-        <p>💡 Tip: Tap and hold to drag on touch devices</p>
-      </div>
     </div>
   )
 }
