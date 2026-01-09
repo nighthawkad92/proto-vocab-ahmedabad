@@ -2,11 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import PassageDisplay from '../shared/PassageDisplay'
 import { Question, FeedbackState } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
-import { generateSpeech } from '@/lib/googleTTS'
-import { playAudio } from '@/lib/audioCache'
 import { Button } from '@/components/ui/Button'
 
 interface ReadingComprehensionProps {
@@ -56,7 +53,6 @@ export default function ReadingComprehension({
 
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [hasSubmitted, setHasSubmitted] = useState(false)
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
 
   // Reset selection when question changes
   useEffect(() => {
@@ -81,83 +77,25 @@ export default function ReadingComprehension({
     onAnswer(selectedAnswer)
   }
 
-  // Handle read passage again
-  const handleReadAgain = async () => {
-    if (isPlayingAudio) return
-
-    setIsPlayingAudio(true)
-    try {
-      const audioUrl = await generateSpeech({ text: question.passage! })
-      await playAudio(audioUrl)
-    } catch (error) {
-      console.error('Failed to play passage audio:', error)
-    } finally {
-      setIsPlayingAudio(false)
-    }
-  }
-
-  // Get question type badge
-  const getQuestionTypeBadge = () => {
-    if (!question.questionType) return null
-
-    const badges: Record<string, { color: string; label: string }> = {
-      who: { color: 'bg-blue-500', label: 'Who?' },
-      what: { color: 'bg-green-500', label: 'What?' },
-      where: { color: 'bg-purple-500', label: 'Where?' },
-      when: { color: 'bg-orange-500', label: 'When?' },
-      why: { color: 'bg-red-500', label: 'Why?' },
-      how: { color: 'bg-yellow-500', label: 'How?' },
-    }
-
-    const badge = badges[question.questionType]
-    if (!badge) return null
-
-    return (
-      <span className={`${badge.color} text-white px-3 py-1 rounded-full text-xs font-medium`}>
-        {badge.label}
-      </span>
-    )
-  }
-
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
+      {/* Question Text */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="text-center"
+      >
+        <p className="text-lg font-medium text-gray-800">
+          {question.prompt}
+        </p>
+      </motion.div>
+
       {/* Story Passage */}
-      <PassageDisplay
-        passage={question.passage}
-        onReadAgain={handleReadAgain}
-        disabled={isPlayingAudio}
-      />
-
-      {/* Divider */}
-      <div className="border-t-2 border-gray-200"></div>
-
-      {/* Question Section */}
-      <div className="space-y-4">
-        {/* Question Type Badge */}
-        {question.questionType && (
-          <div className="flex justify-center">
-            {getQuestionTypeBadge()}
-          </div>
-        )}
-
-        {/* Question Text */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-center"
-        >
-          <p className="text-lg font-medium text-gray-800">
-            {question.prompt}
-          </p>
-        </motion.div>
-
-        {/* Instructions */}
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            Choose the best answer
-          </p>
-        </div>
+      <div className="bg-gray-50 rounded-child p-6 max-h-64 overflow-y-auto shadow-inner">
+        <p className="text-child-lg text-gray-800 leading-relaxed whitespace-pre-wrap">
+          {question.passage}
+        </p>
       </div>
 
       {/* Answer Options */}
