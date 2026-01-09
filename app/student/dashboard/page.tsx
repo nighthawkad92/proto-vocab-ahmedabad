@@ -88,22 +88,24 @@ export default function StudentDashboard() {
         onLogout={handleLogout}
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        {lessons.length === 0 ? (
-          <div className="bg-white rounded-child shadow-child">
-            <EmptyState
-              icon="📖"
-              title="No Lessons Yet"
-              description="Your teacher will assign lessons soon. Check back later."
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] px-6">
+        <div className="w-[80%]">
+          {lessons.length === 0 ? (
+            <div className="bg-white rounded-child shadow-child">
+              <EmptyState
+                icon="📖"
+                title="No Lessons Yet"
+                description="Your teacher will assign lessons soon. Check back later."
+              />
+            </div>
+          ) : (
+            <LessonCarousel
+              lessons={lessons}
+              unlocks={unlocks}
+              onStartLesson={handleStartLesson}
             />
-          </div>
-        ) : (
-          <LessonCarousel
-            lessons={lessons}
-            unlocks={unlocks}
-            onStartLesson={handleStartLesson}
-          />
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
