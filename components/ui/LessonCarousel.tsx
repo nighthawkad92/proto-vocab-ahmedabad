@@ -244,35 +244,6 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
         </div>
       )}
 
-      {/* Navigation Buttons Below Carousel */}
-      {lessons.length > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-8" data-testid="carousel-navigation">
-          <button
-            onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
-            disabled={currentIndex === 0}
-            className="w-16 h-16 rounded-full bg-tertiary-50 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-tertiary-100 transition-colors active:scale-95"
-            aria-label="Previous lesson"
-          >
-            <img
-              src="/icons/Children Mobile App (Community) - Design System (Community)/angle-left.svg"
-              alt="Previous"
-              className="w-6 h-6"
-            />
-          </button>
-          <button
-            onClick={() => setCurrentIndex(Math.min(lessons.length - 1, currentIndex + 1))}
-            disabled={currentIndex >= lessons.length - Math.ceil(itemsToShow)}
-            className="w-16 h-16 rounded-full bg-tertiary-50 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-tertiary-100 transition-colors active:scale-95"
-            aria-label="Next lesson"
-          >
-            <img
-              src="/icons/Children Mobile App (Community) - Design System (Community)/angle-right.svg"
-              alt="Next"
-              className="w-6 h-6"
-            />
-          </button>
-        </div>
-      )}
     </div>
   )
 }
