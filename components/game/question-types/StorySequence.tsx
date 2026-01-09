@@ -20,11 +20,8 @@ import {
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers'
 import { motion } from 'framer-motion'
 import DraggableCard from '../shared/DraggableCard'
-import PassageDisplay from '../shared/PassageDisplay'
 import { Question, FeedbackState } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
-import { generateSpeech } from '@/lib/googleTTS'
-import { playAudio } from '@/lib/audioCache'
 import { Button } from '@/components/ui/Button'
 
 interface StorySequenceProps {
@@ -77,7 +74,6 @@ export default function StorySequence({
     []
   )
   const [hasSubmitted, setHasSubmitted] = useState(false)
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
   const [activeId, setActiveId] = useState<string | null>(null)
 
   // Position labels
@@ -153,21 +149,6 @@ export default function StorySequence({
     onAnswer(answer)
   }
 
-  // Handle read passage again
-  const handleReadAgain = async () => {
-    if (isPlayingAudio) return
-
-    setIsPlayingAudio(true)
-    try {
-      const audioUrl = await generateSpeech({ text: question.passage! })
-      await playAudio(audioUrl)
-    } catch (error) {
-      console.error('Failed to play passage audio:', error)
-    } finally {
-      setIsPlayingAudio(false)
-    }
-  }
-
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
       {/* Question Prompt */}
@@ -181,11 +162,11 @@ export default function StorySequence({
 
       {/* Story Passage */}
       {question.passage && (
-        <PassageDisplay
-          passage={question.passage}
-          onReadAgain={handleReadAgain}
-          disabled={isPlayingAudio}
-        />
+        <div className="bg-gray-50 rounded-child p-6 max-h-64 overflow-y-auto shadow-inner mb-6">
+          <p className="text-child-lg text-gray-800 leading-relaxed whitespace-pre-wrap">
+            {question.passage}
+          </p>
+        </div>
       )}
 
       {/* Drag and Drop Area with Position Labels */}
@@ -221,7 +202,7 @@ export default function StorySequence({
                   animate={{ scale: 1 }}
                   transition={{ delay: index * 0.06 + 0.1 }}
                 >
-                  <span className="inline-block bg-gradient-to-r from-accent-500 to-accent-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
+                  <span className="inline-block bg-gradient-to-r from-secondary-500 to-secondary-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
                     {positionLabels[index] || `Step ${index + 1}`}
                   </span>
                 </motion.div>

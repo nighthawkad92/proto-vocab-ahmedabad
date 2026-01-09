@@ -110,7 +110,7 @@ export default function DraggableCard({
         className={`
           relative z-10 flex-1 px-5 py-4
           ${!showHandle && !disabled ? 'cursor-grab active:cursor-grabbing' : ''}
-          text-center font-medium text-gray-800
+          text-left font-medium text-gray-800
         `}
       >
         {children}
