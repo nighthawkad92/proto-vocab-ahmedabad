@@ -43,11 +43,25 @@ export default function LevelCompleteModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
         className="bg-white rounded-child shadow-2xl p-8 max-w-md w-full text-center space-y-6"
       >
+        {/* Rocket Image */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+          className="flex justify-center"
+        >
+          <img
+            src="/assets/visuals/image-rocket.png"
+            alt="Rocket celebrating completion"
+            className="w-32 h-32 object-contain"
+          />
+        </motion.div>
+
         <div className="space-y-2">
           <h2 className="text-child-lg font-body font-medium text-gray-800">
             {stoppedEarly ? 'You finished this level.' : 'You finished this level.'}
