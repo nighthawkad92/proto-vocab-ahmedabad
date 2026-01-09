@@ -88,8 +88,8 @@ export default function StudentDashboard() {
         onLogout={handleLogout}
       />
 
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] px-6">
-        <div className="w-[80%]">
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="w-[calc(100vw-48px)]">
           {lessons.length === 0 ? (
             <div className="bg-white rounded-child shadow-child">
               <EmptyState
