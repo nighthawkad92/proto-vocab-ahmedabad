@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import WordBank from '../shared/WordBank'
-import { Question } from '@/lib/types'
+import { Question, FeedbackState } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 import { Button } from '@/components/ui/Button'
 
@@ -11,6 +11,7 @@ interface AddWordActivityProps {
   question: Question
   onAnswer: (answer: string) => void
   disabled?: boolean
+  feedbackState?: FeedbackState
 }
 
 /**
@@ -48,6 +49,7 @@ export default function AddWordActivity({
   question,
   onAnswer,
   disabled = false,
+  feedbackState,
 }: AddWordActivityProps) {
   // Validate question has required fields
   if (!question.baseSentence || question.insertPosition === undefined) {
@@ -228,13 +230,38 @@ export default function AddWordActivity({
       )}
 
       {/* Word Bank */}
-      <WordBank
-        words={question.options}
-        onSelect={handleSelectWord}
-        selectedWords={selectedWord ? [selectedWord] : []}
-        disabled={disabled || hasSubmitted}
-        multiSelect={false}
-      />
+      <motion.div
+        animate={
+          feedbackState?.type === 'incorrect'
+            ? { x: [-10, 10, -10, 10, 0] }
+            : {}
+        }
+        transition={{ duration: 0.5 }}
+      >
+        <WordBank
+          words={question.options}
+          onSelect={handleSelectWord}
+          selectedWords={selectedWord ? [selectedWord] : []}
+          disabled={disabled || hasSubmitted}
+          multiSelect={false}
+        />
+      </motion.div>
+
+      {/* Correct Answer Highlight */}
+      {feedbackState?.type === 'incorrect' && feedbackState.correctAnswer && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-green-100 border-2 border-green-500 rounded-child p-4"
+        >
+          <p className="text-center text-sm font-semibold text-green-700 mb-2">
+            Correct Answer:
+          </p>
+          <p className="text-center text-2xl font-medium text-green-800">
+            {feedbackState.correctAnswer}
+          </p>
+        </motion.div>
+      )}
 
       {/* Submit Button */}
       <Button

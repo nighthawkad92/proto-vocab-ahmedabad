@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import PassageDisplay from '../shared/PassageDisplay'
-import { Question } from '@/lib/types'
+import { Question, FeedbackState } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 import { generateSpeech } from '@/lib/googleTTS'
 import { playAudio } from '@/lib/audioCache'
@@ -13,6 +13,7 @@ interface ReadingComprehensionProps {
   question: Question
   onAnswer: (answer: string) => void
   disabled?: boolean
+  feedbackState?: FeedbackState
 }
 
 /**
@@ -41,6 +42,7 @@ export default function ReadingComprehension({
   question,
   onAnswer,
   disabled = false,
+  feedbackState,
 }: ReadingComprehensionProps) {
   // Validate question has required fields
   if (!question.passage) {
@@ -159,7 +161,15 @@ export default function ReadingComprehension({
       </div>
 
       {/* Answer Options */}
-      <div className="grid grid-cols-1 gap-3">
+      <motion.div
+        className="grid grid-cols-1 gap-3"
+        animate={
+          feedbackState?.type === 'incorrect'
+            ? { x: [-10, 10, -10, 10, 0] }
+            : {}
+        }
+        transition={{ duration: 0.5 }}
+      >
         {question.options.map((option, index) => {
           const isSelected = selectedAnswer === option
 
@@ -188,7 +198,23 @@ export default function ReadingComprehension({
             </motion.button>
           )
         })}
-      </div>
+      </motion.div>
+
+      {/* Correct Answer Highlight */}
+      {feedbackState?.type === 'incorrect' && feedbackState.correctAnswer && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-green-100 border-2 border-green-500 rounded-child p-4"
+        >
+          <p className="text-center text-sm font-semibold text-green-700 mb-2">
+            Correct Answer:
+          </p>
+          <p className="text-center text-2xl font-medium text-green-800">
+            {feedbackState.correctAnswer}
+          </p>
+        </motion.div>
+      )}
 
       {/* Submit Button */}
       <Button

@@ -10,14 +10,12 @@ import { playTextToSpeech, generateSpeech } from '@/lib/googleTTS'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 import { audioQueue } from '@/lib/audioQueue'
 import QuestionCard from '@/components/game/QuestionCard'
-import FeedbackModal from '@/components/game/FeedbackModal'
 import ProgressBar from '@/components/game/ProgressBar'
 import LevelCompleteModal from '@/components/game/LevelCompleteModal'
 import IntroductionCard from '@/components/game/IntroductionCard'
 import ConnectionStatus from '@/components/layout/ConnectionStatus'
 import { Header } from '@/components/navigation/Header'
 import { Loader } from '@/components/ui/Loader'
-import { Button } from '@/components/ui/Button'
 import { getLessonCache } from '@/lib/lessonCache'
 import type { LessonContent, Question, LevelIntroduction, FeedbackState } from '@/lib/types'
 
@@ -40,8 +38,6 @@ export default function LessonPage() {
     accuracy: 0,
   })
   const [feedbackState, setFeedbackState] = useState<FeedbackState>({ type: null })
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [feedbackIsCorrect, setFeedbackIsCorrect] = useState(false)
   const [showLevelComplete, setShowLevelComplete] = useState(false)
   const [levelStoppedEarly, setLevelStoppedEarly] = useState(false)
   const [waitingForNext, setWaitingForNext] = useState(false)
@@ -459,15 +455,9 @@ export default function LessonPage() {
           question={currentQuestion}
           onAnswer={handleAnswer}
           disabled={waitingForNext || isPlayingAudio}
+          feedbackState={feedbackState}
         />
       </div>
-
-      {/* Feedback Modal */}
-      <FeedbackModal
-        isCorrect={feedbackIsCorrect}
-        show={showFeedback}
-        onClose={() => setShowFeedback(false)}
-      />
 
       {/* Level Complete Modal */}
       <LevelCompleteModal

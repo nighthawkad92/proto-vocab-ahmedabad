@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import type { Question } from '@/lib/types'
+import type { Question, FeedbackState } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 
 // Import question type components
@@ -15,6 +15,7 @@ interface QuestionCardProps {
   question: Question
   onAnswer: (answer: string) => void
   disabled?: boolean
+  feedbackState?: FeedbackState
 }
 
 /**
@@ -33,24 +34,25 @@ export default function QuestionCard({
   question,
   onAnswer,
   disabled = false,
+  feedbackState,
 }: QuestionCardProps) {
 
   // Route to specialized components for new question types
   switch (question.type) {
     case 'sentence-rearrange':
-      return <SentenceRearrange question={question} onAnswer={onAnswer} disabled={disabled} />
+      return <SentenceRearrange question={question} onAnswer={onAnswer} disabled={disabled} feedbackState={feedbackState} />
 
     case 'story-sequence':
-      return <StorySequence question={question} onAnswer={onAnswer} disabled={disabled} />
+      return <StorySequence question={question} onAnswer={onAnswer} disabled={disabled} feedbackState={feedbackState} />
 
     case 'sentence-gap-fill':
-      return <SentenceGapFill question={question} onAnswer={onAnswer} disabled={disabled} />
+      return <SentenceGapFill question={question} onAnswer={onAnswer} disabled={disabled} feedbackState={feedbackState} />
 
     case 'reading-comprehension':
-      return <ReadingComprehension question={question} onAnswer={onAnswer} disabled={disabled} />
+      return <ReadingComprehension question={question} onAnswer={onAnswer} disabled={disabled} feedbackState={feedbackState} />
 
     case 'add-word':
-      return <AddWordActivity question={question} onAnswer={onAnswer} disabled={disabled} />
+      return <AddWordActivity question={question} onAnswer={onAnswer} disabled={disabled} feedbackState={feedbackState} />
 
     // Default MCQ-style UI for existing question types
     case 'multiple-choice':

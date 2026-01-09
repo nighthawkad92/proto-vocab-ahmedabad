@@ -21,7 +21,7 @@ import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifi
 import { motion } from 'framer-motion'
 import DraggableCard from '../shared/DraggableCard'
 import PassageDisplay from '../shared/PassageDisplay'
-import { Question } from '@/lib/types'
+import { Question, FeedbackState } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 import { generateSpeech } from '@/lib/googleTTS'
 import { playAudio } from '@/lib/audioCache'
@@ -31,6 +31,7 @@ interface StorySequenceProps {
   question: Question
   onAnswer: (answer: string) => void
   disabled?: boolean
+  feedbackState?: FeedbackState
 }
 
 /**
@@ -59,6 +60,7 @@ export default function StorySequence({
   question,
   onAnswer,
   disabled = false,
+  feedbackState,
 }: StorySequenceProps) {
   // Validate question has required fields
   if (!question.scrambledItems || !question.correctOrder || !question.passage) {
@@ -195,7 +197,15 @@ export default function StorySequence({
         modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-5">
+          <motion.div
+            className="space-y-5"
+            animate={
+              feedbackState?.type === 'incorrect'
+                ? { x: [-10, 10, -10, 10, 0] }
+                : {}
+            }
+            transition={{ duration: 0.5 }}
+          >
             {items.map((item, index) => (
               <motion.div
                 key={item.id}
@@ -229,7 +239,7 @@ export default function StorySequence({
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </SortableContext>
         <DragOverlay dropAnimation={{
           duration: 200,
@@ -242,6 +252,22 @@ export default function StorySequence({
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      {/* Correct Answer Highlight */}
+      {feedbackState?.type === 'incorrect' && feedbackState.correctAnswer && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-green-100 border-2 border-green-500 rounded-child p-4"
+        >
+          <p className="text-center text-sm font-semibold text-green-700 mb-2">
+            Correct Answer:
+          </p>
+          <p className="text-center text-xl font-medium text-green-800">
+            {feedbackState.correctAnswer}
+          </p>
+        </motion.div>
+      )}
 
       {/* Submit Button */}
       <Button
