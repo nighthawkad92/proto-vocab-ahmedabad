@@ -83,6 +83,16 @@ export default function LessonPage() {
         }
 
         content = data.lesson.content
+
+        // Handle legacy "blocks" vs new "levels" structure
+        if (!content.levels && (content as any).blocks) {
+          console.log('Migrating legacy blocks structure to levels')
+          content = {
+            ...content,
+            levels: (content as any).blocks
+          }
+        }
+
         attemptNumber = data.attemptNumber || 1
 
         // Cache for offline use
@@ -95,6 +105,11 @@ export default function LessonPage() {
 
       if (!content) {
         throw new Error('Lesson content is null after loading')
+      }
+
+      if (!content.levels || !Array.isArray(content.levels) || content.levels.length === 0) {
+        console.error('Invalid content structure:', content)
+        throw new Error('Lesson content is missing levels array')
       }
 
       setLessonContent(content)
