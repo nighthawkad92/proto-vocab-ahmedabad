@@ -399,6 +399,7 @@ export default function StudentDetailPage() {
                       attempt.questions_attempted
                     )
                     const isCompleted = !!attempt.completed_at
+                    const isAbandoned = !!(attempt as any).is_abandoned
                     const difficulty = getDifficultyLevel(
                       attempt.levels_completed,
                       attempt.levels_stopped_at
@@ -440,6 +441,10 @@ export default function StudentDetailPage() {
                             {isCompleted ? (
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-child-xs font-bold bg-green-100 text-green-700">
                                 ✓ Completed
+                              </span>
+                            ) : isAbandoned ? (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-child-xs font-bold bg-red-100 text-red-700">
+                                ⚠ Abandoned
                               </span>
                             ) : (
                               <span className="inline-flex items-center px-3 py-1 rounded-full text-child-xs font-bold bg-yellow-100 text-yellow-700">

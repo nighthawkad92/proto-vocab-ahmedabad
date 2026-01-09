@@ -22,27 +22,38 @@ export async function POST(request: NextRequest) {
 
       if (error) throw error
     } else if (queueItem.type === 'attempt') {
-      // Update attempt completion
+      // Update attempt completion or abandonment
       const {
         attemptId,
         completedAt,
+        isAbandoned,
+        abandonedAt,
         questionsAttempted,
         questionsCorrect,
         levelsCompleted,
         levels_stopped_at,
       } = queueItem.data
 
+      const updateData: any = {
+        questions_attempted: questionsAttempted,
+        questions_correct: questionsCorrect,
+        levels_completed: levelsCompleted,
+        levels_stopped_at: levels_stopped_at,
+      }
+
+      // Add completion or abandonment status
+      if (isAbandoned) {
+        updateData.is_abandoned = true
+        updateData.abandoned_at = abandonedAt
+      } else if (completedAt) {
+        updateData.completed_at = completedAt
+      }
+
       // @ts-ignore - Supabase types are strict when env vars aren't set
       const { error } = await supabase
         .from('attempts')
         // @ts-ignore
-        .update({
-          completed_at: completedAt,
-          questions_attempted: questionsAttempted,
-          questions_correct: questionsCorrect,
-          levels_completed: levelsCompleted,
-          levels_stopped_at: levels_stopped_at,
-        })
+        .update(updateData)
         .eq('id', attemptId)
 
       if (error) throw error

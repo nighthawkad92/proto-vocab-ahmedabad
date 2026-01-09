@@ -54,6 +54,33 @@ export default function LessonPage() {
     loadLesson(session)
   }, [lessonId, router])
 
+  // Handle page unload/close to mark lesson as abandoned
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (engine) {
+        const attemptState = engine.getAttemptState()
+        // Only mark as abandoned if lesson is not complete
+        if (attemptState && !attemptState.levelsCompleted) {
+          const queue = OfflineQueue.getInstance()
+          queue.add({
+            type: 'attempt',
+            data: {
+              attemptId: attemptState.attemptId,
+              isAbandoned: true,
+              abandonedAt: new Date().toISOString(),
+              ...attemptState,
+            },
+          })
+        }
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [engine])
+
   const loadLesson = async (session: any) => {
     try {
       // Try to load from cache first
@@ -275,6 +302,38 @@ export default function LessonPage() {
     }
   }
 
+  const handleAbandonLesson = useCallback(async () => {
+    if (!engine) return
+
+    const attemptState = engine.getAttemptState()
+
+    // Mark attempt as abandoned
+    const queue = OfflineQueue.getInstance()
+    queue.add({
+      type: 'attempt',
+      data: {
+        attemptId: attemptState.attemptId,
+        isAbandoned: true,
+        abandonedAt: new Date().toISOString(),
+        ...attemptState,
+      },
+    })
+
+    // Sync if online
+    if (navigator.onLine) {
+      await queue.sync(async (item) => {
+        await fetch('/api/student/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item),
+        })
+      })
+    }
+
+    // Clear attempt state
+    AttemptStateManager.remove(attemptState.attemptId)
+  }, [engine])
+
   const handleFinishLesson = async () => {
     if (!engine) return
 
@@ -369,8 +428,9 @@ export default function LessonPage() {
         {/* Back button */}
         <div className="flex justify-center">
           <Button
-            onClick={() => {
+            onClick={async () => {
               if (confirm('Exit now? Progress is saved.')) {
+                await handleAbandonLesson()
                 router.push('/student/dashboard')
               }
             }}

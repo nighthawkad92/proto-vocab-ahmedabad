@@ -77,6 +77,8 @@ export interface AttemptState {
   questionsCorrect: number
   levelsCompleted: number
   responses: ResponseRecord[]
+  isAbandoned?: boolean
+  abandonedAt?: string
 }
 
 export interface ResponseRecord {
