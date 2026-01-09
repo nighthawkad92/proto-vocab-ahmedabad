@@ -20,9 +20,11 @@ interface LessonCarouselProps {
 
 export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const scrollbarRef = useRef<HTMLDivElement>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [itemsToShow, setItemsToShow] = useState(2.5)
   const [containerWidth, setContainerWidth] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
 
   // Update layout on window resize and initial mount
   useEffect(() => {
@@ -146,25 +148,97 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
       {lessons.length > 1 && (
         <div className="mt-8 px-4 py-4">
           <div
-            className="h-3 bg-secondary-100 rounded-full relative overflow-visible cursor-pointer"
+            ref={scrollbarRef}
+            className="h-3 bg-secondary-100 rounded-full relative cursor-pointer"
             onClick={(e) => {
+              if (isDragging) return
               const rect = e.currentTarget.getBoundingClientRect()
               const clickX = e.clientX - rect.left
               const maxIndex = lessons.length - Math.ceil(itemsToShow)
-              const newIndex = Math.round((clickX / rect.width) * maxIndex)
+
+              // Calculate thumb width
+              const thumbWidthPercent = Math.max((itemsToShow / lessons.length) * 100, 15)
+              const thumbWidth = (rect.width * thumbWidthPercent) / 100
+
+              // Available space for thumb to move
+              const availableSpace = rect.width - thumbWidth
+
+              // Calculate new index based on click position
+              const clickRatio = clickX / rect.width
+              const newIndex = Math.round(clickRatio * maxIndex)
               setCurrentIndex(Math.max(0, Math.min(maxIndex, newIndex)))
+            }}
+            onMouseDown={(e) => {
+              if (!scrollbarRef.current) return
+              setIsDragging(true)
+
+              const rect = scrollbarRef.current.getBoundingClientRect()
+              const maxIndex = lessons.length - Math.ceil(itemsToShow)
+
+              const handleMouseMove = (moveEvent: MouseEvent) => {
+                const x = moveEvent.clientX - rect.left
+                const thumbWidthPercent = Math.max((itemsToShow / lessons.length) * 100, 15)
+                const thumbWidth = (rect.width * thumbWidthPercent) / 100
+                const availableSpace = rect.width - thumbWidth
+
+                // Calculate position ratio
+                const ratio = Math.max(0, Math.min(1, (x - thumbWidth / 2) / availableSpace))
+                const newIndex = Math.round(ratio * maxIndex)
+                setCurrentIndex(Math.max(0, Math.min(maxIndex, newIndex)))
+              }
+
+              const handleMouseUp = () => {
+                setIsDragging(false)
+                document.removeEventListener('mousemove', handleMouseMove)
+                document.removeEventListener('mouseup', handleMouseUp)
+              }
+
+              document.addEventListener('mousemove', handleMouseMove)
+              document.addEventListener('mouseup', handleMouseUp)
+            }}
+            onTouchStart={(e) => {
+              if (!scrollbarRef.current) return
+              setIsDragging(true)
+
+              const rect = scrollbarRef.current.getBoundingClientRect()
+              const maxIndex = lessons.length - Math.ceil(itemsToShow)
+
+              const handleTouchMove = (moveEvent: TouchEvent) => {
+                const touch = moveEvent.touches[0]
+                const x = touch.clientX - rect.left
+                const thumbWidthPercent = Math.max((itemsToShow / lessons.length) * 100, 15)
+                const thumbWidth = (rect.width * thumbWidthPercent) / 100
+                const availableSpace = rect.width - thumbWidth
+
+                const ratio = Math.max(0, Math.min(1, (x - thumbWidth / 2) / availableSpace))
+                const newIndex = Math.round(ratio * maxIndex)
+                setCurrentIndex(Math.max(0, Math.min(maxIndex, newIndex)))
+              }
+
+              const handleTouchEnd = () => {
+                setIsDragging(false)
+                document.removeEventListener('touchmove', handleTouchMove)
+                document.removeEventListener('touchend', handleTouchEnd)
+              }
+
+              document.addEventListener('touchmove', handleTouchMove)
+              document.addEventListener('touchend', handleTouchEnd)
             }}
           >
             {/* Scrollbar thumb - larger hit area for touch */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 h-8 bg-secondary-500 rounded-full transition-all duration-300 cursor-grab active:cursor-grabbing shadow-md hover:shadow-lg"
+              className={`absolute top-1/2 -translate-y-1/2 h-8 bg-secondary-500 rounded-full shadow-md hover:shadow-lg ${
+                isDragging ? 'cursor-grabbing' : 'cursor-grab'
+              }`}
               style={{
-                width: `max(${(itemsToShow / lessons.length) * 100}%, 48px)`,
-                left: `${(currentIndex / Math.max(1, lessons.length - itemsToShow)) * 100}%`,
-                transform: 'translateY(-50%)',
+                width: `max(${(itemsToShow / lessons.length) * 100}%, 15%)`,
+                left: `${Math.min(
+                  (currentIndex / Math.max(1, lessons.length - itemsToShow)) *
+                  (100 - Math.max((itemsToShow / lessons.length) * 100, 15)),
+                  100 - Math.max((itemsToShow / lessons.length) * 100, 15)
+                )}%`,
+                transition: isDragging ? 'none' : 'left 0.3s ease',
               }}
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
             />
           </div>
         </div>
