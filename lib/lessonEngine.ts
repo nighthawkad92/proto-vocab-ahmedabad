@@ -76,7 +76,11 @@ export class LessonEngine {
 
   private randomizeAnswerOptions(question: Question): Question {
     // For multiple choice questions, randomize the answer options
-    if (question.type === 'multiple-choice' || question.type === 'listen-and-select') {
+    if (
+      question.type === 'multiple-choice' ||
+      question.type === 'listen-and-select' ||
+      question.type === 'sentence-completion'
+    ) {
       const shuffledOptions = this.shuffleArray(question.options)
       return {
         ...question,

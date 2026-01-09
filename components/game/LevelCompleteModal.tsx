@@ -40,7 +40,7 @@ export default function LevelCompleteModal({
       ? nextLevelName
         ? `Ready to try level ${nextLevel}: ${nextLevelName}`
         : `Ready to try level ${nextLevel}`
-      : 'Ready for the next level?'
+      : "You've completed the lesson!"
 
   useEffect(() => {
     if (show) {
