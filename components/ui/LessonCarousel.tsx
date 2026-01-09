@@ -154,7 +154,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
               if (isDragging) return
               const rect = e.currentTarget.getBoundingClientRect()
               const clickX = e.clientX - rect.left
-              const maxIndex = lessons.length - Math.ceil(itemsToShow)
+              const maxIndex = lessons.length - 1
 
               // Calculate thumb width
               const thumbWidthPercent = Math.max((itemsToShow / lessons.length) * 100, 15)
@@ -173,7 +173,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
               setIsDragging(true)
 
               const rect = scrollbarRef.current.getBoundingClientRect()
-              const maxIndex = lessons.length - Math.ceil(itemsToShow)
+              const maxIndex = lessons.length - 1
 
               const handleMouseMove = (moveEvent: MouseEvent) => {
                 const x = moveEvent.clientX - rect.left
@@ -201,7 +201,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
               setIsDragging(true)
 
               const rect = scrollbarRef.current.getBoundingClientRect()
-              const maxIndex = lessons.length - Math.ceil(itemsToShow)
+              const maxIndex = lessons.length - 1
 
               const handleTouchMove = (moveEvent: TouchEvent) => {
                 const touch = moveEvent.touches[0]
@@ -233,7 +233,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
               style={{
                 width: `max(${(itemsToShow / lessons.length) * 100}%, 15%)`,
                 left: `${Math.min(
-                  (currentIndex / Math.max(1, lessons.length - itemsToShow)) *
+                  (currentIndex / Math.max(1, lessons.length - 1)) *
                   (100 - Math.max((itemsToShow / lessons.length) * 100, 15)),
                   100 - Math.max((itemsToShow / lessons.length) * 100, 15)
                 )}%`,
