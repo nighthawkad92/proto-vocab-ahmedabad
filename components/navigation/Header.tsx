@@ -13,6 +13,7 @@ export type HeaderVariant = 'simple' | 'back' | 'backWithTitle' | 'full'
 export interface HeaderProps {
   variant?: HeaderVariant
   title?: string
+  greeting?: string
   onBack?: () => void
   onMenu?: () => void
   onLogout?: () => void
@@ -25,6 +26,7 @@ export interface HeaderProps {
 export function Header({
   variant = 'simple',
   title,
+  greeting,
   onBack,
   onMenu,
   onLogout,
@@ -53,6 +55,9 @@ export function Header({
             )}
           {(variant === 'backWithTitle' || variant === 'full') && title && (
             <h1 className="text-child-xl font-semibold">{title}</h1>
+          )}
+          {greeting && (
+            <h1 className="text-child-lg font-semibold text-gray-800">{greeting}</h1>
           )}
         </div>
 

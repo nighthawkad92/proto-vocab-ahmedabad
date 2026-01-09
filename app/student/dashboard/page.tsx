@@ -83,43 +83,27 @@ export default function StudentDashboard() {
 
       <Header
         variant="simple"
+        greeting={`Hello, ${session?.studentName}`}
         showLogoutButton={true}
         onLogout={handleLogout}
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
-        {/* Greeting Card */}
-        <div className="bg-white rounded-child shadow-child p-6">
-          <h1 className="text-child-xl font-semibold text-gray-800">
-            Hello, {session?.studentName}
-          </h1>
-          <p className="text-child-base text-gray-600">
-            Class: {session?.classCode}
-          </p>
-        </div>
-
-        {/* Lessons */}
-        <div>
-          <h2 className="text-child-lg font-display font-semibold text-gray-800 mb-4">
-            Your Lessons
-          </h2>
-
-          {lessons.length === 0 ? (
-            <div className="bg-white rounded-child shadow-child">
-              <EmptyState
-                icon="📖"
-                title="No Lessons Yet"
-                description="Your teacher will assign lessons soon. Check back later."
-              />
-            </div>
-          ) : (
-            <LessonCarousel
-              lessons={lessons}
-              unlocks={unlocks}
-              onStartLesson={handleStartLesson}
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        {lessons.length === 0 ? (
+          <div className="bg-white rounded-child shadow-child">
+            <EmptyState
+              icon="📖"
+              title="No Lessons Yet"
+              description="Your teacher will assign lessons soon. Check back later."
             />
-          )}
-        </div>
+          </div>
+        ) : (
+          <LessonCarousel
+            lessons={lessons}
+            unlocks={unlocks}
+            onStartLesson={handleStartLesson}
+          />
+        )}
       </div>
     </div>
   )
