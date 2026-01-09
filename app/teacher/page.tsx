@@ -89,8 +89,8 @@ export default function TeacherLoginPage() {
         </form>
 
         <div className="text-center">
-          <a href="/" className="text-child-sm text-gray-500 hover:text-gray-700 underline">
-            Back to Home
+          <a href="/student" className="text-child-sm text-gray-500 hover:text-gray-700 underline">
+            Student Login
           </a>
         </div>
       </div>

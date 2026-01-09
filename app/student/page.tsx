@@ -132,9 +132,9 @@ export default function StudentLoginPage() {
         <div className="text-center">
           <Button
             variant="text"
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/teacher')}
           >
-            Back to Home
+            Teacher Login
           </Button>
         </div>
       </div>

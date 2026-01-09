@@ -2,7 +2,7 @@
   "name": "PAL Vocabulary Tool",
   "short_name": "PAL Vocab",
   "description": "Supplemental learning tool for Class 3 students in Ahmedabad",
-  "start_url": "/",
+  "start_url": "/student",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ef4444",
