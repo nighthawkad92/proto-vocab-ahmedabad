@@ -30,22 +30,22 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseClasses =
-      'rounded-child transition-all duration-200 active:scale-95 font-medium flex items-center justify-center gap-2'
+      'rounded-[40px] transition-all duration-200 active:scale-95 font-semibold flex items-center justify-center gap-2'
 
     const variantClasses = {
       primary:
-        'bg-primary-500 hover:bg-primary-600 text-white shadow-child disabled:bg-gray-300 disabled:cursor-not-allowed',
+        'bg-primary-500 hover:bg-primary-600 text-white shadow-child disabled:bg-neutral-300 disabled:text-neutral-500 disabled:cursor-not-allowed disabled:shadow-none',
       secondary:
-        'border-2 border-secondary-500 text-secondary-500 hover:bg-secondary-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed',
+        'bg-primary-500 hover:bg-primary-600 text-white shadow-child disabled:bg-neutral-300 disabled:text-neutral-500 disabled:cursor-not-allowed disabled:shadow-none',
       optional:
-        'border-2 border-gray-400 text-gray-700 hover:bg-gray-50 disabled:border-gray-200 disabled:text-gray-300 disabled:cursor-not-allowed',
-      text: 'text-secondary-500 hover:underline disabled:text-gray-300 disabled:cursor-not-allowed',
+        'border-2 border-primary-500 text-primary-500 hover:bg-primary-50 bg-white disabled:border-neutral-300 disabled:text-neutral-400 disabled:cursor-not-allowed disabled:bg-white',
+      text: 'text-primary-500 hover:text-primary-600 hover:underline disabled:text-neutral-400 disabled:cursor-not-allowed bg-transparent',
     }
 
     const sizeClasses = {
-      sm: 'px-4 py-2 text-child-sm min-h-[2.5rem]',
-      md: 'px-6 py-3 text-child-base min-h-[3rem]',
-      lg: 'px-8 py-6 text-child-lg min-h-[3.5rem]',
+      sm: 'h-8 px-4 text-[14px] leading-[20px]',
+      md: 'h-10 px-6 text-[16px] leading-[24px]',
+      lg: 'h-12 px-6 text-[16px] leading-[24px]',
     }
 
     const iconOnlyClass =

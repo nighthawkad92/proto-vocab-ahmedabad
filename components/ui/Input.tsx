@@ -2,6 +2,7 @@ import { InputHTMLAttributes, forwardRef, useState } from 'react'
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/outline'
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -11,6 +12,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   success?: boolean
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
+  prefix?: string
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -22,6 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       success,
       leftIcon,
       rightIcon,
+      prefix,
       className = '',
       disabled,
       ...props
@@ -30,26 +33,35 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const [isFocused, setIsFocused] = useState(false)
 
+    // Updated border colors based on Figma design system
     const borderColor = error
-      ? 'border-primary-500'
+      ? 'border-error-500'
       : success
-      ? 'border-secondary-500'
+      ? 'border-primary-500'
       : isFocused
-      ? 'border-secondary-500'
-      : 'border-gray-300'
+      ? 'border-primary-500'
+      : 'border-neutral-300'
+
+    const textColor = disabled ? 'text-neutral-400' : 'text-neutral-900'
 
     return (
       <div className="w-full">
         {label && (
-          <label className="block mb-2 font-semibold text-child-base text-gray-900">
+          <label className="block mb-2 font-semibold text-child-base text-neutral-900">
             {label}
           </label>
         )}
 
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">
               {leftIcon}
+            </div>
+          )}
+
+          {prefix && (
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-neutral-900">
+              {prefix}
             </div>
           )}
 
@@ -57,11 +69,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             className={`
               w-full px-4 py-3 border-2 rounded-child
-              focus:outline-none transition-colors
+              font-sans text-child-base
+              focus:outline-none focus:ring-0 transition-colors
+              placeholder:text-neutral-400
               ${borderColor}
-              ${leftIcon ? 'pl-10' : ''}
-              ${rightIcon || error || success ? 'pr-10' : ''}
-              ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
+              ${textColor}
+              ${leftIcon ? 'pl-12' : ''}
+              ${prefix ? 'pl-16' : ''}
+              ${rightIcon || error || success ? 'pr-12' : ''}
+              ${disabled ? 'bg-neutral-100 cursor-not-allowed' : 'bg-white'}
               ${className}
             `}
             disabled={disabled}
@@ -71,13 +87,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           />
 
           {(rightIcon || error || success) && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2">
               {error ? (
-                <ExclamationCircleIcon className="w-6 h-6 text-primary-500" />
+                <XCircleIcon className="w-5 h-5 text-error-500" />
               ) : success ? (
-                <CheckCircleIcon className="w-6 h-6 text-secondary-500" />
+                <CheckCircleIcon className="w-5 h-5 text-primary-500" />
               ) : (
-                <div className="text-gray-400">{rightIcon}</div>
+                <div className="text-neutral-400">{rightIcon}</div>
               )}
             </div>
           )}
@@ -86,7 +102,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {(helperText || error) && (
           <p
             className={`mt-2 text-child-sm ${
-              error ? 'text-primary-500' : 'text-gray-500'
+              error ? 'text-error-500' : 'text-neutral-500'
             }`}
           >
             {error || helperText}
