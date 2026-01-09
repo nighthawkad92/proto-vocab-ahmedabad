@@ -103,8 +103,9 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
             return (
               <div
                 key={lesson.id}
-                className="flex-shrink-0 flex flex-col select-none"
+                className="flex-shrink-0 flex flex-col select-none cursor-pointer"
                 style={{ width: itemWidth > 0 ? `${itemWidth}px` : 'auto' }}
+                onClick={() => isUnlocked && onStartLesson(lesson.id)}
               >
                 {/* Image Container */}
                 <div className="relative aspect-[4/3] rounded-child overflow-hidden mb-4 bg-transparent flex items-center justify-center">
@@ -119,39 +120,20 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
                     }}
                     draggable={false}
                   />
-                  {!isUnlocked && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                      <span className="text-6xl" aria-hidden="true">
-                        🔒
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Lesson Text */}
-                <div className="flex-1 mb-4">
-                  <h3 className="text-child-base font-semibold text-gray-800 text-center mb-2">
-                    {lesson.title}
-                  </h3>
-                  <p className="text-child-sm text-gray-600 text-center">
-                    {lesson.description}
-                  </p>
-                  {!isUnlocked && (
-                    <p className="text-child-xs text-gray-500 text-center mt-2">
-                      Ask your teacher to unlock
-                    </p>
-                  )}
                 </div>
 
                 {/* Start Button */}
                 <div className="flex justify-center">
                   <Button
-                    onClick={() => onStartLesson(lesson.id)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onStartLesson(lesson.id)
+                    }}
                     disabled={!isUnlocked}
                     size="md"
                     variant="primary"
                   >
-                    Start
+                    {isUnlocked ? 'Start' : 'Lesson locked'}
                   </Button>
                 </div>
               </div>
