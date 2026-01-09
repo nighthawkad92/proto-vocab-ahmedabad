@@ -1,7 +1,7 @@
 import type { LessonContent } from './types'
 
 const DB_NAME = 'pal_vocab_cache'
-const DB_VERSION = 1
+const DB_VERSION = 2  // Bumped to invalidate old cache with 'blocks' structure
 const STORE_NAME = 'lessons'
 
 export class LessonCache {
@@ -63,7 +63,23 @@ export class LessonCache {
 
       request.onsuccess = () => {
         const result = request.result
-        resolve(result ? result.content : null)
+        if (!result) {
+          resolve(null)
+          return
+        }
+
+        let content = result.content
+
+        // Migrate legacy 'blocks' to 'levels' structure
+        if (content && !content.levels && (content as any).blocks) {
+          content = {
+            ...content,
+            levels: (content as any).blocks
+          }
+          delete (content as any).blocks
+        }
+
+        resolve(content)
       }
       request.onerror = () => reject(request.error)
     })
