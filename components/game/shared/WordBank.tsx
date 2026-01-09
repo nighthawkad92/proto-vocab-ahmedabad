@@ -66,7 +66,7 @@ export default function WordBank({
                 border-2
                 ${
                   selected
-                    ? 'bg-secondary-600 text-white border-secondary-700 shadow-lg'
+                    ? 'bg-primary-500 text-white border-primary-600 shadow-lg'
                     : 'bg-white text-gray-800 border-gray-300 hover:border-accent-400'
                 }
                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'}
