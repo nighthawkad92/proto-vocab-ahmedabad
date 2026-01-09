@@ -57,7 +57,14 @@ export function Header({
             <h1 className="text-child-xl font-semibold">{title}</h1>
           )}
           {greeting && (
-            <h1 className="text-child-lg font-semibold text-gray-800">{greeting}</h1>
+            <div className="flex items-center gap-2">
+              <img
+                src="/profile-photo.png"
+                alt="Profile"
+                className="w-6 h-6 rounded-full object-cover"
+              />
+              <h1 className="text-child-lg font-semibold text-gray-800">{greeting}</h1>
+            </div>
           )}
         </div>
 
