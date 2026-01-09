@@ -7,7 +7,7 @@ import ConnectionStatus from '@/components/layout/ConnectionStatus'
 import { Header } from '@/components/navigation/Header'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Loader } from '@/components/ui/Loader'
-import { LessonCarousel } from '@/components/ui/LessonCarousel'
+import { LessonGrid } from '@/components/ui/LessonGrid'
 import type { StudentSession, LessonUnlock } from '@/lib/types'
 
 interface Lesson {
@@ -88,24 +88,24 @@ export default function StudentDashboard() {
         onLogout={handleLogout}
       />
 
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-        <div className="w-[calc(100vw-48px)]">
-          {lessons.length === 0 ? (
-            <div className="bg-white rounded-child shadow-child">
+      <div className="min-h-[calc(100vh-4rem)] py-8">
+        {lessons.length === 0 ? (
+          <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
+            <div className="bg-white rounded-child shadow-child max-w-md mx-6">
               <EmptyState
                 icon="📖"
                 title="No Lessons Yet"
                 description="Your teacher will assign lessons soon. Check back later."
               />
             </div>
-          ) : (
-            <LessonCarousel
-              lessons={lessons}
-              unlocks={unlocks}
-              onStartLesson={handleStartLesson}
-            />
-          )}
-        </div>
+          </div>
+        ) : (
+          <LessonGrid
+            lessons={lessons}
+            unlocks={unlocks}
+            onStartLesson={handleStartLesson}
+          />
+        )}
       </div>
     </div>
   )
