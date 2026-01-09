@@ -142,9 +142,37 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
         </motion.div>
       </div>
 
+      {/* Horizontal Scrollbar - Touch-friendly */}
+      {lessons.length > 1 && (
+        <div className="mt-8 px-4 py-4">
+          <div
+            className="h-3 bg-secondary-100 rounded-full relative overflow-visible cursor-pointer"
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect()
+              const clickX = e.clientX - rect.left
+              const maxIndex = lessons.length - Math.ceil(itemsToShow)
+              const newIndex = Math.round((clickX / rect.width) * maxIndex)
+              setCurrentIndex(Math.max(0, Math.min(maxIndex, newIndex)))
+            }}
+          >
+            {/* Scrollbar thumb - larger hit area for touch */}
+            <div
+              className="absolute top-1/2 -translate-y-1/2 h-8 bg-secondary-500 rounded-full transition-all duration-300 cursor-grab active:cursor-grabbing shadow-md hover:shadow-lg"
+              style={{
+                width: `max(${(itemsToShow / lessons.length) * 100}%, 48px)`,
+                left: `${(currentIndex / Math.max(1, lessons.length - itemsToShow)) * 100}%`,
+                transform: 'translateY(-50%)',
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Navigation Buttons Below Carousel */}
       {lessons.length > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-12" data-testid="carousel-navigation">
+        <div className="flex items-center justify-center gap-4 mt-8" data-testid="carousel-navigation">
           <button
             onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
             disabled={currentIndex === 0}
