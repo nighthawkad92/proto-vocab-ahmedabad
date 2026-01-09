@@ -25,6 +25,7 @@ import { Question } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
 import { generateSpeech } from '@/lib/googleTTS'
 import { playAudio } from '@/lib/audioCache'
+import { Button } from '@/components/ui/Button'
 
 interface StorySequenceProps {
   question: Question
@@ -243,13 +244,15 @@ export default function StorySequence({
       </DndContext>
 
       {/* Submit Button */}
-      <button
+      <Button
         onClick={handleSubmit}
         disabled={disabled || hasSubmitted || items.length === 0}
-        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
+        variant="primary"
+        size="lg"
+        className="w-full"
       >
         {hasSubmitted ? 'Submitted' : 'Check Answer'}
-      </button>
+      </Button>
     </div>
   )
 }

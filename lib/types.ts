@@ -106,3 +106,9 @@ export interface LessonUnlock {
   isUnlocked: boolean
   unlockedAt?: string
 }
+
+// Inline feedback state for question components
+export interface FeedbackState {
+  type: 'correct' | 'incorrect' | null
+  correctAnswer?: string
+}

@@ -1,5 +1,6 @@
 // Google Cloud Text-to-Speech integration
 // Indian English female voice
+import { audioQueue } from './audioQueue'
 
 export interface TTSRequest {
   text: string
@@ -23,6 +24,17 @@ export async function generateSpeech(request: TTSRequest): Promise<string> {
     return data.audioUrl
   } catch (error) {
     console.error('TTS generation error:', error)
+    throw error
+  }
+}
+
+// Generate and play TTS using audio queue (medium priority)
+export async function playTextToSpeech(text: string): Promise<void> {
+  try {
+    const audioUrl = await generateSpeech({ text })
+    await audioQueue.playAudio(audioUrl, 50) // Medium priority
+  } catch (error) {
+    console.error('Failed to play text-to-speech:', error)
     throw error
   }
 }

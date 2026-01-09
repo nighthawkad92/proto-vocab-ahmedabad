@@ -6,7 +6,9 @@ import { StudentSessionManager } from '@/lib/studentSession'
 import { LessonEngine } from '@/lib/lessonEngine'
 import { OfflineQueue, AttemptStateManager } from '@/lib/offlineQueue'
 import { playAudio, preloadLessonAudio } from '@/lib/audioCache'
-import { generateSpeech } from '@/lib/googleTTS'
+import { playTextToSpeech, generateSpeech } from '@/lib/googleTTS'
+import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
+import { audioQueue } from '@/lib/audioQueue'
 import QuestionCard from '@/components/game/QuestionCard'
 import FeedbackModal from '@/components/game/FeedbackModal'
 import ProgressBar from '@/components/game/ProgressBar'
@@ -17,7 +19,7 @@ import { Header } from '@/components/navigation/Header'
 import { Loader } from '@/components/ui/Loader'
 import { Button } from '@/components/ui/Button'
 import { getLessonCache } from '@/lib/lessonCache'
-import type { LessonContent, Question, LevelIntroduction } from '@/lib/types'
+import type { LessonContent, Question, LevelIntroduction, FeedbackState } from '@/lib/types'
 
 export default function LessonPage() {
   const router = useRouter()
@@ -37,6 +39,7 @@ export default function LessonPage() {
     currentQuestionInLevel: 0,
     accuracy: 0,
   })
+  const [feedbackState, setFeedbackState] = useState<FeedbackState>({ type: null })
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedbackIsCorrect, setFeedbackIsCorrect] = useState(false)
   const [showLevelComplete, setShowLevelComplete] = useState(false)
@@ -225,12 +228,8 @@ export default function LessonPage() {
 
     setWaitingForNext(true)
 
-    // Submit answer to engine (removed auto-play audio per UX spec)
+    // Submit answer to engine
     const result = engine.submitAnswer(answer)
-
-    // Show feedback
-    setFeedbackIsCorrect(result.isCorrect)
-    setShowFeedback(true)
 
     // Save response to queue for syncing
     const attemptState = engine.getAttemptState()
@@ -251,21 +250,44 @@ export default function LessonPage() {
     // Update progress
     setProgress(engine.getProgress())
 
-    // Wait for feedback to close
-    setTimeout(() => {
-      setShowFeedback(false)
+    // NEW INLINE FEEDBACK FLOW
 
-      // Check if level is complete
-      if (result.isLevelComplete) {
-        setLevelStoppedEarly(result.shouldStopLevel)
-        setShowLevelComplete(true)
-      } else {
-        // Move to next question
-        setCurrentQuestion(engine.getCurrentQuestion())
-        setWaitingForNext(false)
-      }
-    }, 1500)
-  }, [engine, waitingForNext])
+    // 1. Play sound effect immediately (high priority in audio queue)
+    await playSoundEffect(result.isCorrect ? SoundEffect.CORRECT : SoundEffect.INCORRECT)
+
+    // 2. Set feedback state to trigger inline feedback (shake/highlight in question components)
+    setFeedbackState({
+      type: result.isCorrect ? 'correct' : 'incorrect',
+      correctAnswer: result.isCorrect ? undefined : currentQuestion?.correctAnswer,
+    })
+
+    // 3. Play TTS feedback (medium priority, waits for sound effect in audio queue)
+    const feedbackText = result.isCorrect
+      ? currentQuestion?.feedback?.correct || 'You answered correctly!'
+      : currentQuestion?.feedback?.incorrect || 'Try again next time!'
+
+    try {
+      await playTextToSpeech(feedbackText)
+    } catch (error) {
+      console.error('Failed to play TTS feedback:', error)
+    }
+
+    // 4. Wait 1 second after TTS completes
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // 5. Clear feedback state and advance
+    setFeedbackState({ type: null })
+
+    // Check if level is complete
+    if (result.isLevelComplete) {
+      setLevelStoppedEarly(result.shouldStopLevel)
+      setShowLevelComplete(true)
+    } else {
+      // Move to next question
+      setCurrentQuestion(engine.getCurrentQuestion())
+      setWaitingForNext(false)
+    }
+  }, [engine, waitingForNext, currentQuestion])
 
   const handleContinueToNextLevel = () => {
     if (!engine) return
@@ -304,6 +326,9 @@ export default function LessonPage() {
 
   const handleAbandonLesson = useCallback(async () => {
     if (!engine) return
+
+    // Stop all audio playback
+    audioQueue.stopAll()
 
     const attemptState = engine.getAttemptState()
 
@@ -403,13 +428,24 @@ export default function LessonPage() {
   }
 
   return (
-    <div className="min-h-screen p-6 space-y-8">
-      {/* Connection Status */}
-      <div className="fixed top-4 right-4 z-30">
+    <div className="min-h-screen bg-secondary-50">
+      {/* Connection Status - Hidden */}
+      <div className="fixed top-4 right-4 z-30 hidden">
         <ConnectionStatus />
       </div>
 
-      <div className="max-w-4xl mx-auto space-y-8">
+      {/* Header with Back Button */}
+      <Header
+        variant="back"
+        onBack={async () => {
+          if (confirm('Exit now? Progress will be lost.')) {
+            await handleAbandonLesson()
+            router.push('/student/dashboard')
+          }
+        }}
+      />
+
+      <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
         {/* Progress */}
         <ProgressBar
           current={progress.currentQuestionInLevel + 1}
@@ -424,22 +460,6 @@ export default function LessonPage() {
           onAnswer={handleAnswer}
           disabled={waitingForNext || isPlayingAudio}
         />
-
-        {/* Back button */}
-        <div className="flex justify-center">
-          <Button
-            onClick={async () => {
-              if (confirm('Exit now? Progress is saved.')) {
-                await handleAbandonLesson()
-                router.push('/student/dashboard')
-              }
-            }}
-            variant="secondary"
-            size="md"
-          >
-            Back to Lessons
-          </Button>
-        </div>
       </div>
 
       {/* Feedback Modal */}

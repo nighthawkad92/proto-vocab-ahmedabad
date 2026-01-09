@@ -1,5 +1,6 @@
 // Sound effects manager for UI feedback
 // Uses provided sound effects from assets folder
+import { audioQueue } from './audioQueue'
 
 export enum SoundEffect {
   CORRECT = 'correct',
@@ -44,7 +45,7 @@ class SoundEffectsManager {
     })
   }
 
-  public play(effect: SoundEffect): void {
+  public async play(effect: SoundEffect): Promise<void> {
     if (!this.enabled) return
 
     const audio = this.sounds.get(effect)
@@ -54,11 +55,8 @@ class SoundEffectsManager {
     }
 
     try {
-      // Reset to beginning and play
-      audio.currentTime = 0
-      audio.play().catch((error) => {
-        console.warn('Failed to play sound effect:', effect, error)
-      })
+      // Use audio queue for sequential playback (high priority)
+      await audioQueue.playAudio(audio.src, 100)
     } catch (error) {
       console.warn('Error playing sound effect:', effect, error)
     }
@@ -74,8 +72,8 @@ class SoundEffectsManager {
 }
 
 // Export singleton instance methods
-export function playSoundEffect(effect: SoundEffect): void {
-  SoundEffectsManager.getInstance().play(effect)
+export async function playSoundEffect(effect: SoundEffect): Promise<void> {
+  return SoundEffectsManager.getInstance().play(effect)
 }
 
 export function setSoundEffectsEnabled(enabled: boolean): void {

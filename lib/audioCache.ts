@@ -1,4 +1,6 @@
 // Audio cache manager for offline playback
+import { audioQueue } from './audioQueue'
+
 export class AudioCache {
   private static instance: AudioCache
   private cache: Map<string, HTMLAudioElement> = new Map()
@@ -46,42 +48,8 @@ export class AudioCache {
   }
 
   public async play(url: string): Promise<void> {
-    let audio = this.cache.get(url)
-
-    if (!audio) {
-      // Not cached, create and play immediately
-      audio = new Audio(url)
-      this.cache.set(url, audio)
-    }
-
-    try {
-      audio.currentTime = 0 // Reset to start
-      await audio.play()
-
-      // Wait for audio to finish playing
-      return new Promise((resolve, reject) => {
-        const handleEnded = () => {
-          cleanup()
-          resolve()
-        }
-
-        const handleError = (error: Event) => {
-          cleanup()
-          reject(error)
-        }
-
-        const cleanup = () => {
-          audio!.removeEventListener('ended', handleEnded)
-          audio!.removeEventListener('error', handleError)
-        }
-
-        audio.addEventListener('ended', handleEnded, { once: true })
-        audio.addEventListener('error', handleError, { once: true })
-      })
-    } catch (error) {
-      console.error('Failed to play audio:', url, error)
-      throw error
-    }
+    // Use audio queue for sequential playback (low priority)
+    return audioQueue.playAudio(url, 25)
   }
 
   public pause(url: string) {

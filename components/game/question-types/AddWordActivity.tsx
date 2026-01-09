@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import WordBank from '../shared/WordBank'
 import { Question } from '@/lib/types'
 import { playSoundEffect, SoundEffect } from '@/lib/soundEffects'
+import { Button } from '@/components/ui/Button'
 
 interface AddWordActivityProps {
   question: Question
@@ -236,13 +237,15 @@ export default function AddWordActivity({
       />
 
       {/* Submit Button */}
-      <button
+      <Button
         onClick={handleSubmit}
         disabled={disabled || hasSubmitted || !selectedWord}
-        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium text-base py-6 px-8 rounded-child shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[3rem]"
+        variant="primary"
+        size="lg"
+        className="w-full"
       >
         {hasSubmitted ? 'Submitted' : selectedWord ? 'Check Answer' : 'Select a word first'}
-      </button>
+      </Button>
     </div>
   )
 }
