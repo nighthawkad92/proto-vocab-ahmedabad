@@ -87,7 +87,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
 
   return (
     <div ref={containerRef} className="relative py-4">
-      <div className="overflow-hidden">
+      <div className="overflow-hidden touch-pan-y">
         <motion.div
           className="flex gap-6"
           animate={{ x: offset }}
@@ -103,23 +103,24 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
             return (
               <div
                 key={lesson.id}
-                className="flex-shrink-0 flex flex-col"
+                className="flex-shrink-0 flex flex-col select-none"
                 style={{ width: itemWidth > 0 ? `${itemWidth}px` : 'auto' }}
               >
                 {/* Image Container */}
-                <div className="relative aspect-[4/3] rounded-child overflow-hidden mb-4 bg-transparent">
+                <div className="relative aspect-[4/3] rounded-child overflow-hidden mb-4 bg-transparent flex items-center justify-center">
                   <img
                     src={getLessonImage(lesson.title)}
                     alt={lesson.title}
-                    className={`w-full h-full object-contain transition-all ${
+                    className={`w-[80%] h-[80%] object-contain transition-all pointer-events-none ${
                       !isUnlocked ? 'grayscale opacity-60' : ''
                     }`}
                     onError={(e) => {
                       e.currentTarget.src = '/lesson-images/image-breaking-big-words.png'
                     }}
+                    draggable={false}
                   />
                   {!isUnlocked && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
                       <span className="text-6xl" aria-hidden="true">
                         🔒
                       </span>
@@ -159,30 +160,40 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
         </motion.div>
       </div>
 
-      {/* Navigation Arrows (Desktop only) */}
+      {/* Navigation Buttons Below Carousel */}
       {lessons.length > 1 && (
-        <>
-          <button
+        <div className="flex items-center justify-center gap-4 mt-6">
+          <Button
             onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
             disabled={currentIndex === 0}
-            className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-white rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
+            variant="primary"
+            size="lg"
+            icon={
+              <img
+                src="/icons/Children Mobile App (Community) - Design System (Community)/angle-left.svg"
+                alt=""
+                className="w-6 h-6"
+              />
+            }
+            iconPosition="only"
             aria-label="Previous lesson"
-          >
-            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
+          />
+          <Button
             onClick={() => setCurrentIndex(Math.min(lessons.length - 1, currentIndex + 1))}
             disabled={currentIndex >= lessons.length - Math.ceil(itemsToShow)}
-            className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-white rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-all"
+            variant="primary"
+            size="lg"
+            icon={
+              <img
+                src="/icons/Children Mobile App (Community) - Design System (Community)/angle-right.svg"
+                alt=""
+                className="w-6 h-6"
+              />
+            }
+            iconPosition="only"
             aria-label="Next lesson"
-          >
-            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </>
+          />
+        </div>
       )}
     </div>
   )
