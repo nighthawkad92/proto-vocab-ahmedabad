@@ -166,8 +166,8 @@ import { Loader } from '@/components/ui/Loader'
 - `message`: Optional loading message text
 
 #### Features
-- Uses design system spinner icon (`spinner.svg`)
-- Smooth rotation animation (1 second per rotation)
+- Uses design system loading indicator (`loading-indicator.svg`)
+- Built-in animation from SVG asset
 - Animated pulsing message text
 - Animated dots (...) after message
 - Responsive sizing

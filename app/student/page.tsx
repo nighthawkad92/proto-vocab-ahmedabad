@@ -92,7 +92,6 @@ export default function StudentLoginPage() {
               maxLength={6}
               disabled={loading}
               required
-              className="text-center uppercase font-bold"
               error={error && classCode.trim() === '' ? 'Class code is required' : ''}
             />
 
