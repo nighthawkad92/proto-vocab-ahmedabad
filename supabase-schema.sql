@@ -62,8 +62,8 @@ CREATE TABLE attempts (
   completed_at TIMESTAMPTZ,
   questions_attempted INTEGER DEFAULT 0,
   questions_correct INTEGER DEFAULT 0,
-  blocks_completed INTEGER DEFAULT 0,
-  blocks_stopped_at INTEGER
+  levels_completed INTEGER DEFAULT 0,
+  levels_stopped_at INTEGER
 );
 
 -- Responses table
@@ -72,7 +72,7 @@ CREATE TABLE responses (
   attempt_id UUID NOT NULL REFERENCES attempts(id) ON DELETE CASCADE,
   question_id TEXT NOT NULL,
   question_type TEXT NOT NULL,
-  block_number INTEGER NOT NULL,
+  level_number INTEGER NOT NULL,
   student_answer TEXT,
   is_correct BOOLEAN NOT NULL,
   answered_at TIMESTAMPTZ DEFAULT NOW()
