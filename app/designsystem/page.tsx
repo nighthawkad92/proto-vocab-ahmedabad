@@ -223,38 +223,38 @@ function VisualSection() {
 
         <div className="space-y-6">
           <div>
-            <h4 className="text-lg font-bold text-gray-700 mb-3">Primary Colors (Red)</h4>
+            <h4 className="text-lg font-bold text-gray-700 mb-3">Primary Colors (Green)</h4>
             <div className="grid grid-cols-5 gap-2">
-              <ColorSwatch color="primary-50" hex="#fef2f2" />
-              <ColorSwatch color="primary-100" hex="#fee2e2" />
-              <ColorSwatch color="primary-200" hex="#fecaca" />
-              <ColorSwatch color="primary-300" hex="#fca5a5" />
-              <ColorSwatch color="primary-400" hex="#f87171" />
+              <ColorSwatch color="primary-50" hex="#f0fdf4" />
+              <ColorSwatch color="primary-100" hex="#dcfce7" />
+              <ColorSwatch color="primary-200" hex="#bbf7d0" />
+              <ColorSwatch color="primary-300" hex="#86efac" />
+              <ColorSwatch color="primary-400" hex="#4ade80" />
             </div>
             <div className="grid grid-cols-5 gap-2 mt-2">
-              <ColorSwatch color="primary-500" hex="#ef4444" label="Main" />
-              <ColorSwatch color="primary-600" hex="#dc2626" />
-              <ColorSwatch color="primary-700" hex="#b91c1c" />
-              <ColorSwatch color="primary-800" hex="#991b1b" />
-              <ColorSwatch color="primary-900" hex="#7f1d1d" />
+              <ColorSwatch color="primary-500" hex="#22c55e" label="Main" />
+              <ColorSwatch color="primary-600" hex="#16a34a" />
+              <ColorSwatch color="primary-700" hex="#15803d" />
+              <ColorSwatch color="primary-800" hex="#166534" />
+              <ColorSwatch color="primary-900" hex="#14532d" />
             </div>
           </div>
 
           <div>
-            <h4 className="text-lg font-bold text-gray-700 mb-3">Secondary Colors (Green)</h4>
+            <h4 className="text-lg font-bold text-gray-700 mb-3">Secondary Colors (Red)</h4>
             <div className="grid grid-cols-5 gap-2">
-              <ColorSwatch color="secondary-50" hex="#f0fdf4" />
-              <ColorSwatch color="secondary-100" hex="#dcfce7" />
-              <ColorSwatch color="secondary-200" hex="#bbf7d0" />
-              <ColorSwatch color="secondary-300" hex="#86efac" />
-              <ColorSwatch color="secondary-400" hex="#4ade80" />
+              <ColorSwatch color="secondary-50" hex="#fef2f2" />
+              <ColorSwatch color="secondary-100" hex="#fee2e2" />
+              <ColorSwatch color="secondary-200" hex="#fecaca" />
+              <ColorSwatch color="secondary-300" hex="#fca5a5" />
+              <ColorSwatch color="secondary-400" hex="#f87171" />
             </div>
             <div className="grid grid-cols-5 gap-2 mt-2">
-              <ColorSwatch color="secondary-500" hex="#22c55e" label="Success" />
-              <ColorSwatch color="secondary-600" hex="#16a34a" />
-              <ColorSwatch color="secondary-700" hex="#15803d" />
-              <ColorSwatch color="secondary-800" hex="#166534" />
-              <ColorSwatch color="secondary-900" hex="#14532d" />
+              <ColorSwatch color="secondary-500" hex="#ef4444" label="Accent" />
+              <ColorSwatch color="secondary-600" hex="#dc2626" />
+              <ColorSwatch color="secondary-700" hex="#b91c1c" />
+              <ColorSwatch color="secondary-800" hex="#991b1b" />
+              <ColorSwatch color="secondary-900" hex="#7f1d1d" />
             </div>
           </div>
 

@@ -51,32 +51,32 @@ Optimize for clarity, low cognitive load, and low-spec tablets.
 
 ### Color System
 
-#### Primary Colors (Red spectrum)
+#### Primary Colors (Green spectrum)
 ```css
-primary-50:  #fef2f2
-primary-100: #fee2e2
-primary-200: #fecaca
-primary-300: #fca5a5
-primary-400: #f87171
-primary-500: #ef4444 /* Main brand color */
-primary-600: #dc2626
-primary-700: #b91c1c
-primary-800: #991b1b
-primary-900: #7f1d1d
+primary-50:  #f0fdf4
+primary-100: #dcfce7
+primary-200: #bbf7d0
+primary-300: #86efac
+primary-400: #4ade80
+primary-500: #22c55e /* Main brand color */
+primary-600: #16a34a
+primary-700: #15803d
+primary-800: #166534
+primary-900: #14532d
 ```
 
-#### Secondary Colors (Green spectrum)
+#### Secondary Colors (Red spectrum)
 ```css
-secondary-50:  #f0fdf4
-secondary-100: #dcfce7
-secondary-200: #bbf7d0
-secondary-300: #86efac
-secondary-400: #4ade80
-secondary-500: #22c55e /* Success states */
-secondary-600: #16a34a
-secondary-700: #15803d
-secondary-800: #166534
-secondary-900: #14532d
+secondary-50:  #fef2f2
+secondary-100: #fee2e2
+secondary-200: #fecaca
+secondary-300: #fca5a5
+secondary-400: #f87171
+secondary-500: #ef4444 /* Accent/emphasis states */
+secondary-600: #dc2626
+secondary-700: #b91c1c
+secondary-800: #991b1b
+secondary-900: #7f1d1d
 ```
 
 #### Accent Colors (Orange/Yellow spectrum)
