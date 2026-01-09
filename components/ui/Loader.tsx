@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 export interface LoaderProps {
   size?: 'sm' | 'md' | 'lg'
@@ -8,53 +9,54 @@ export interface LoaderProps {
 }
 
 export function Loader({ size = 'md', message = 'Loading' }: LoaderProps) {
-  const sizeClasses = {
-    sm: 'w-16 h-16',
-    md: 'w-24 h-24',
-    lg: 'w-32 h-32',
-  }
-
-  const iconSizes = {
-    sm: 'text-2xl',
-    md: 'text-4xl',
-    lg: 'text-6xl',
+  const spinnerSizes = {
+    sm: 32,
+    md: 48,
+    lg: 64,
   }
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <motion.div
-        className={`${sizeClasses[size]} rounded-full bg-secondary-100 flex items-center justify-center`}
         animate={{
-          scale: [1, 1.1, 1],
+          rotate: 360,
         }}
         transition={{
-          duration: 1.5,
+          duration: 1,
           repeat: Infinity,
-          ease: 'easeInOut',
+          ease: 'linear',
         }}
       >
-        <span className={iconSizes[size]}>🦕</span>
+        <Image
+          src="/icons/Children Mobile App (Community) - Design System (Community)/spinner.svg"
+          alt="Loading"
+          width={spinnerSizes[size]}
+          height={spinnerSizes[size]}
+          className="text-primary-500"
+        />
       </motion.div>
 
-      <motion.p
-        className="text-child-base text-gray-600"
-        animate={{
-          opacity: [1, 0.5, 1],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-      >
-        {message}
-        <motion.span
-          animate={{ opacity: [0, 1, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
+      {message && (
+        <motion.p
+          className="text-child-base text-neutral-600 font-semibold"
+          animate={{
+            opacity: [1, 0.5, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
         >
-          ...
-        </motion.span>
-      </motion.p>
+          {message}
+          <motion.span
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            ...
+          </motion.span>
+        </motion.p>
+      )}
     </div>
   )
 }

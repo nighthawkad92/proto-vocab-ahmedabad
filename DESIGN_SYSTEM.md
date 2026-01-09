@@ -149,12 +149,36 @@ import { Icon } from '@/components/ui/Icon'
 - Cards/Containers: `bg-white`
 - Disabled: `bg-neutral-100`
 
+## Loading States
+
+### Loader Component
+The Loader component displays an animated spinner for loading states.
+
+#### Usage
+```tsx
+import { Loader } from '@/components/ui/Loader'
+
+<Loader size="md" message="Loading your lessons" />
+```
+
+#### Props
+- `size`: 'sm' | 'md' | 'lg' - Spinner size (32px, 48px, 64px)
+- `message`: Optional loading message text
+
+#### Features
+- Uses design system spinner icon (`spinner.svg`)
+- Smooth rotation animation (1 second per rotation)
+- Animated pulsing message text
+- Animated dots (...) after message
+- Responsive sizing
+
 ## Component Export
 
 All components are exported from their respective files:
 - `@/components/ui/Button` - Button component
 - `@/components/ui/Input` - Input component
 - `@/components/ui/Icon` - Icon component
+- `@/components/ui/Loader` - Loading spinner component
 - `@/components/ui/VocabPalLogo` - Logo component
 - `@/components/ui/LoginBackground` - Decorative background
 
