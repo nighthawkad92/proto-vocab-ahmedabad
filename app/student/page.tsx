@@ -68,7 +68,7 @@ export default function StudentLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-secondary-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center space-y-4">
           <div className="text-7xl">👨‍🎓</div>

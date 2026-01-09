@@ -107,14 +107,14 @@ export default function StudentDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-secondary-50">
         <Loader message="Loading your lessons" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-secondary-50 pb-24">
       {/* Connection Status */}
       <div className="fixed top-20 right-4 z-30">
         <ConnectionStatus />

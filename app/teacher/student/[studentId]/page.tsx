@@ -363,7 +363,7 @@ export default function StudentDetailPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-secondary-50">
                   <tr>
                     <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700 w-8"></th>
                     <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
@@ -406,7 +406,7 @@ export default function StudentDetailPage() {
                     return (
                       <tr
                         key={attempt.id}
-                        className={`hover:bg-gray-50 cursor-pointer transition-colors ${
+                        className={`hover:bg-secondary-50 cursor-pointer transition-colors ${
                           isExpanded ? 'bg-secondary-50' : ''
                         }`}
                         onClick={() => toggleAttemptDetails(attempt.id)}

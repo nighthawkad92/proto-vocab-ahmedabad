@@ -310,7 +310,7 @@ export default function LessonPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-secondary-50 flex items-center justify-center">
         <Loader message="Loading lesson" />
       </div>
     )
@@ -373,7 +373,7 @@ export default function LessonPage() {
                 router.push('/student/dashboard')
               }
             }}
-            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-child text-child-sm font-medium transition-colors active:scale-95 min-h-[3rem]"
+            className="px-6 py-3 bg-secondary-500 hover:bg-gray-600 text-white rounded-child text-child-sm font-medium transition-colors active:scale-95 min-h-[3rem]"
           >
             Back to Lessons
           </button>

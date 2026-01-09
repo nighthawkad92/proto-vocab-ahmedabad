@@ -45,7 +45,7 @@ export default function StudentProfilePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-secondary-50 pb-24">
       <Header
         variant="backWithTitle"
         title="My Profile"

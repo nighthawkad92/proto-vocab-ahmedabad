@@ -249,7 +249,7 @@ export default function ClassDetailPage() {
                     {students.map((student) => (
                       <tr
                         key={student.id}
-                        className="hover:bg-gray-50 cursor-pointer"
+                        className="hover:bg-secondary-50 cursor-pointer"
                         onClick={() => router.push(`/teacher/student/${student.id}`)}
                       >
                         <td className="px-6 py-4 text-child-sm text-gray-800">
