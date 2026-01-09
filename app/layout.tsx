@@ -1,16 +1,17 @@
 import type { Metadata } from 'next'
-import { Inter, Poppins } from 'next/font/google'
+import { Bubblegum_Sans, Andika } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({
+const andika = Andika({
+  weight: ['400', '700'],
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-andika',
 })
 
-const poppins = Poppins({
-  weight: ['400', '500', '600', '700'],
+const bubblegumSans = Bubblegum_Sans({
+  weight: ['400'],
   subsets: ['latin'],
-  variable: '--font-poppins',
+  variable: '--font-bubblegum',
 })
 
 export const metadata: Metadata = {
@@ -37,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+    <html lang="en" className={`${andika.variable} ${bubblegumSans.variable}`}>
       <body className="font-sans antialiased bg-gray-50 min-h-screen">
         {children}
       </body>

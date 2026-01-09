@@ -71,8 +71,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-andika)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-bubblegum)', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'child-xs': ['12px', { lineHeight: '16px' }],      // Paragraph XSmall

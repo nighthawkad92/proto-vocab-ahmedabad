@@ -141,8 +141,8 @@ Black: #000000
 
 #### Font Families
 ```css
---font-inter: 'Inter', system-ui, sans-serif;     /* Body text */
---font-poppins: 'Poppins', system-ui, sans-serif; /* Display/headings */
+--font-andika: 'Andika', system-ui, sans-serif;           /* Body text, descriptions */
+--font-bubblegum: 'Bubblegum Sans', system-ui, sans-serif; /* Headings, titles */
 ```
 
 #### Font Sizes (Child-Optimized)
@@ -161,11 +161,12 @@ child-xl:   2.25rem  (36px) /* Main headings */
 - **Feedback text**: 1.875rem (child-lg)
 
 #### Typography Rules
-- Use `font-display` (Poppins) for headings and emphasis
-- Use `font-sans` (Inter) for body text
+- Use `font-display` (Bubblegum Sans) for headings, titles, and emphasis
+- Use `font-sans` (Andika) for body text, descriptions, and smaller fonts
 - Enable OpenType features: `"rlig" 1, "calt" 1`
-- Never use decorative fonts
 - Maintain consistent line-height for readability
+- **Bubblegum Sans**: Playful, rounded font optimized for children
+- **Andika**: Clear, readable sans-serif designed for literacy and learning
 
 ### Visual Hierarchy Pattern
 1. Show object/image (if applicable)

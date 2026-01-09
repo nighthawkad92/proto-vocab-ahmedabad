@@ -320,13 +320,13 @@ function VisualSection() {
 
         <div className="space-y-4">
           <div className="bg-gray-50 rounded-xl p-6">
-            <p className="font-display text-4xl mb-2">Poppins Display</p>
-            <p className="text-gray-600">Used for headings and emphasis</p>
+            <p className="font-display text-4xl mb-2">Bubblegum Sans</p>
+            <p className="text-gray-600">Used for headings, titles, and emphasis - Playful and child-friendly</p>
           </div>
 
           <div className="bg-gray-50 rounded-xl p-6">
-            <p className="font-sans text-3xl mb-2">Inter Sans</p>
-            <p className="text-gray-600">Used for body text and UI</p>
+            <p className="font-sans text-3xl mb-2">Andika</p>
+            <p className="text-gray-600">Used for body text, descriptions, and smaller fonts - Clear and readable for learning</p>
           </div>
         </div>
 
