@@ -6,8 +6,8 @@ export const VocabPalLogo = ({ className = "" }: { className?: string }) => {
       <Image
         src="/logo-vocabpal.png"
         alt="VocabPal Logo"
-        width={200}
-        height={200}
+        width={400}
+        height={400}
         priority
         className="object-contain"
       />
