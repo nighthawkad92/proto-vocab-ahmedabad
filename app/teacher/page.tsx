@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { TeacherSessionManager } from '@/lib/teacherSession'
+import { LoginBackground } from '@/components/ui/LoginBackground'
 
 export default function TeacherLoginPage() {
   const router = useRouter()
@@ -43,8 +44,9 @@ export default function TeacherLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-secondary-50">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-secondary-50 relative">
+      <LoginBackground />
+      <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center space-y-4">
           <div className="text-7xl">👩‍🏫</div>
           <h1 className="text-child-xl font-display font-bold text-secondary-600">
