@@ -15,6 +15,8 @@ export interface HeaderProps {
   title?: string
   onBack?: () => void
   onMenu?: () => void
+  onLogout?: () => void
+  showLogoutButton?: boolean
   onNotifications?: () => void
   onProfile?: () => void
   showNotificationBadge?: boolean
@@ -25,6 +27,8 @@ export function Header({
   title,
   onBack,
   onMenu,
+  onLogout,
+  showLogoutButton = false,
   onNotifications,
   onProfile,
   showNotificationBadge = false,
@@ -81,17 +85,29 @@ export function Header({
           )}
           {(variant === 'simple' ||
             variant === 'back' ||
-            variant === 'backWithTitle') &&
-            onMenu && (
-              <Button
-                variant="text"
-                icon={<Bars3Icon className="w-6 h-6" />}
-                iconPosition="only"
-                onClick={onMenu}
-                aria-label="Menu"
-                size="sm"
-              />
-            )}
+            variant === 'backWithTitle') && (
+            <>
+              {showLogoutButton && onLogout ? (
+                <Button
+                  variant="text"
+                  onClick={onLogout}
+                  aria-label="Logout"
+                  size="sm"
+                >
+                  Logout
+                </Button>
+              ) : onMenu ? (
+                <Button
+                  variant="text"
+                  icon={<Bars3Icon className="w-6 h-6" />}
+                  iconPosition="only"
+                  onClick={onMenu}
+                  aria-label="Menu"
+                  size="sm"
+                />
+              ) : null}
+            </>
+          )}
         </div>
       </div>
     </header>

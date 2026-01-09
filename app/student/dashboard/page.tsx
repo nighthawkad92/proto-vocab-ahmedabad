@@ -5,17 +5,9 @@ import { useRouter } from 'next/navigation'
 import { StudentSessionManager } from '@/lib/studentSession'
 import ConnectionStatus from '@/components/layout/ConnectionStatus'
 import { Header } from '@/components/navigation/Header'
-import { BottomNav } from '@/components/navigation/BottomNav'
-import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Loader } from '@/components/ui/Loader'
-import {
-  BookOpenIcon,
-  ChartBarIcon,
-  TrophyIcon,
-  UserCircleIcon,
-  Bars3Icon,
-} from '@heroicons/react/24/outline'
+import { LessonCarousel } from '@/components/ui/LessonCarousel'
 import type { StudentSession, LessonUnlock } from '@/lib/types'
 
 interface Lesson {
@@ -74,37 +66,6 @@ export default function StudentDashboard() {
     router.push(`/student/lesson/${lessonId}`)
   }
 
-  const navItems = [
-    {
-      id: 'lessons',
-      label: 'Lessons',
-      icon: <BookOpenIcon className="w-6 h-6" />,
-      href: '/student/dashboard',
-      color: 'secondary',
-    },
-    {
-      id: 'progress',
-      label: 'Progress',
-      icon: <ChartBarIcon className="w-6 h-6" />,
-      href: '/student/progress',
-      color: 'primary',
-    },
-    {
-      id: 'badges',
-      label: 'Badges',
-      icon: <TrophyIcon className="w-6 h-6" />,
-      href: '/student/badges',
-      color: 'achievement',
-    },
-    {
-      id: 'profile',
-      label: 'Profile',
-      icon: <UserCircleIcon className="w-6 h-6" />,
-      href: '/student/profile',
-      color: 'accent',
-    },
-  ]
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-secondary-50">
@@ -114,18 +75,19 @@ export default function StudentDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-secondary-50 pb-24">
+    <div className="min-h-screen bg-secondary-50">
       {/* Connection Status */}
-      <div className="fixed top-20 right-4 z-30">
+      <div className="fixed top-20 right-4 z-30 hidden">
         <ConnectionStatus />
       </div>
 
       <Header
         variant="simple"
-        onMenu={handleLogout}
+        showLogoutButton={true}
+        onLogout={handleLogout}
       />
 
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         {/* Greeting Card */}
         <div className="bg-white rounded-child shadow-child p-6">
           <h1 className="text-child-xl font-semibold text-gray-800">
@@ -151,59 +113,14 @@ export default function StudentDashboard() {
               />
             </div>
           ) : (
-            <div className="grid gap-4">
-              {lessons.map((lesson) => {
-                const isUnlocked = unlocks[lesson.id]
-
-                return (
-                  <div
-                    key={lesson.id}
-                    className={`bg-white rounded-child shadow-child p-6 transition-all ${
-                      isUnlocked
-                        ? 'border-2 border-accent-400'
-                        : 'opacity-60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-child-base font-medium text-gray-800">
-                            {lesson.title}
-                          </h3>
-                          {!isUnlocked && (
-                            <span className="text-child-sm text-gray-500">
-                              (Locked)
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-child-sm text-gray-600">
-                          {lesson.description}
-                        </p>
-                        {!isUnlocked && (
-                          <p className="text-child-xs text-gray-500 mt-2">
-                            Ask your teacher to unlock this lesson
-                          </p>
-                        )}
-                      </div>
-
-                      {isUnlocked && (
-                        <Button
-                          onClick={() => handleStartLesson(lesson.id)}
-                          size="md"
-                        >
-                          Start
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <LessonCarousel
+              lessons={lessons}
+              unlocks={unlocks}
+              onStartLesson={handleStartLesson}
+            />
           )}
         </div>
       </div>
-
-      <BottomNav items={navItems} />
     </div>
   )
 }
