@@ -144,7 +144,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
 
       {/* Navigation Buttons Below Carousel */}
       {lessons.length > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-6">
+        <div className="flex items-center justify-center gap-4 mt-6" data-testid="carousel-navigation">
           <Button
             onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
             disabled={currentIndex === 0}
@@ -153,7 +153,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
             icon={
               <img
                 src="/icons/Children Mobile App (Community) - Design System (Community)/angle-left.svg"
-                alt=""
+                alt="Previous"
                 className="w-6 h-6 brightness-0 invert"
               />
             }
@@ -168,7 +168,7 @@ export function LessonCarousel({ lessons, unlocks, onStartLesson }: LessonCarous
             icon={
               <img
                 src="/icons/Children Mobile App (Community) - Design System (Community)/angle-right.svg"
-                alt=""
+                alt="Next"
                 className="w-6 h-6 brightness-0 invert"
               />
             }
