@@ -37,6 +37,7 @@ export default function StudentDashboard() {
 
   const loadLessons = async (classId: string) => {
     try {
+      console.log('🎓 Student class ID:', classId)
       const response = await fetch(`/api/student/lessons?classId=${classId}`, {
         cache: 'no-store',
         headers: {
