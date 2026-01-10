@@ -452,6 +452,7 @@ export default function LessonPage() {
 
     // Check for newly earned badges
     try {
+      console.log('🏆 Checking for newly earned badges...')
       const badgeResponse = await fetch('/api/student/badges/check', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -460,15 +461,21 @@ export default function LessonPage() {
 
       if (badgeResponse.ok) {
         const { newBadges } = await badgeResponse.json()
+        console.log('🏆 Badge check result:', newBadges)
 
         if (newBadges && newBadges.length > 0) {
+          console.log(`🎉 ${newBadges.length} new badge(s) earned! Showing modals...`)
           // Queue badges to show sequentially
           setBadgeQueue(newBadges)
           setCurrentBadgeIndex(0)
           setShowBadgeModal(true)
           setFinalScore(score) // Store final score for later
           return // Don't show lesson complete yet, wait for badge modals
+        } else {
+          console.log('No new badges earned this time')
         }
+      } else {
+        console.error('Badge check failed with status:', badgeResponse.status)
       }
     } catch (error) {
       console.error('Failed to check badges:', error)
