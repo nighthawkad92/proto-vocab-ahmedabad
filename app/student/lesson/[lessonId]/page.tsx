@@ -19,7 +19,8 @@ import { Loader } from '@/components/ui/Loader'
 import { getLessonCache } from '@/lib/lessonCache'
 import { PointAnimation } from '@/components/game/PointAnimation'
 import { LessonCompleteModal } from '@/components/game/LessonCompleteModal'
-import type { LessonContent, Question, LevelIntroduction, FeedbackState } from '@/lib/types'
+import { BadgeUnlockedModal } from '@/components/game/BadgeUnlockedModal'
+import type { LessonContent, Question, LevelIntroduction, FeedbackState, Badge } from '@/lib/types'
 
 export default function LessonPage() {
   const router = useRouter()
@@ -56,6 +57,11 @@ export default function LessonPage() {
   const [lessonStartTime] = useState(Date.now())
   const [showLessonComplete, setShowLessonComplete] = useState(false)
   const [finalScore, setFinalScore] = useState(0)
+
+  // Badge state
+  const [badgeQueue, setBadgeQueue] = useState<Badge[]>([])
+  const [currentBadgeIndex, setCurrentBadgeIndex] = useState(0)
+  const [showBadgeModal, setShowBadgeModal] = useState(false)
 
   useEffect(() => {
     const session = StudentSessionManager.load()
@@ -397,8 +403,22 @@ export default function LessonPage() {
     AttemptStateManager.remove(attemptState.attemptId)
   }, [engine])
 
+  const handleBadgeDismiss = () => {
+    if (currentBadgeIndex < badgeQueue.length - 1) {
+      // Show next badge
+      setCurrentBadgeIndex(prev => prev + 1)
+    } else {
+      // All badges shown, now show lesson complete
+      setShowBadgeModal(false)
+      setShowLessonComplete(true)
+    }
+  }
+
   const handleFinishLesson = async () => {
     if (!engine) return
+
+    const session = StudentSessionManager.load()
+    if (!session) return
 
     const attemptState = engine.getAttemptState()
     const durationSeconds = Math.floor((Date.now() - lessonStartTime) / 1000)
@@ -429,6 +449,31 @@ export default function LessonPage() {
 
     // Clear attempt state
     AttemptStateManager.remove(attemptState.attemptId)
+
+    // Check for newly earned badges
+    try {
+      const badgeResponse = await fetch('/api/student/badges/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId: session.studentId }),
+      })
+
+      if (badgeResponse.ok) {
+        const { newBadges } = await badgeResponse.json()
+
+        if (newBadges && newBadges.length > 0) {
+          // Queue badges to show sequentially
+          setBadgeQueue(newBadges)
+          setCurrentBadgeIndex(0)
+          setShowBadgeModal(true)
+          setFinalScore(score) // Store final score for later
+          return // Don't show lesson complete yet, wait for badge modals
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check badges:', error)
+      // Continue to lesson complete even if badge check fails
+    }
 
     // Show lesson complete modal with final score
     setFinalScore(score)
@@ -523,6 +568,13 @@ export default function LessonPage() {
       <PointAnimation
         show={showPointAnimation}
         onComplete={() => setShowPointAnimation(false)}
+      />
+
+      {/* Badge Unlocked Modal */}
+      <BadgeUnlockedModal
+        badge={badgeQueue[currentBadgeIndex] || null}
+        show={showBadgeModal}
+        onClose={handleBadgeDismiss}
       />
 
       {/* Lesson Complete Modal */}
