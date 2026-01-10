@@ -86,10 +86,13 @@ export async function DELETE(
       }
 
       // Delete student stats (gamification)
-      const { error: statsError } = await supabase
+      const { data: deletedStats, error: statsError } = await supabase
         .from('student_stats')
         .delete()
         .in('student_id', studentIds)
+        .select()
+
+      console.log(`Deleted ${deletedStats?.length || 0} student_stats records`)
 
       if (statsError) {
         console.error('Error deleting student stats:', statsError)
