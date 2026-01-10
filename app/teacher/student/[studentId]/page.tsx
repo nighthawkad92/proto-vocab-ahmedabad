@@ -166,10 +166,12 @@ export default function StudentDetailPage() {
       return
     }
 
+    // Open the side sheet immediately
+    setExpandedAttempt(attemptId)
+
     // Check if we already have the responses loaded
     const attempt = attempts.find((a) => a.id === attemptId)
     if (attempt?.responses) {
-      setExpandedAttempt(attemptId)
       return
     }
 
@@ -233,9 +235,9 @@ export default function StudentDetailPage() {
             : a
         )
       )
-      setExpandedAttempt(attemptId)
     } catch (error) {
       console.error('Failed to load attempt details:', error)
+      // Even if loading fails, keep the side sheet open to show summary data
     } finally {
       setLoadingDetails(null)
     }
@@ -539,24 +541,36 @@ export default function StudentDetailPage() {
             <div className="p-6 space-y-6">
               {(() => {
                 const attempt = attempts.find((a) => a.id === expandedAttempt)
-                if (!attempt || !attempt.responses) return null
+                if (!attempt) {
+                  return (
+                    <div className="bg-red-50 rounded-child p-6 border-2 border-red-200 text-center">
+                      <p className="text-child-base text-gray-700">Attempt not found</p>
+                    </div>
+                  )
+                }
 
-                // Calculate level-by-level stats
-                const levelStats = attempt.responses.reduce((acc, response) => {
-                  if (!acc[response.level_number]) {
-                    acc[response.level_number] = { total: 0, correct: 0 }
-                  }
-                  acc[response.level_number].total++
-                  if (response.is_correct) acc[response.level_number].correct++
-                  return acc
-                }, {} as Record<number, { total: number; correct: number }>)
+                // Check if responses are loaded
+                const hasResponses = attempt.responses && attempt.responses.length > 0
+                const isLoadingResponses = loadingDetails === attempt.id
+
+                // Calculate level-by-level stats only if responses are available
+                const levelStats = hasResponses
+                  ? attempt.responses!.reduce((acc, response) => {
+                      if (!acc[response.level_number]) {
+                        acc[response.level_number] = { total: 0, correct: 0 }
+                      }
+                      acc[response.level_number].total++
+                      if (response.is_correct) acc[response.level_number].correct++
+                      return acc
+                    }, {} as Record<number, { total: number; correct: number }>)
+                  : {}
 
                 return (
                   <>
                     {/* Lesson Info */}
                     <div className="bg-secondary-50 rounded-child p-4 border-2 border-secondary-200">
                       <h4 className="text-child-base font-bold text-gray-800 mb-2">
-                        {attempt.lesson.title}
+                        {attempt.lesson?.title || 'Unknown Lesson'}
                       </h4>
                       <div className="grid grid-cols-2 gap-4 text-child-sm text-gray-600">
                         <div>
@@ -627,72 +641,91 @@ export default function StudentDetailPage() {
                       </div>
                     </div>
 
-                    {/* Level-by-level breakdown */}
-                    <div>
-                      <h4 className="text-child-base font-bold text-gray-800 mb-3">
-                        Performance by Level
-                      </h4>
-                      <div className="grid grid-cols-1 gap-3">
-                        {Object.entries(levelStats).map(([levelNum, stats]) => {
-                          const levelAccuracy = calculateAccuracy(stats.correct, stats.total)
-                          const levelDifficulty =
-                            Number(levelNum) === 0
-                              ? { level: 'EASY', color: 'border-green-200 bg-green-50', emoji: '🟢' }
-                              : Number(levelNum) === 1
-                              ? { level: 'MEDIUM', color: 'border-yellow-200 bg-yellow-50', emoji: '🟡' }
-                              : { level: 'HARD', color: 'border-red-200 bg-red-50', emoji: '🔴' }
-
-                          return (
-                            <div
-                              key={levelNum}
-                              className={`rounded-lg p-4 border-2 ${levelDifficulty.color}`}
-                            >
-                              <div className="flex items-center justify-between mb-3">
-                                <span className="text-child-sm font-bold text-gray-800">
-                                  Level {levelNum}
-                                </span>
-                                <span className="text-child-xs font-bold text-gray-600">
-                                  {levelDifficulty.emoji} {levelDifficulty.level}
-                                </span>
-                              </div>
-                              <div className="space-y-2">
-                                <div className="flex justify-between text-child-xs text-gray-600">
-                                  <span>Questions:</span>
-                                  <span className="font-bold">
-                                    {stats.correct}/{stats.total}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="flex-1 bg-gray-200 rounded-full h-2">
-                                    <div
-                                      className={`h-2 rounded-full transition-all ${
-                                        levelAccuracy >= 80
-                                          ? 'bg-green-500'
-                                          : levelAccuracy >= 60
-                                          ? 'bg-yellow-500'
-                                          : 'bg-red-500'
-                                      }`}
-                                      style={{ width: `${levelAccuracy}%` }}
-                                    />
-                                  </div>
-                                  <span className="text-child-xs font-bold min-w-[45px]">
-                                    {levelAccuracy}%
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          )
-                        })}
+                    {/* Show loading state while responses are being fetched */}
+                    {isLoadingResponses && (
+                      <div className="bg-blue-50 rounded-child p-6 border-2 border-blue-200 text-center">
+                        <div className="text-2xl mb-2">⏳</div>
+                        <p className="text-child-base text-gray-700">Loading detailed responses...</p>
                       </div>
-                    </div>
+                    )}
 
-                    {/* Question-by-question details */}
-                    <div>
-                      <h4 className="text-child-base font-bold text-gray-800 mb-3">
-                        Question History
-                      </h4>
-                      <div className="space-y-3">
-                        {attempt.responses.map((response, idx) => (
+                    {/* Show message if no responses and not loading */}
+                    {!isLoadingResponses && !hasResponses && attempt.questions_attempted === 0 && (
+                      <div className="bg-gray-50 rounded-child p-6 border-2 border-gray-200 text-center">
+                        <div className="text-2xl mb-2">📝</div>
+                        <p className="text-child-base text-gray-700">No questions attempted yet</p>
+                      </div>
+                    )}
+
+                    {/* Show detailed breakdown only when responses are loaded */}
+                    {hasResponses && (
+                      <>
+                        {/* Level-by-level breakdown */}
+                        <div>
+                          <h4 className="text-child-base font-bold text-gray-800 mb-3">
+                            Performance by Level
+                          </h4>
+                          <div className="grid grid-cols-1 gap-3">
+                            {Object.entries(levelStats).map(([levelNum, stats]) => {
+                              const levelAccuracy = calculateAccuracy(stats.correct, stats.total)
+                              const levelDifficulty =
+                                Number(levelNum) === 0
+                                  ? { level: 'EASY', color: 'border-green-200 bg-green-50', emoji: '🟢' }
+                                  : Number(levelNum) === 1
+                                  ? { level: 'MEDIUM', color: 'border-yellow-200 bg-yellow-50', emoji: '🟡' }
+                                  : { level: 'HARD', color: 'border-red-200 bg-red-50', emoji: '🔴' }
+
+                              return (
+                                <div
+                                  key={levelNum}
+                                  className={`rounded-lg p-4 border-2 ${levelDifficulty.color}`}
+                                >
+                                  <div className="flex items-center justify-between mb-3">
+                                    <span className="text-child-sm font-bold text-gray-800">
+                                      Level {levelNum}
+                                    </span>
+                                    <span className="text-child-xs font-bold text-gray-600">
+                                      {levelDifficulty.emoji} {levelDifficulty.level}
+                                    </span>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <div className="flex justify-between text-child-xs text-gray-600">
+                                      <span>Questions:</span>
+                                      <span className="font-bold">
+                                        {stats.correct}/{stats.total}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div
+                                          className={`h-2 rounded-full transition-all ${
+                                            levelAccuracy >= 80
+                                              ? 'bg-green-500'
+                                              : levelAccuracy >= 60
+                                              ? 'bg-yellow-500'
+                                              : 'bg-red-500'
+                                          }`}
+                                          style={{ width: `${levelAccuracy}%` }}
+                                        />
+                                      </div>
+                                      <span className="text-child-xs font-bold min-w-[45px]">
+                                        {levelAccuracy}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Question-by-question details */}
+                        <div>
+                          <h4 className="text-child-base font-bold text-gray-800 mb-3">
+                            Question History
+                          </h4>
+                          <div className="space-y-3">
+                            {attempt.responses!.map((response, idx) => (
                           <div
                             key={response.question_id}
                             className={`rounded-lg p-4 border-2 ${
@@ -764,6 +797,8 @@ export default function StudentDetailPage() {
                         ))}
                       </div>
                     </div>
+                      </>
+                    )}
                   </>
                 )
               })()}
