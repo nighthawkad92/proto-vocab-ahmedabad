@@ -10,6 +10,9 @@ export class LessonCache {
   async init(): Promise<void> {
     if (typeof window === 'undefined') return
 
+    // One-time cleanup: delete entire database if we haven't cleared v4 yet
+    await this.clearOldDatabaseIfNeeded()
+
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION)
 
@@ -27,6 +30,35 @@ export class LessonCache {
         }
       }
     })
+  }
+
+  private async clearOldDatabaseIfNeeded(): Promise<void> {
+    try {
+      // Check if we've already done this cleanup
+      const clearFlag = localStorage.getItem('lesson_cache_cleared_v4')
+      if (clearFlag === 'done') return
+
+      // Delete the entire old database
+      await new Promise<void>((resolve) => {
+        const request = indexedDB.deleteDatabase(DB_NAME)
+        request.onsuccess = () => {
+          console.log('🗑️ Cleared old lesson cache (blocks→levels migration)')
+          localStorage.setItem('lesson_cache_cleared_v4', 'done')
+          resolve()
+        }
+        request.onerror = () => {
+          console.warn('Could not delete old cache, will continue anyway')
+          resolve()
+        }
+        request.onblocked = () => {
+          console.warn('Cache deletion blocked, will try next time')
+          resolve()
+        }
+      })
+    } catch (error) {
+      console.error('Error clearing old cache:', error)
+      // Don't block the app
+    }
   }
 
   async cacheLessonContent(
@@ -64,6 +96,14 @@ export class LessonCache {
       request.onsuccess = () => {
         const result = request.result
         if (!result) {
+          resolve(null)
+          return
+        }
+
+        // Validate: reject old cached data with "blocks" instead of "levels"
+        const content = result.content
+        if (content && (content as any).blocks && !(content as any).levels) {
+          console.warn('Cached lesson has old "blocks" structure, forcing refresh')
           resolve(null)
           return
         }
