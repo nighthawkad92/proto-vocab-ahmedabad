@@ -171,11 +171,14 @@ export default function StudentDetailPage() {
 
     const attemptTime = new Date(attempt.completed_at).getTime()
 
-    // Find badges earned within 5 seconds of completing this attempt
+    // Find badges earned within 20 seconds of completing this attempt
+    // (accounts for network latency in badge check API)
     return studentBadges
       .filter(badge => {
         const badgeTime = new Date(badge.earnedAt).getTime()
-        return Math.abs(badgeTime - attemptTime) < 5000 // Within 5 seconds
+        const timeDiff = badgeTime - attemptTime
+        // Badge must be earned AFTER attempt completed, within 20 seconds
+        return timeDiff >= 0 && timeDiff < 20000
       })
       .map(({ id, name, icon, imageUrl }) => ({ id, name, icon, imageUrl }))
   }
