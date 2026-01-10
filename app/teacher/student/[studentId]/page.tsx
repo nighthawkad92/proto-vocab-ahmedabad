@@ -272,6 +272,7 @@ export default function StudentDetailPage() {
 
   const totalAttempts = attempts.length
   const completedAttempts = attempts.filter((a) => a.completed_at).length
+  const abandonedAttempts = attempts.filter((a) => a.is_abandoned).length
   const totalQuestionsAttempted = attempts.reduce((sum, a) => sum + a.questions_attempted, 0)
   const totalQuestionsCorrect = attempts.reduce((sum, a) => sum + a.questions_correct, 0)
   const overallAccuracy = calculateAccuracy(totalQuestionsCorrect, totalQuestionsAttempted)
@@ -322,7 +323,7 @@ export default function StudentDetailPage() {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div className="bg-primary-50 rounded-child shadow-lg p-6 border-2 border-primary-200">
             <div className="text-3xl mb-2">📝</div>
             <div className="text-child-base font-bold text-gray-800">Total Attempts</div>
@@ -331,11 +332,19 @@ export default function StudentDetailPage() {
             </div>
           </div>
 
-          <div className="bg-secondary-50 rounded-child shadow-lg p-6 border-2 border-secondary-200">
+          <div className="bg-green-50 rounded-child shadow-lg p-6 border-2 border-green-200">
             <div className="text-3xl mb-2">✅</div>
             <div className="text-child-base font-bold text-gray-800">Completed</div>
-            <div className="text-child-xl font-display font-bold text-secondary-600">
+            <div className="text-child-xl font-display font-bold text-green-600">
               {completedAttempts}
+            </div>
+          </div>
+
+          <div className="bg-red-50 rounded-child shadow-lg p-6 border-2 border-red-200">
+            <div className="text-3xl mb-2">⚠️</div>
+            <div className="text-child-base font-bold text-gray-800">Abandoned</div>
+            <div className="text-child-xl font-display font-bold text-red-600">
+              {abandonedAttempts}
             </div>
           </div>
 
@@ -347,10 +356,10 @@ export default function StudentDetailPage() {
             </div>
           </div>
 
-          <div className="bg-green-50 rounded-child shadow-lg p-6 border-2 border-green-200">
+          <div className="bg-secondary-50 rounded-child shadow-lg p-6 border-2 border-secondary-200">
             <div className="text-3xl mb-2">💯</div>
             <div className="text-child-base font-bold text-gray-800">Questions Correct</div>
-            <div className="text-child-xl font-display font-bold text-green-600">
+            <div className="text-child-xl font-display font-bold text-secondary-600">
               {totalQuestionsCorrect}/{totalQuestionsAttempted}
             </div>
           </div>
@@ -569,15 +578,51 @@ export default function StudentDetailPage() {
                             <span className="text-yellow-600 font-bold">⏳ In Progress</span>
                           )}
                         </div>
+                        {attempt.is_abandoned && attempt.abandoned_at && (
+                          <div>
+                            <span className="font-medium">Abandoned:</span>{' '}
+                            <span className="text-red-600 text-child-xs">
+                              {new Date(attempt.abandoned_at).toLocaleString('en-IN', {
+                                day: 'numeric',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                          </div>
+                        )}
+                        <div>
+                          <span className="font-medium">Questions Attempted:</span>{' '}
+                          <span className="font-bold">
+                            {attempt.questions_attempted}
+                            {attempt.is_abandoned && (
+                              <span className="text-red-600 text-child-xs ml-1">
+                                (stopped early)
+                              </span>
+                            )}
+                          </span>
+                        </div>
                         <div>
                           <span className="font-medium">Accuracy:</span>{' '}
                           <span className="font-bold">
                             {calculateAccuracy(attempt.questions_correct, attempt.questions_attempted)}%
+                            {attempt.is_abandoned && attempt.questions_attempted > 0 && (
+                              <span className="text-gray-500 text-child-xs ml-1">
+                                ({attempt.questions_correct}/{attempt.questions_attempted} correct)
+                              </span>
+                            )}
                           </span>
                         </div>
                         <div>
-                          <span className="font-medium">Levels:</span>{' '}
-                          <span className="font-bold">{attempt.levels_completed}</span>
+                          <span className="font-medium">Levels Completed:</span>{' '}
+                          <span className="font-bold">
+                            {attempt.levels_completed}
+                            {attempt.is_abandoned && (
+                              <span className="text-red-600 text-child-xs ml-1">
+                                / 3 total
+                              </span>
+                            )}
+                          </span>
                         </div>
                       </div>
                     </div>
