@@ -28,6 +28,13 @@ interface Response {
   correct_answer?: string
 }
 
+interface Badge {
+  id: string
+  name: string
+  icon: string
+  imageUrl: string
+}
+
 interface Attempt {
   id: string
   lesson: {
@@ -42,6 +49,7 @@ interface Attempt {
   is_abandoned?: boolean
   abandoned_at?: string | null
   responses?: Response[]
+  badges?: Badge[]
 }
 
 export default function StudentDetailPage() {
@@ -51,6 +59,7 @@ export default function StudentDetailPage() {
 
   const [student, setStudent] = useState<StudentInfo | null>(null)
   const [attempts, setAttempts] = useState<Attempt[]>([])
+  const [studentBadges, setStudentBadges] = useState<Array<Badge & { earnedAt: string }>>([])
   const [expandedAttempt, setExpandedAttempt] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [loadingDetails, setLoadingDetails] = useState<string | null>(null)
@@ -65,6 +74,7 @@ export default function StudentDetailPage() {
     }
 
     loadStudentData()
+    loadStudentBadges()
   }, [studentId, router])
 
   const loadStudentData = async () => {
@@ -140,6 +150,34 @@ export default function StudentDetailPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const loadStudentBadges = async () => {
+    try {
+      const response = await fetch(`/api/teacher/student/${studentId}/badges`)
+      const data = await response.json()
+
+      if (response.ok) {
+        setStudentBadges(data.badges || [])
+      }
+    } catch (error) {
+      console.error('Failed to load student badges:', error)
+    }
+  }
+
+  // Match badges to attempts based on completion time
+  const getBadgesForAttempt = (attempt: Attempt): Badge[] => {
+    if (!attempt.completed_at) return []
+
+    const attemptTime = new Date(attempt.completed_at).getTime()
+
+    // Find badges earned within 5 seconds of completing this attempt
+    return studentBadges
+      .filter(badge => {
+        const badgeTime = new Date(badge.earnedAt).getTime()
+        return Math.abs(badgeTime - attemptTime) < 5000 // Within 5 seconds
+      })
+      .map(({ id, name, icon, imageUrl }) => ({ id, name, icon, imageUrl }))
   }
 
   const calculateAccuracy = (correct: number, attempted: number) => {
@@ -481,6 +519,9 @@ export default function StudentDetailPage() {
                       Levels
                     </th>
                     <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
+                      Badges Earned
+                    </th>
+                    <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
                       Actions
                     </th>
                   </tr>
@@ -580,6 +621,34 @@ export default function StudentDetailPage() {
                           </td>
                           <td className="px-6 py-4 text-child-sm text-gray-600">
                             {attempt.levels_completed}
+                          </td>
+                          <td className="px-6 py-4">
+                            {(() => {
+                              const badges = getBadgesForAttempt(attempt)
+                              if (badges.length === 0) {
+                                return <span className="text-gray-400 text-child-xs">—</span>
+                              }
+                              return (
+                                <div className="flex flex-wrap gap-2">
+                                  {badges.map((badge) => (
+                                    <div
+                                      key={badge.id}
+                                      className="group relative"
+                                      title={badge.name}
+                                    >
+                                      <img
+                                        src={badge.imageUrl}
+                                        alt={badge.name}
+                                        className="w-8 h-8 hover:scale-110 transition-transform"
+                                      />
+                                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                        {badge.icon} {badge.name}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )
+                            })()}
                           </td>
                           <td className="px-6 py-4">
                             <Button

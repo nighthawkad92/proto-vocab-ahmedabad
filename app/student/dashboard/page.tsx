@@ -8,7 +8,7 @@ import { Header } from '@/components/navigation/Header'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Loader } from '@/components/ui/Loader'
 import { LessonGrid } from '@/components/ui/LessonGrid'
-import type { StudentSession, LessonUnlock, Badge } from '@/lib/types'
+import type { StudentSession, LessonUnlock } from '@/lib/types'
 
 interface Lesson {
   id: string
@@ -22,7 +22,6 @@ export default function StudentDashboard() {
   const [session, setSession] = useState<StudentSession | null>(null)
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [unlocks, setUnlocks] = useState<Record<string, boolean>>({})
-  const [badges, setBadges] = useState<Badge[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -34,7 +33,6 @@ export default function StudentDashboard() {
 
     setSession(currentSession)
     loadLessons(currentSession.classId)
-    loadBadges(currentSession.studentId)
   }, [router])
 
   const loadLessons = async (classId: string) => {
@@ -56,19 +54,6 @@ export default function StudentDashboard() {
       console.error('Failed to load lessons:', error)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const loadBadges = async (studentId: string) => {
-    try {
-      const response = await fetch(`/api/student/badges?studentId=${studentId}`)
-      const data = await response.json()
-
-      if (response.ok) {
-        setBadges(data.badges || [])
-      }
-    } catch (error) {
-      console.error('Failed to load badges:', error)
     }
   }
 
@@ -104,23 +89,6 @@ export default function StudentDashboard() {
       />
 
       <div className="min-h-[calc(100vh-4rem)] py-8">
-        {/* Badge Display */}
-        {badges.length > 0 && (
-          <div className="max-w-4xl mx-auto px-6 mb-6">
-            <div className="bg-white rounded-child shadow-child p-4 flex items-center gap-4">
-              <div className="text-child-2xl">🏆</div>
-              <div>
-                <p className="text-child-base font-semibold text-gray-800">
-                  {badges.length} Badge{badges.length !== 1 ? 's' : ''} Earned
-                </p>
-                <p className="text-child-sm text-gray-600">
-                  Keep learning to earn more!
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {lessons.length === 0 ? (
           <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
             <div className="bg-white rounded-child shadow-child max-w-md mx-6">
