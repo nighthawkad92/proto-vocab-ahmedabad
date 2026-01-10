@@ -92,6 +92,18 @@ export default function LessonPage() {
 
       try {
         content = await cache.getCachedLesson(lessonId)
+
+        // Validate cached content has correct number of questions (4 per level)
+        if (content && content.levels) {
+          const hasInvalidQuestionCount = content.levels.some(level =>
+            !level.questions || level.questions.length !== 4
+          )
+
+          if (hasInvalidQuestionCount) {
+            console.warn('Cached lesson has invalid question count, fetching fresh data')
+            content = null // Force refetch from network
+          }
+        }
       } catch (error) {
         console.error('Failed to load from cache:', error)
       }
