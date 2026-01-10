@@ -14,9 +14,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Reading and Writing Connection",
     "description": "Read stories and put events in the right order",
     "rotationEnabled": false,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Understanding Story Order",
           "explanation": "Stories happen in order: First this, then that, finally this. When we put events in the right order, the story makes sense!",
@@ -55,7 +55,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "introduction": {
           "concept": "Following Longer Stories",
           "explanation": "Some stories have more steps. We need to remember what happened first, second, third, and so on.",
@@ -81,7 +81,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "introduction": {
           "concept": "Understanding Stories with Problems and Solutions",
           "explanation": "Some stories tell about a problem and how it was solved. We need to understand: what was the problem? what happened? how did it end?",

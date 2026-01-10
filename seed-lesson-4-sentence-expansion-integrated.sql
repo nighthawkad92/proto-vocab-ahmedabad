@@ -14,9 +14,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Sentence Expansion",
     "description": "Build sentences and make them more interesting",
     "rotationEnabled": false,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Building Sentences in the Right Order",
           "explanation": "Words need to be in the right order to make sense. When we put them correctly, everyone understands!",
@@ -45,7 +45,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "introduction": {
           "concept": "Adding Describing Words",
           "explanation": "We can make sentences better by adding words that describe. Describing words tell us WHAT KIND of thing we''re talking about!",
@@ -82,7 +82,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "introduction": {
           "concept": "Making Longer Sentences",
           "explanation": "Sentences can have describing words AND words that tell HOW something happens. This makes them even better!",
@@ -115,7 +115,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 3,
+        "levelNumber": 3,
         "introduction": {
           "concept": "Adding Where and When",
           "explanation": "We can also add words that tell WHERE or WHEN something happens. This gives more information!",

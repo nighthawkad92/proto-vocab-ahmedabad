@@ -38,12 +38,12 @@ export async function POST(request: NextRequest) {
       const updateData: any = {
         questions_attempted: questionsAttempted,
         questions_correct: questionsCorrect,
-        blocks_completed: levelsCompleted, // Note: DB still uses "blocks" terminology
+        levels_completed: levelsCompleted,
       }
 
       // If stopped due to mistakes, record the level where they stopped
       if (mistakesInLevel >= 2 && !completedAt) {
-        updateData.blocks_stopped_at = currentLevel
+        updateData.levels_stopped_at = currentLevel
       }
 
       // Add completion or abandonment status

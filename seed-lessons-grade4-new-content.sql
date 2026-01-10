@@ -342,9 +342,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Reading Short Stories",
     "description": "I can read short stories and understand them",
     "rotationEnabled": true,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Reading Comprehension",
           "explanation": "When we read, we must understand what the story tells us. We look for who is in the story, what happens, and where it happens.",
@@ -481,7 +481,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "questions": [
           {
             "id": "l3b1q1",
@@ -552,7 +552,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "questions": [
           {
             "id": "l3b2q1",

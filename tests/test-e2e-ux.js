@@ -207,7 +207,7 @@ async function testE2E() {
           completed_at: new Date().toISOString(),
           questions_attempted: 4,
           questions_correct: 3,
-          blocks_completed: 1,
+          levels_completed: 1,
           accuracy: 75.0
         })
 

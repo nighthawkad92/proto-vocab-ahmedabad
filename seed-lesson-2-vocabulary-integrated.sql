@@ -14,9 +14,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Vocabulary in Context",
     "description": "Learn word meanings and use them in sentences",
     "rotationEnabled": false,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Understanding Words in Context",
           "explanation": "Words have meanings. We use them to tell about things we see, feel, and do. When we pick the right word, others understand us better!",
@@ -47,7 +47,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "introduction": {
           "concept": "Feelings and Behavior Words",
           "explanation": "Some words tell us how people feel or act. These words help us understand why someone does something.",
@@ -68,7 +68,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "introduction": {
           "concept": "Thinking and Emotion Words",
           "explanation": "Some words describe how our mind works or how we feel inside. These words are more difficult, but they help us talk about our thoughts!",

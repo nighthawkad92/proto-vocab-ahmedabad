@@ -14,9 +14,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
     "title": "Reading Short Paragraphs",
     "description": "Read stories and answer questions about them",
     "rotationEnabled": false,
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "introduction": {
           "concept": "Reading and Understanding Stories",
           "explanation": "When we read, we can find out WHO is in the story and WHAT they did. Reading carefully helps us remember!",
@@ -47,7 +47,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "introduction": {
           "concept": "Understanding What Happened First",
           "explanation": "Stories have a beginning, middle, and end. We need to remember what happened first, then next.",
@@ -68,7 +68,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 2,
+        "levelNumber": 2,
         "introduction": {
           "concept": "Understanding Why Things Happen",
           "explanation": "Sometimes the story tells us WHY someone felt happy or sad. We need to read carefully to find the reason!",

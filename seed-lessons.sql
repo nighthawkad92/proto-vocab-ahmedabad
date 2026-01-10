@@ -10,9 +10,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
   '{
     "title": "Animals Around Us",
     "description": "Learn names of common animals",
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "questions": [
           {
             "id": "l1b0q1",
@@ -45,7 +45,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "questions": [
           {
             "id": "l1b1q1",
@@ -83,9 +83,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
   '{
     "title": "Bright Colors",
     "description": "Learn color names",
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "questions": [
           {
             "id": "l2b0q1",
@@ -118,7 +118,7 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
         ]
       },
       {
-        "blockNumber": 1,
+        "levelNumber": 1,
         "questions": [
           {
             "id": "l2b1q1",
@@ -149,9 +149,9 @@ INSERT INTO lessons (title, description, grade, "order", content) VALUES (
   '{
     "title": "My Body",
     "description": "Learn body part names",
-    "blocks": [
+    "levels": [
       {
-        "blockNumber": 0,
+        "levelNumber": 0,
         "questions": [
           {
             "id": "l3b0q1",

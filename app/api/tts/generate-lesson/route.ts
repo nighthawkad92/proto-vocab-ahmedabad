@@ -35,8 +35,8 @@ export async function POST(request: NextRequest) {
     // Extract all prompts that need audio
     const prompts: { questionId: string; text: string }[] = []
 
-    content.blocks?.forEach((block: any) => {
-      block.questions?.forEach((question: any) => {
+    content.levels?.forEach((level: any) => {
+      level.questions?.forEach((question: any) => {
         if (question.prompt && !question.audioUrl) {
           prompts.push({
             questionId: question.id,
@@ -86,9 +86,9 @@ export async function POST(request: NextRequest) {
     // and update the content with proper URLs
     const updatedContent = { ...content }
 
-    updatedContent.blocks = updatedContent.blocks.map((block: any) => ({
-      ...block,
-      questions: block.questions.map((question: any) => ({
+    updatedContent.levels = updatedContent.levels.map((level: any) => ({
+      ...level,
+      questions: level.questions.map((question: any) => ({
         ...question,
         audioUrl: audioMap[question.id] || question.audioUrl,
       })),
