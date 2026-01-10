@@ -128,16 +128,6 @@ export default function LessonPage() {
         }
 
         content = data.lesson.content
-
-        // Handle legacy "blocks" vs new "levels" structure
-        if (!content.levels && (content as any).blocks) {
-          console.log('Migrating legacy blocks structure to levels')
-          content = {
-            ...content,
-            levels: (content as any).blocks
-          }
-        }
-
         attemptNumber = data.attemptNumber || 1
 
         // Cache for offline use

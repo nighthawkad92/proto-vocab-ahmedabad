@@ -211,10 +211,8 @@ export default function StudentDetailPage() {
       const lessonContent = (lessonData as any)?.lessons?.content
       const questionMap = new Map()
 
-      // Handle both legacy 'blocks' and new 'levels' structure
-      const levelsOrBlocks = lessonContent?.levels || lessonContent?.blocks
-      if (levelsOrBlocks) {
-        levelsOrBlocks.forEach((level: any) => {
+      if (lessonContent?.levels) {
+        lessonContent.levels.forEach((level: any) => {
           level.questions?.forEach((q: any) => {
             questionMap.set(q.id, {
               prompt: q.prompt,
@@ -229,8 +227,7 @@ export default function StudentDetailPage() {
         const questionDetails = questionMap.get(response.question_id)
         return {
           ...response,
-          // Handle both level_number (new) and block_number (old) column names
-          level_number: response.level_number ?? response.block_number ?? 0,
+          level_number: response.level_number ?? 0,
           question_prompt: questionDetails?.prompt || 'Question not found',
           correct_answer: questionDetails?.correctAnswer || '',
         }

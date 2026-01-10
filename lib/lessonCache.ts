@@ -68,18 +68,7 @@ export class LessonCache {
           return
         }
 
-        let content = result.content
-
-        // Migrate legacy 'blocks' to 'levels' structure
-        if (content && !content.levels && (content as any).blocks) {
-          content = {
-            ...content,
-            levels: (content as any).blocks
-          }
-          delete (content as any).blocks
-        }
-
-        resolve(content)
+        resolve(result.content)
       }
       request.onerror = () => reject(request.error)
     })
