@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background circle -->
+  <circle cx="128" cy="128" r="118" fill="#FFC107" opacity="0.1"/>
+  <circle cx="128" cy="128" r="110" fill="none" stroke="#FFC107" stroke-width="3"/>
+
+  <!-- Lightning bolt -->
+  <g transform="translate(128, 128)">
+    <!-- Main bolt (yellow-orange gradient) -->
+    <path d="M 20,-70 L -30,-10 L 10,-10 L -20,70 L 50,0 L 0,0 Z" fill="#FFC107"/>
+
+    <!-- Highlight on bolt -->
+    <path d="M 15,-70 L -25,-10 L 5,-10 L 5,-5 L -18,65 L 45,0 L 5,0 Z" fill="#FFD54F"/>
+
+    <!-- Inner bolt detail (brightest) -->
+    <path d="M 10,-70 L -20,-10 L 0,-10 L 0,-8 L -15,55 L 35,0 L 0,0 Z" fill="#FFEB3B"/>
+  </g>
+
+  <!-- Energy sparks around bolt -->
+  <g fill="#FFD54F">
+    <!-- Top sparks -->
+    <circle cx="105" cy="50" r="4"/>
+    <circle cx="150" cy="50" r="3"/>
+    <circle cx="128" cy="35" r="3.5"/>
+
+    <!-- Middle sparks -->
+    <circle cx="85" cy="115" r="3.5"/>
+    <circle cx="170" cy="100" r="4"/>
+    <circle cx="90" cy="140" r="3"/>
+
+    <!-- Bottom sparks -->
+    <circle cx="145" cy="180" r="4"/>
+    <circle cx="160" cy="165" r="3"/>
+    <circle cx="130" cy="195" r="3.5"/>
+  </g>
+
+  <!-- Speed lines -->
+  <g stroke="#FFD54F" stroke-width="2" stroke-linecap="round" opacity="0.6">
+    <line x1="65" y1="75" x2="50" y2="75"/>
+    <line x1="70" y1="100" x2="50" y2="100"/>
+    <line x1="75" y1="125" x2="55" y2="125"/>
+
+    <line x1="190" y1="85" x2="210" y2="85"/>
+    <line x1="185" y1="110" x2="205" y2="110"/>
+    <line x1="180" y1="135" x2="200" y2="135"/>
+  </g>
+
+  <!-- "Fast" indicator -->
+  <g transform="translate(185, 70)">
+    <circle cx="0" cy="0" r="20" fill="#FFC107"/>
+    <path d="M -8,-5 L -8,5 L 8,0 Z" fill="white"/>
+  </g>
+
+  <!-- Electric glow effect -->
+  <circle cx="128" cy="128" r="85" fill="none" stroke="#FFD54F" stroke-width="2" opacity="0.3"/>
+</svg>

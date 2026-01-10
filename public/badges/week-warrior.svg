@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background circle -->
+  <circle cx="128" cy="128" r="118" fill="#FF6F00" opacity="0.1"/>
+  <circle cx="128" cy="128" r="110" fill="none" stroke="#FF6F00" stroke-width="3"/>
+
+  <!-- Fire flame -->
+  <g transform="translate(128, 135)">
+    <!-- Main flame -->
+    <path d="M 0,-60 C -15,-40 -20,-20 -15,0 C -12,10 -5,18 0,20 C 5,18 12,10 15,0 C 20,-20 15,-40 0,-60 Z" fill="#FF6F00"/>
+
+    <!-- Middle flame -->
+    <path d="M 0,-50 C -10,-35 -12,-20 -8,0 C -6,8 -3,14 0,15 C 3,14 6,8 8,0 C 12,-20 10,-35 0,-50 Z" fill="#FF9100"/>
+
+    <!-- Inner flame -->
+    <path d="M 0,-35 C -6,-25 -8,-15 -5,0 C -3,6 -1,10 0,11 C 1,10 3,6 5,0 C 8,-15 6,-25 0,-35 Z" fill="#FFAB00"/>
+
+    <!-- Hot core -->
+    <ellipse cx="0" cy="0" rx="6" ry="8" fill="#FFD54F"/>
+  </g>
+
+  <!-- "7" badge -->
+  <circle cx="185" cy="70" r="25" fill="#FF6F00"/>
+  <text x="185" y="82" font-family="Arial, sans-serif" font-size="30" font-weight="bold" text-anchor="middle" fill="white">7</text>
+</svg>

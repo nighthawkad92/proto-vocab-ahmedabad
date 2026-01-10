@@ -167,7 +167,7 @@ export async function evaluateBadgeCriteria(
       const newBadge = {
         // @ts-ignore
         ...badge,
-        imageUrl: `/badges/${badgeKey}.png`
+        imageUrl: `/badges/${badgeKey}.svg`
       } as Badge
       newBadges.push(newBadge)
     }
@@ -231,7 +231,7 @@ export async function getStudentBadges(studentId: string): Promise<Badge[]> {
 
   return (data || []).map((item: any) => ({
     ...item.badges,
-    imageUrl: `/badges/${item.badges.name.toLowerCase().replace(/ /g, '-')}.png`,
+    imageUrl: `/badges/${item.badges.name.toLowerCase().replace(/ /g, '-')}.svg`,
     earned_at: item.earned_at,
   })) as Badge[]
 }
