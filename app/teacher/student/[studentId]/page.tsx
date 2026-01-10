@@ -39,6 +39,8 @@ interface Attempt {
   questions_correct: number
   levels_completed: number
   levels_stopped_at: number | null
+  is_abandoned?: boolean
+  abandoned_at?: string | null
   responses?: Response[]
 }
 
@@ -106,6 +108,8 @@ export default function StudentDetailPage() {
           questions_correct,
           blocks_completed,
           blocks_stopped_at,
+          is_abandoned,
+          abandoned_at,
           lessons:lesson_id (
             title
           )
@@ -124,6 +128,8 @@ export default function StudentDetailPage() {
         questions_correct: attempt.questions_correct || 0,
         levels_completed: attempt.blocks_completed || 0, // DB uses "blocks" terminology
         levels_stopped_at: attempt.blocks_stopped_at,    // DB uses "blocks" terminology
+        is_abandoned: attempt.is_abandoned || false,
+        abandoned_at: attempt.abandoned_at,
       }))
 
       setAttempts(formattedAttempts || [])
@@ -399,7 +405,7 @@ export default function StudentDetailPage() {
                       attempt.questions_attempted
                     )
                     const isCompleted = !!attempt.completed_at
-                    const isAbandoned = !!(attempt as any).is_abandoned
+                    const isAbandoned = !!attempt.is_abandoned
                     const difficulty = getDifficultyLevel(
                       attempt.levels_completed,
                       attempt.levels_stopped_at
@@ -557,6 +563,8 @@ export default function StudentDetailPage() {
                           <span className="font-medium">Status:</span>{' '}
                           {attempt.completed_at ? (
                             <span className="text-green-600 font-bold">✓ Completed</span>
+                          ) : attempt.is_abandoned ? (
+                            <span className="text-red-600 font-bold">⚠ Abandoned</span>
                           ) : (
                             <span className="text-yellow-600 font-bold">⏳ In Progress</span>
                           )}
