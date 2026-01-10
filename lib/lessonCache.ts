@@ -1,7 +1,7 @@
 import type { LessonContent } from './types'
 
 const DB_NAME = 'pal_vocab_cache'
-const DB_VERSION = 2  // Bumped to invalidate old cache with 'blocks' structure
+const DB_VERSION = 3  // Bumped to invalidate old cache with incorrect question counts (Jan 10, 2026 update)
 const STORE_NAME = 'lessons'
 
 export class LessonCache {
