@@ -107,23 +107,35 @@ export default function ClassDetailPage() {
 
       if (isUnlocked) {
         // Remove unlock
-        await supabase
+        const { error: deleteError } = await supabase
           .from('lesson_unlocks')
           .delete()
           .eq('class_id', classId)
           .eq('lesson_id', lessonId)
+
+        if (deleteError) {
+          console.error('Error removing unlock:', deleteError)
+          throw deleteError
+        }
+        console.log('✅ Lesson unlocked removed')
       } else {
         // Add unlock
         // @ts-ignore - Supabase types are strict when env vars aren't set
-        await supabase.from('lesson_unlocks').insert({
+        const { data, error: insertError } = await supabase.from('lesson_unlocks').insert({
           class_id: classId,
           lesson_id: lessonId,
           unlocked_by: session.teacherId,
-        })
+        }).select()
+
+        if (insertError) {
+          console.error('Error adding unlock:', insertError)
+          throw insertError
+        }
+        console.log('✅ Lesson unlocked:', data)
       }
 
       // Reload lessons
-      loadClassData()
+      await loadClassData()
     } catch (error) {
       console.error('Failed to toggle lesson:', error)
       alert('Failed to update lesson status')
