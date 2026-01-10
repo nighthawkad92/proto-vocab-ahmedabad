@@ -66,40 +66,43 @@ export async function updateStudentStats(studentId: string): Promise<void> {
  * Get additional data needed for badge evaluation
  */
 async function getAdditionalBadgeData(studentId: string) {
-  // Check for perfect attempts (100% accuracy)
-  // @ts-ignore
-  const { data: perfectAttempts } = await supabase
-    .from('attempts')
-    .select('questions_attempted, questions_correct')
-    .eq('student_id', studentId)
-    .eq('is_abandoned', false)
+  // Run all queries in parallel for better performance
+  const [
+    { data: perfectAttempts },
+    { data: quickAttempts },
+    { data: student },
+  ] = await Promise.all([
+    // @ts-ignore
+    supabase
+      .from('attempts')
+      .select('questions_attempted, questions_correct')
+      .eq('student_id', studentId)
+      .eq('is_abandoned', false),
+    // @ts-ignore
+    supabase
+      .from('attempts')
+      .select('duration_seconds')
+      .eq('student_id', studentId)
+      .lt('duration_seconds', 600)
+      .not('duration_seconds', 'is', null),
+    // @ts-ignore
+    supabase
+      .from('students')
+      .select('class_id, classes(grade)')
+      .eq('id', studentId)
+      .single()
+  ])
 
   const hasPerfectAttempt = perfectAttempts?.some((a: any) =>
     a.questions_attempted > 0 && a.questions_attempted === a.questions_correct
   )
 
-  // Check for quick completions (< 10 minutes = 600 seconds)
-  // @ts-ignore
-  const { data: quickAttempts } = await supabase
-    .from('attempts')
-    .select('duration_seconds')
-    .eq('student_id', studentId)
-    .lt('duration_seconds', 600)
-    .not('duration_seconds', 'is', null)
-
   const hasQuickCompletion = (quickAttempts?.length || 0) > 0
-
-  // Get total lesson count for student's grade
-  // @ts-ignore
-  const { data: student } = await supabase
-    .from('students')
-    .select('class_id, classes(grade)')
-    .eq('id', studentId)
-    .single()
 
   // @ts-ignore
   const grade = student?.classes?.grade || 4
 
+  // Get total lesson count for student's grade
   // @ts-ignore
   const { count: totalLessons } = await supabase
     .from('lessons')
@@ -119,13 +122,21 @@ async function getAdditionalBadgeData(studentId: string) {
 export async function evaluateBadgeCriteria(
   studentId: string
 ): Promise<Badge[]> {
-  // Get current stats
-  // @ts-ignore
-  const { data: statsData } = await supabase
-    .from('student_stats')
-    .select('*')
-    .eq('student_id', studentId)
-    .single()
+  // Run all queries in parallel for better performance
+  const [
+    { data: statsData },
+    { data: earnedBadges },
+    { data: allBadges },
+    additionalData
+  ] = await Promise.all([
+    // @ts-ignore
+    supabase.from('student_stats').select('*').eq('student_id', studentId).single(),
+    // @ts-ignore
+    supabase.from('student_badges').select('badge_id').eq('student_id', studentId),
+    // @ts-ignore
+    supabase.from('badges').select('*'),
+    getAdditionalBadgeData(studentId)
+  ])
 
   const stats = statsData as StudentStats
 
@@ -134,23 +145,7 @@ export async function evaluateBadgeCriteria(
     return []
   }
 
-  // Get already earned badges
-  // @ts-ignore
-  const { data: earnedBadges } = await supabase
-    .from('student_badges')
-    .select('badge_id')
-    .eq('student_id', studentId)
-
   const earnedBadgeIds = new Set(earnedBadges?.map((b: any) => b.badge_id) || [])
-
-  // Get all badge definitions
-  // @ts-ignore
-  const { data: allBadges } = await supabase
-    .from('badges')
-    .select('*')
-
-  // Check additional criteria
-  const additionalData = await getAdditionalBadgeData(studentId)
 
   // Find newly earned badges
   const newBadges: Badge[] = []
