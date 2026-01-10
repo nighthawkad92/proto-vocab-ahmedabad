@@ -565,79 +565,138 @@ export default function StudentDetailPage() {
                     }, {} as Record<number, { total: number; correct: number }>)
                   : {}
 
+                // Calculate total questions in lesson (3 levels × 4 questions = 12)
+                const totalQuestionsInLesson = 12
+                const completionPercentage = Math.round((attempt.questions_attempted / totalQuestionsInLesson) * 100)
+
                 return (
                   <>
-                    {/* Lesson Info */}
-                    <div className="bg-secondary-50 rounded-child p-4 border-2 border-secondary-200">
-                      <h4 className="text-child-base font-bold text-gray-800 mb-2">
+                    {/* Lesson Title and Status */}
+                    <div className="bg-white border-b-2 border-gray-200 pb-4">
+                      <h4 className="text-child-lg font-display font-bold text-gray-800 mb-2">
                         {attempt.lesson?.title || 'Unknown Lesson'}
                       </h4>
-                      <div className="grid grid-cols-2 gap-4 text-child-sm text-gray-600">
-                        <div>
-                          <span className="font-medium">Started:</span>{' '}
+                      <div className="flex items-center gap-2">
+                        {attempt.completed_at ? (
+                          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-child-xs font-bold">
+                            ✓ Completed
+                          </span>
+                        ) : attempt.is_abandoned ? (
+                          <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-child-xs font-bold">
+                            ⚠ Abandoned
+                          </span>
+                        ) : (
+                          <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-child-xs font-bold">
+                            ⏳ In Progress
+                          </span>
+                        )}
+                        <span className="text-child-xs text-gray-500">
                           {new Date(attempt.started_at).toLocaleString('en-IN', {
                             day: 'numeric',
                             month: 'short',
                             hour: '2-digit',
                             minute: '2-digit',
                           })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Key Metrics */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Completion Status */}
+                      <div className="bg-blue-50 rounded-child p-4 border-2 border-blue-200">
+                        <div className="text-child-xs text-blue-600 font-medium mb-1">
+                          Lesson Progress
                         </div>
-                        <div>
-                          <span className="font-medium">Status:</span>{' '}
-                          {attempt.completed_at ? (
-                            <span className="text-green-600 font-bold">✓ Completed</span>
-                          ) : attempt.is_abandoned ? (
-                            <span className="text-red-600 font-bold">⚠ Abandoned</span>
-                          ) : (
-                            <span className="text-yellow-600 font-bold">⏳ In Progress</span>
-                          )}
+                        <div className="text-child-lg font-bold text-gray-800">
+                          {attempt.levels_completed} / 3
                         </div>
-                        {attempt.is_abandoned && attempt.abandoned_at && (
-                          <div>
-                            <span className="font-medium">Abandoned:</span>{' '}
-                            <span className="text-red-600 text-child-xs">
+                        <div className="text-child-xs text-gray-600">
+                          levels completed
+                        </div>
+                      </div>
+
+                      {/* Questions Completed */}
+                      <div className="bg-purple-50 rounded-child p-4 border-2 border-purple-200">
+                        <div className="text-child-xs text-purple-600 font-medium mb-1">
+                          Questions
+                        </div>
+                        <div className="text-child-lg font-bold text-gray-800">
+                          {attempt.questions_attempted} / {totalQuestionsInLesson}
+                        </div>
+                        <div className="text-child-xs text-gray-600">
+                          attempted ({completionPercentage}%)
+                        </div>
+                      </div>
+
+                      {/* Accuracy */}
+                      <div className={`rounded-child p-4 border-2 ${
+                        calculateAccuracy(attempt.questions_correct, attempt.questions_attempted) >= 80
+                          ? 'bg-green-50 border-green-200'
+                          : calculateAccuracy(attempt.questions_correct, attempt.questions_attempted) >= 60
+                          ? 'bg-yellow-50 border-yellow-200'
+                          : 'bg-red-50 border-red-200'
+                      }`}>
+                        <div className={`text-child-xs font-medium mb-1 ${
+                          calculateAccuracy(attempt.questions_correct, attempt.questions_attempted) >= 80
+                            ? 'text-green-600'
+                            : calculateAccuracy(attempt.questions_correct, attempt.questions_attempted) >= 60
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                        }`}>
+                          Accuracy
+                        </div>
+                        <div className="text-child-lg font-bold text-gray-800">
+                          {calculateAccuracy(attempt.questions_correct, attempt.questions_attempted)}%
+                        </div>
+                        <div className="text-child-xs text-gray-600">
+                          {attempt.questions_correct} / {attempt.questions_attempted} correct
+                        </div>
+                      </div>
+
+                      {/* Completion Status Detail */}
+                      <div className="bg-gray-50 rounded-child p-4 border-2 border-gray-200">
+                        <div className="text-child-xs text-gray-600 font-medium mb-1">
+                          Status
+                        </div>
+                        {attempt.completed_at ? (
+                          <>
+                            <div className="text-child-sm font-bold text-green-600">
+                              Finished
+                            </div>
+                            <div className="text-child-xs text-gray-600">
+                              {new Date(attempt.completed_at).toLocaleString('en-IN', {
+                                day: 'numeric',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </div>
+                          </>
+                        ) : attempt.is_abandoned && attempt.abandoned_at ? (
+                          <>
+                            <div className="text-child-sm font-bold text-red-600">
+                              Left Early
+                            </div>
+                            <div className="text-child-xs text-gray-600">
                               {new Date(attempt.abandoned_at).toLocaleString('en-IN', {
                                 day: 'numeric',
                                 month: 'short',
                                 hour: '2-digit',
                                 minute: '2-digit',
                               })}
-                            </span>
-                          </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-child-sm font-bold text-yellow-600">
+                              In Progress
+                            </div>
+                            <div className="text-child-xs text-gray-600">
+                              Not yet completed
+                            </div>
+                          </>
                         )}
-                        <div>
-                          <span className="font-medium">Questions Attempted:</span>{' '}
-                          <span className="font-bold">
-                            {attempt.questions_attempted}
-                            {attempt.is_abandoned && (
-                              <span className="text-red-600 text-child-xs ml-1">
-                                (stopped early)
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-medium">Accuracy:</span>{' '}
-                          <span className="font-bold">
-                            {calculateAccuracy(attempt.questions_correct, attempt.questions_attempted)}%
-                            {attempt.is_abandoned && attempt.questions_attempted > 0 && (
-                              <span className="text-gray-500 text-child-xs ml-1">
-                                ({attempt.questions_correct}/{attempt.questions_attempted} correct)
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="font-medium">Levels Completed:</span>{' '}
-                          <span className="font-bold">
-                            {attempt.levels_completed}
-                            {attempt.is_abandoned && (
-                              <span className="text-red-600 text-child-xs ml-1">
-                                / 3 total
-                              </span>
-                            )}
-                          </span>
-                        </div>
                       </div>
                     </div>
 
@@ -660,9 +719,16 @@ export default function StudentDetailPage() {
                     {/* Show detailed breakdown only when responses are loaded */}
                     {hasResponses && (
                       <>
+                        {/* Section Divider */}
+                        <div className="border-t-2 border-gray-200 pt-4">
+                          <h3 className="text-child-base font-display font-bold text-gray-800 mb-4">
+                            📊 Detailed Breakdown
+                          </h3>
+                        </div>
+
                         {/* Level-by-level breakdown */}
                         <div>
-                          <h4 className="text-child-base font-bold text-gray-800 mb-3">
+                          <h4 className="text-child-sm font-bold text-gray-700 mb-3">
                             Performance by Level
                           </h4>
                           <div className="grid grid-cols-1 gap-3">
@@ -721,71 +787,88 @@ export default function StudentDetailPage() {
 
                         {/* Question-by-question details */}
                         <div>
-                          <h4 className="text-child-base font-bold text-gray-800 mb-3">
-                            Question History
+                          <h4 className="text-child-sm font-bold text-gray-700 mb-3">
+                            Questions Attempted ({attempt.responses!.length})
                           </h4>
                           <div className="space-y-3">
                             {attempt.responses!.map((response, idx) => (
                           <div
                             key={response.question_id}
-                            className={`rounded-lg p-4 border-2 ${
+                            className={`rounded-child p-4 border-l-4 ${
                               response.is_correct
-                                ? 'border-green-200 bg-green-50'
-                                : 'border-red-200 bg-red-50'
-                            }`}
+                                ? 'border-l-green-500 bg-green-50'
+                                : 'border-l-red-500 bg-red-50'
+                            } shadow-sm`}
                           >
-                            <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-start justify-between mb-3">
                               <div className="flex items-center gap-2">
-                                <span className="text-child-xs font-bold text-gray-600">
-                                  #{idx + 1}
+                                <span className={`w-7 h-7 rounded-full flex items-center justify-center text-child-xs font-bold ${
+                                  response.is_correct
+                                    ? 'bg-green-200 text-green-700'
+                                    : 'bg-red-200 text-red-700'
+                                }`}>
+                                  {idx + 1}
                                 </span>
-                                <span className="text-child-xs text-gray-500">
-                                  Level {response.level_number}
-                                </span>
+                                <div>
+                                  <div className="text-child-xs text-gray-500 capitalize">
+                                    {response.question_type.replace('-', ' ')} • Level {response.level_number}
+                                  </div>
+                                </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 {response.is_correct ? (
-                                  <span className="text-green-600 font-bold text-child-xs">
+                                  <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-child-xs font-bold">
                                     ✓ Correct
                                   </span>
                                 ) : (
-                                  <span className="text-red-600 font-bold text-child-xs">
-                                    ✗ Incorrect
+                                  <span className="bg-red-200 text-red-700 px-2 py-1 rounded-full text-child-xs font-bold">
+                                    ✗ Wrong
                                   </span>
                                 )}
                               </div>
                             </div>
 
-                            <div className="space-y-2">
-                              <div>
-                                <p className="text-child-xs text-gray-500 mb-1 capitalize">
-                                  {response.question_type.replace('-', ' ')}
-                                </p>
-                                <p className="text-child-sm font-medium text-gray-800">
+                            <div className="space-y-3">
+                              {/* Question */}
+                              <div className="bg-white rounded-lg p-3 border border-gray-200">
+                                <p className="text-child-xs text-gray-500 mb-1 font-medium">Question:</p>
+                                <p className="text-child-sm text-gray-800">
                                   {response.question_prompt}
                                 </p>
                               </div>
 
-                              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200">
-                                <div>
-                                  <p className="text-child-xs text-gray-600 mb-1">Student Answer:</p>
-                                  <p
-                                    className={`text-child-sm font-bold ${
-                                      response.is_correct ? 'text-green-700' : 'text-red-700'
-                                    }`}
-                                  >
+                              {/* Answers */}
+                              <div className="grid grid-cols-1 gap-2">
+                                <div className={`rounded-lg p-3 border-2 ${
+                                  response.is_correct
+                                    ? 'border-green-300 bg-green-100'
+                                    : 'border-red-300 bg-red-100'
+                                }`}>
+                                  <p className="text-child-xs font-medium mb-1" style={{
+                                    color: response.is_correct ? '#15803d' : '#b91c1c'
+                                  }}>
+                                    Student's Answer:
+                                  </p>
+                                  <p className="text-child-sm font-bold" style={{
+                                    color: response.is_correct ? '#15803d' : '#b91c1c'
+                                  }}>
                                     {response.student_answer || '(No answer)'}
                                   </p>
                                 </div>
-                                <div>
-                                  <p className="text-child-xs text-gray-600 mb-1">Correct Answer:</p>
-                                  <p className="text-child-sm font-bold text-blue-700">
-                                    {response.correct_answer}
-                                  </p>
-                                </div>
+
+                                {!response.is_correct && (
+                                  <div className="rounded-lg p-3 border-2 border-blue-300 bg-blue-50">
+                                    <p className="text-child-xs text-blue-700 font-medium mb-1">
+                                      Correct Answer:
+                                    </p>
+                                    <p className="text-child-sm font-bold text-blue-700">
+                                      {response.correct_answer}
+                                    </p>
+                                  </div>
+                                )}
                               </div>
 
-                              <div className="text-child-xs text-gray-500 pt-1">
+                              <div className="text-child-xs text-gray-400 text-right">
                                 {new Date(response.answered_at).toLocaleTimeString('en-IN', {
                                   hour: '2-digit',
                                   minute: '2-digit',
