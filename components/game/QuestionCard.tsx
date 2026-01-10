@@ -124,6 +124,7 @@ export default function QuestionCard({
           >
             {question.options.map((option, index) => {
               const isSelected = selectedAnswer === option
+              const isCorrect = feedbackState?.type === 'correct' && isSelected
 
               return (
                 <motion.button
@@ -131,20 +132,45 @@ export default function QuestionCard({
                   onClick={() => handleSelectAnswer(option)}
                   disabled={disabled || hasSubmitted}
                   initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    backgroundColor: isCorrect ? '#02A959' : (isSelected ? '#F59E0B' : '#ffffff'),
+                    borderColor: isCorrect ? '#028E4B' : (isSelected ? '#D88B09' : '#D1D5DB'),
+                  }}
+                  transition={{
+                    duration: 0.2,
+                    delay: index * 0.05,
+                    backgroundColor: { duration: 0.5, ease: 'easeInOut' },
+                    borderColor: { duration: 0.5, ease: 'easeInOut' }
+                  }}
                   className={`
                     w-full font-medium text-[28px] py-6 px-6 rounded-child shadow-md
-                    transition-all min-h-[4rem] text-left border-2
+                    min-h-[4rem] text-left border-2 relative flex items-center justify-between
                     ${
                       isSelected
-                        ? 'bg-secondary-600 text-white border-secondary-700 shadow-lg scale-105'
-                        : 'bg-white text-gray-800 border-gray-300 hover:border-accent-400 hover:shadow-lg'
+                        ? 'text-white shadow-lg scale-105'
+                        : 'text-gray-800 hover:border-accent-400 hover:shadow-lg'
                     }
-                    ${disabled || hasSubmitted ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'}
+                    ${disabled || hasSubmitted ? 'cursor-not-allowed' : 'cursor-pointer active:scale-95'}
                   `}
                 >
-                  {option}
+                  <span>{option}</span>
+                  {isCorrect && (
+                    <motion.img
+                      src="/assets/visuals/icon-check.svg"
+                      alt="Correct"
+                      className="w-8 h-8"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 20,
+                        delay: 0.3
+                      }}
+                    />
+                  )}
                 </motion.button>
               )
             })}
