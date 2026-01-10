@@ -88,7 +88,9 @@ if (result.isCorrect) {
 - [x] Wrong answer → no animation or penalty
 - [x] Build passes with no TypeScript errors
 
-**⚠️ NOTE**: `point.wav` is currently a copy of `correct.wav`. Replace with a more subtle coin/chime sound from Freesound.org or ZapSplat (< 500ms, quieter volume).
+**✅ UPDATE**: `point.wav` now uses `tap.wav` (31KB, more subtle and shorter than correct.wav).
+
+**✅ DATABASE**: Migration successfully run - `duration_seconds`, `score`, `is_abandoned`, `abandoned_at` columns added to attempts table.
 
 ---
 

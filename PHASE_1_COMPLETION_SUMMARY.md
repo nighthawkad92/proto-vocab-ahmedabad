@@ -71,9 +71,9 @@ audio.volume = effect === 'point' ? 0.3 : 0.6
 ```
 
 **Sound File**: `public/sounds/point.wav`
-- ⚠️ Currently a copy of `correct.wav`
-- **TODO**: Replace with subtle coin/chime sound
-- Target specs: < 500ms duration, quieter/softer tone
+- ✅ Using `tap.wav` (31KB, more subtle than correct.wav)
+- Shorter and quieter, perfect for point feedback
+- Volume set to 0.3 in code for extra subtlety
 
 ### 4. Level Complete Modal Updates
 **File**: [components/game/LevelCompleteModal.tsx](components/game/LevelCompleteModal.tsx)
@@ -193,22 +193,19 @@ if (score !== undefined) {
 
 ## Database Schema Changes
 
-### Required for Phase 2:
-Run this migration in Supabase SQL Editor:
-
-```sql
-ALTER TABLE attempts ADD COLUMN IF NOT EXISTS duration_seconds INTEGER;
-ALTER TABLE attempts ADD COLUMN IF NOT EXISTS score INTEGER;
-ALTER TABLE attempts ADD COLUMN IF NOT EXISTS is_abandoned BOOLEAN DEFAULT FALSE;
-ALTER TABLE attempts ADD COLUMN IF NOT EXISTS abandoned_at TIMESTAMPTZ;
-```
+### ✅ Migration Complete:
+Database schema updated with:
+- `duration_seconds` INTEGER - Time taken to complete lesson
+- `score` INTEGER - Total points earned (0-12)
+- `is_abandoned` BOOLEAN - Whether lesson was abandoned
+- `abandoned_at` TIMESTAMPTZ - When lesson was abandoned
 
 **Migration File**: [schemas/migrations/add-gamification-fields.sql](schemas/migrations/add-gamification-fields.sql)
 
 ### Current State:
-- ❌ Columns do NOT exist in production database yet
-- ✅ Code is ready to use them when added
-- ✅ Sync endpoint handles them gracefully (checks `!== undefined`)
+- ✅ Columns exist in production database
+- ✅ Code is actively using them
+- ✅ Sync endpoint saves duration and score on lesson completion
 
 ---
 
@@ -263,35 +260,21 @@ npm run build
 # No type inference issues
 ```
 
-### ⚠️ Pending Database Testing:
-- Cannot test database save until migration is run
-- `duration_seconds` and `score` columns don't exist yet
-- Sync endpoint ready but won't save these fields until columns exist
+### ✅ Database Testing:
+- Migration successfully run
+- `duration_seconds` and `score` columns now exist
+- Sync endpoint actively saving these fields on lesson completion
 
 ---
 
 ## Known Issues & TODOs
 
-### 🔴 Critical (Required for Production):
-1. **Replace point.wav sound file**
-   - Current: Copy of `correct.wav`
-   - Needed: Subtle coin/chime sound
-   - Source: Freesound.org or ZapSplat
-   - Specs: < 500ms, quieter/softer tone
-   - Volume: 0.3 (already set in code)
-
-### 🟡 Important (Required for Phase 2):
-2. **Run database migration**
-   - File: `schemas/migrations/add-gamification-fields.sql`
-   - Adds: `duration_seconds`, `score`, `is_abandoned`, `abandoned_at`
-   - Must run BEFORE Phase 2 implementation
+### ✅ Resolved:
+1. **Point sound file** - Now using tap.wav (more subtle, 31KB)
+2. **Database migration** - Successfully run in Supabase (duration_seconds, score, is_abandoned, abandoned_at columns added)
 
 ### 🟢 Optional (Nice to Have):
-3. **Test with real sound file**
-   - Verify volume level is appropriate
-   - Ensure timing doesn't conflict with other sounds
-
-4. **Test offline mode**
+1. **Test offline mode**
    - Verify score tracking works offline
    - Verify sync saves score when back online
 
@@ -350,6 +333,6 @@ npm run build
 
 ---
 
-**Phase 1 Status**: ✅ COMPLETE AND READY FOR PRODUCTION (after replacing point.wav)
+**Phase 1 Status**: ✅ COMPLETE AND PRODUCTION READY
 
-**Phase 2 Status**: 📋 READY TO BEGIN (after running database migration)
+**Phase 2 Status**: 🚀 READY TO BEGIN (all prerequisites complete)
