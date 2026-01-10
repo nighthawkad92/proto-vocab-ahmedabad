@@ -14,6 +14,8 @@ interface LevelCompleteModalProps {
   nextLevel?: number
   currentLevelName?: string
   nextLevelName?: string
+  levelScore?: number
+  maxLevelScore?: number
   onContinue: () => void
   onFinish: () => void
 }
@@ -25,6 +27,8 @@ export default function LevelCompleteModal({
   nextLevel,
   currentLevelName,
   nextLevelName,
+  levelScore,
+  maxLevelScore,
   onContinue,
   onFinish,
 }: LevelCompleteModalProps) {
@@ -86,6 +90,16 @@ export default function LevelCompleteModal({
           <h2 className="text-child-lg font-body font-medium text-gray-800">
             {titleText}
           </h2>
+
+          {/* Score Display */}
+          {levelScore !== undefined && maxLevelScore !== undefined && (
+            <div className="mt-3 mb-2">
+              <p className="text-child-base text-neutral-700">
+                Score: <span className="font-bold text-neutral-800">{levelScore}/{maxLevelScore}</span>
+              </p>
+            </div>
+          )}
+
           <p className="text-base text-gray-600">
             {descriptionText}
           </p>

@@ -7,6 +7,7 @@ export enum SoundEffect {
   INCORRECT = 'incorrect',
   TAP = 'tap',
   LEVEL_COMPLETE = 'level_complete',
+  POINT = 'point',
 }
 
 class SoundEffectsManager {
@@ -20,6 +21,7 @@ class SoundEffectsManager {
     [SoundEffect.INCORRECT]: '/sounds/incorrect.wav',
     [SoundEffect.TAP]: '/sounds/tap.wav',
     [SoundEffect.LEVEL_COMPLETE]: '/sounds/level-complete.wav',
+    [SoundEffect.POINT]: '/sounds/point.wav',
   }
 
   private constructor() {
@@ -40,7 +42,8 @@ class SoundEffectsManager {
     Object.entries(this.soundPaths).forEach(([effect, path]) => {
       const audio = new Audio(path)
       audio.preload = 'auto'
-      audio.volume = 0.6 // Moderate volume for children
+      // Lower volume for point sound to be more subtle
+      audio.volume = effect === 'point' ? 0.3 : 0.6
       this.sounds.set(effect as SoundEffect, audio)
     })
   }

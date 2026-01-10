@@ -33,12 +33,22 @@ export async function POST(request: NextRequest) {
         levelsCompleted,
         currentLevel,
         mistakesInLevel,
+        duration,
+        score,
       } = queueItem.data
 
       const updateData: any = {
         questions_attempted: questionsAttempted,
         questions_correct: questionsCorrect,
         levels_completed: levelsCompleted,
+      }
+
+      // Add duration and score if provided
+      if (duration !== undefined) {
+        updateData.duration_seconds = duration
+      }
+      if (score !== undefined) {
+        updateData.score = score
       }
 
       // If stopped due to mistakes, record the level where they stopped

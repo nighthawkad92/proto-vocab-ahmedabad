@@ -17,6 +17,8 @@ import ConnectionStatus from '@/components/layout/ConnectionStatus'
 import { Header } from '@/components/navigation/Header'
 import { Loader } from '@/components/ui/Loader'
 import { getLessonCache } from '@/lib/lessonCache'
+import { PointAnimation } from '@/components/game/PointAnimation'
+import { LessonCompleteModal } from '@/components/game/LessonCompleteModal'
 import type { LessonContent, Question, LevelIntroduction, FeedbackState } from '@/lib/types'
 
 export default function LessonPage() {
@@ -46,6 +48,14 @@ export default function LessonPage() {
   const [nextLevelName, setNextLevelName] = useState<string | undefined>()
   const [waitingForNext, setWaitingForNext] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+
+  // Gamification state
+  const [score, setScore] = useState(0)
+  const [levelScore, setLevelScore] = useState(0)
+  const [showPointAnimation, setShowPointAnimation] = useState(false)
+  const [lessonStartTime] = useState(Date.now())
+  const [showLessonComplete, setShowLessonComplete] = useState(false)
+  const [finalScore, setFinalScore] = useState(0)
 
   useEffect(() => {
     const session = StudentSessionManager.load()
@@ -254,6 +264,13 @@ export default function LessonPage() {
 
     // NEW INLINE FEEDBACK FLOW
 
+    // Increment score and show point animation for correct answers
+    if (result.isCorrect) {
+      setScore(prev => prev + 1)
+      setLevelScore(prev => prev + 1)
+      setShowPointAnimation(true)
+    }
+
     // 1. Play sound effect immediately (high priority in audio queue)
     await playSoundEffect(result.isCorrect ? SoundEffect.CORRECT : SoundEffect.INCORRECT)
 
@@ -317,6 +334,7 @@ export default function LessonPage() {
     if (hasNextLevel) {
       setShowLevelComplete(false)
       setLevelStoppedEarly(false)
+      setLevelScore(0) // Reset level score for next level
 
       // Check if next level has an introduction
       const currentLevelNum = engine.getAttemptState().currentLevel
@@ -383,6 +401,7 @@ export default function LessonPage() {
     if (!engine) return
 
     const attemptState = engine.getAttemptState()
+    const durationSeconds = Math.floor((Date.now() - lessonStartTime) / 1000)
 
     // Mark attempt as completed
     const queue = OfflineQueue.getInstance()
@@ -391,6 +410,8 @@ export default function LessonPage() {
       data: {
         attemptId: attemptState.attemptId,
         completedAt: new Date().toISOString(),
+        duration: durationSeconds,
+        score: score,
         ...attemptState,
       },
     })
@@ -409,8 +430,9 @@ export default function LessonPage() {
     // Clear attempt state
     AttemptStateManager.remove(attemptState.attemptId)
 
-    // Navigate back to dashboard
-    router.push('/student/dashboard')
+    // Show lesson complete modal with final score
+    setFinalScore(score)
+    setShowLessonComplete(true)
   }
 
   if (loading) {
@@ -491,8 +513,28 @@ export default function LessonPage() {
         nextLevel={nextLevelNum}
         currentLevelName={completedLevelName}
         nextLevelName={nextLevelName}
+        levelScore={levelScore}
+        maxLevelScore={4}
         onContinue={handleContinueToNextLevel}
         onFinish={handleFinishLesson}
+      />
+
+      {/* Point Animation */}
+      <PointAnimation
+        show={showPointAnimation}
+        onComplete={() => setShowPointAnimation(false)}
+      />
+
+      {/* Lesson Complete Modal */}
+      <LessonCompleteModal
+        show={showLessonComplete}
+        totalScore={finalScore}
+        maxScore={12}
+        accuracy={progress.accuracy}
+        onClose={() => {
+          setShowLessonComplete(false)
+          router.push('/student/dashboard')
+        }}
       />
     </div>
   )
