@@ -5,10 +5,9 @@ CREATE TABLE IF NOT EXISTS student_stats (
   total_questions_answered INTEGER DEFAULT 0,
   total_questions_correct INTEGER DEFAULT 0,
   total_lessons_completed INTEGER DEFAULT 0,
-  total_blocks_completed INTEGER DEFAULT 0,
+  total_levels_completed INTEGER DEFAULT 0,
   current_streak_days INTEGER DEFAULT 0,
   longest_streak_days INTEGER DEFAULT 0,
-  total_stars_earned INTEGER DEFAULT 0,
   last_practice_date DATE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

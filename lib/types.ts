@@ -112,3 +112,36 @@ export interface FeedbackState {
   type: 'correct' | 'incorrect' | null
   correctAnswer?: string
 }
+
+// Gamification: Badge system
+export interface Badge {
+  id: string
+  name: string
+  description: string
+  icon: string // emoji
+  imageUrl: string // path to illustration
+  criteria: {
+    type: string
+    value: number
+  }
+  earned_at?: string // timestamp when earned
+}
+
+export interface StudentStats {
+  id: string
+  student_id: string
+  total_questions_answered: number
+  total_questions_correct: number
+  total_lessons_completed: number
+  total_levels_completed: number
+  current_streak_days: number
+  longest_streak_days: number
+  last_practice_date: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface BadgeUnlockEvent {
+  badge: Badge
+  isNew: boolean
+}
