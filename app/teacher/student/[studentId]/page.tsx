@@ -228,10 +228,11 @@ export default function StudentDetailPage() {
       }) as Response[]
 
       // Update the attempt with enriched responses
+      console.log('Loaded responses:', enrichedResponses?.length || 0, 'for attempt', attemptId)
       setAttempts((prev) =>
         prev.map((a) =>
           a.id === attemptId
-            ? { ...a, responses: enrichedResponses }
+            ? { ...a, responses: enrichedResponses || [] }
             : a
         )
       )
@@ -552,6 +553,14 @@ export default function StudentDetailPage() {
                 // Check if responses are loaded
                 const hasResponses = attempt.responses && attempt.responses.length > 0
                 const isLoadingResponses = loadingDetails === attempt.id
+
+                console.log('Rendering attempt details:', {
+                  attemptId: attempt.id,
+                  hasResponses,
+                  responsesLength: attempt.responses?.length,
+                  isLoadingResponses,
+                  loadingDetails
+                })
 
                 // Calculate level-by-level stats only if responses are available
                 const levelStats = hasResponses
