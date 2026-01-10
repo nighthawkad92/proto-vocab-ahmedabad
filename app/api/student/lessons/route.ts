@@ -33,12 +33,14 @@ export async function GET(request: NextRequest) {
 
     // Get unlocked lessons for this class
     console.log('🔍 Querying unlocks for class:', classId)
+    // @ts-ignore
     const { data: unlocks, error: unlocksError } = await supabase
       .from('lesson_unlocks')
       .select('lesson_id')
       .eq('class_id', classId)
 
     console.log('🔓 Found unlocks:', unlocks?.length || 0, unlocks)
+    console.log('🔓 Unlock error:', unlocksError)
 
     if (unlocksError) {
       console.error('Failed to fetch unlocks:', unlocksError)
