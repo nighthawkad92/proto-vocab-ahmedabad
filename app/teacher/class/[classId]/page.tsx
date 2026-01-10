@@ -166,7 +166,9 @@ export default function ClassDetailPage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to delete class')
+        const errorData = await response.json()
+        console.error('Delete class error response:', errorData)
+        throw new Error(errorData.details || errorData.error || 'Failed to delete class')
       }
 
       alert(`Class "${classData?.name}" has been deleted successfully`)

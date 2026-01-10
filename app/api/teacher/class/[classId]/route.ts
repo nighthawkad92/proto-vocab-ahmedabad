@@ -16,7 +16,7 @@ export async function DELETE(
     }
 
     // Delete class (cascade will handle related records)
-    // Order: responses -> attempts -> lesson_unlocks -> students -> class
+    // Order: responses -> attempts -> lesson_unlocks -> student_badges -> student_stats -> students -> class
 
     // Get all students in this class
     const { data: students } = await supabase
@@ -28,37 +28,84 @@ export async function DELETE(
       const studentIds = students.map((s: { id: string }) => s.id)
 
       // Delete responses for all attempts by these students
-      const { data: attempts } = await supabase
+      const { data: attempts, error: attemptsError } = await supabase
         .from('attempts')
         .select('id')
         .in('student_id', studentIds)
 
+      if (attemptsError) {
+        console.error('Error fetching attempts:', attemptsError)
+        throw attemptsError
+      }
+
       if (attempts && attempts.length > 0) {
         const attemptIds = attempts.map((a: { id: string }) => a.id)
 
-        await supabase
+        const { error: responsesError } = await supabase
           .from('responses')
           .delete()
           .in('attempt_id', attemptIds)
+
+        if (responsesError) {
+          console.error('Error deleting responses:', responsesError)
+          throw responsesError
+        }
       }
 
       // Delete attempts
-      await supabase
+      const { error: deleteAttemptsError } = await supabase
         .from('attempts')
         .delete()
         .in('student_id', studentIds)
 
+      if (deleteAttemptsError) {
+        console.error('Error deleting attempts:', deleteAttemptsError)
+        throw deleteAttemptsError
+      }
+
       // Delete lesson unlocks
-      await supabase
+      const { error: unlocksError } = await supabase
         .from('lesson_unlocks')
         .delete()
         .eq('class_id', classId)
 
+      if (unlocksError) {
+        console.error('Error deleting lesson unlocks:', unlocksError)
+        throw unlocksError
+      }
+
+      // Delete student badges (gamification)
+      const { error: badgesError } = await supabase
+        .from('student_badges')
+        .delete()
+        .in('student_id', studentIds)
+
+      if (badgesError) {
+        console.error('Error deleting student badges:', badgesError)
+        throw badgesError
+      }
+
+      // Delete student stats (gamification)
+      const { error: statsError } = await supabase
+        .from('student_stats')
+        .delete()
+        .in('student_id', studentIds)
+
+      if (statsError) {
+        console.error('Error deleting student stats:', statsError)
+        throw statsError
+      }
+
       // Delete students
-      await supabase
+      const { error: studentsError } = await supabase
         .from('students')
         .delete()
         .in('id', studentIds)
+
+      if (studentsError) {
+        console.error('Error deleting students:', studentsError)
+        throw studentsError
+      }
     }
 
     // Delete the class
@@ -73,10 +120,14 @@ export async function DELETE(
       success: true,
       message: 'Class and all related data deleted successfully'
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error deleting class:', error)
     return NextResponse.json(
-      { error: 'Failed to delete class' },
+      {
+        error: 'Failed to delete class',
+        details: error?.message || 'Unknown error',
+        code: error?.code
+      },
       { status: 500 }
     )
   }
