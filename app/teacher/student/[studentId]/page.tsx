@@ -104,8 +104,8 @@ export default function StudentDetailPage() {
           completed_at,
           questions_attempted,
           questions_correct,
-          levels_completed,
-          levels_stopped_at,
+          blocks_completed,
+          blocks_stopped_at,
           lessons:lesson_id (
             title
           )
@@ -122,8 +122,8 @@ export default function StudentDetailPage() {
         completed_at: attempt.completed_at,
         questions_attempted: attempt.questions_attempted || 0,
         questions_correct: attempt.questions_correct || 0,
-        levels_completed: attempt.levels_completed || 0,
-        levels_stopped_at: attempt.levels_stopped_at,
+        levels_completed: attempt.blocks_completed || 0, // DB uses "blocks" terminology
+        levels_stopped_at: attempt.blocks_stopped_at,    // DB uses "blocks" terminology
       }))
 
       setAttempts(formattedAttempts || [])
