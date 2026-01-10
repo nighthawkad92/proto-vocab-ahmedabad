@@ -125,12 +125,6 @@ export default function StudentLoginPage() {
             {loading ? 'Starting' : "Let's Learn"}
           </Button>
         </form>
-
-        <div className="text-center">
-          <a href="/teacher" className="text-child-sm text-gray-500 hover:text-gray-700 underline">
-            Teacher Login
-          </a>
-        </div>
       </div>
     </div>
   )

@@ -25,7 +25,7 @@ export async function DELETE(
       .eq('class_id', classId)
 
     if (students && students.length > 0) {
-      const studentIds = students.map(s => s.id)
+      const studentIds = students.map((s: { id: string }) => s.id)
 
       // Delete responses for all attempts by these students
       const { data: attempts } = await supabase
@@ -34,7 +34,7 @@ export async function DELETE(
         .in('student_id', studentIds)
 
       if (attempts && attempts.length > 0) {
-        const attemptIds = attempts.map(a => a.id)
+        const attemptIds = attempts.map((a: { id: string }) => a.id)
 
         await supabase
           .from('responses')

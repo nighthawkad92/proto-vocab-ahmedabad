@@ -3,25 +3,26 @@ import { supabase } from '@/lib/supabase'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { studentId: string } }
+  { params }: { params: { lessonId: string } }
 ) {
   try {
-    const { studentId } = params
+    const { lessonId } = params
 
-    if (!studentId) {
+    if (!lessonId) {
       return NextResponse.json(
-        { error: 'Student ID is required' },
+        { error: 'Lesson ID is required' },
         { status: 400 }
       )
     }
 
-    // Delete in correct order: responses -> attempts -> student
+    // Delete in correct order: responses -> attempts -> lesson_unlocks -> lesson
+    // Note: Database CASCADE constraints will handle related records
 
-    // Get all attempts for this student
+    // Get all attempts for this lesson
     const { data: attempts } = await supabase
       .from('attempts')
       .select('id')
-      .eq('student_id', studentId)
+      .eq('lesson_id', lessonId)
 
     if (attempts && attempts.length > 0) {
       const attemptIds = attempts.map((a: { id: string }) => a.id)
@@ -31,30 +32,36 @@ export async function DELETE(
         .from('responses')
         .delete()
         .in('attempt_id', attemptIds)
+
+      // Delete all attempts for this lesson
+      await supabase
+        .from('attempts')
+        .delete()
+        .in('id', attemptIds)
     }
 
-    // Delete all attempts
+    // Delete lesson unlocks for this lesson
     await supabase
-      .from('attempts')
+      .from('lesson_unlocks')
       .delete()
-      .eq('student_id', studentId)
+      .eq('lesson_id', lessonId)
 
-    // Delete the student
+    // Delete the lesson
     const { error } = await supabase
-      .from('students')
+      .from('lessons')
       .delete()
-      .eq('id', studentId)
+      .eq('id', lessonId)
 
     if (error) throw error
 
     return NextResponse.json({
       success: true,
-      message: 'Student and all related data deleted successfully'
+      message: 'Lesson and all related data deleted successfully'
     })
   } catch (error) {
-    console.error('Error deleting student:', error)
+    console.error('Error deleting lesson:', error)
     return NextResponse.json(
-      { error: 'Failed to delete student' },
+      { error: 'Failed to delete lesson' },
       { status: 500 }
     )
   }
