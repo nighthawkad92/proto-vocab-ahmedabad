@@ -32,6 +32,8 @@ export default function ClassDetailPage() {
   const [lessons, setLessons] = useState<Lesson[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'students' | 'lessons'>('lessons')
+  const [deleting, setDeleting] = useState<string | null>(null)
+  const [showDeleteClassConfirm, setShowDeleteClassConfirm] = useState(false)
 
   useEffect(() => {
     loadClassData()
@@ -128,6 +130,54 @@ export default function ClassDetailPage() {
     }
   }
 
+  const handleDeleteStudent = async (studentId: string, studentName: string) => {
+    if (!confirm(`Are you sure you want to delete ${studentName}? This will permanently delete all their attempts and responses.`)) {
+      return
+    }
+
+    setDeleting(studentId)
+    try {
+      const response = await fetch(`/api/teacher/student/${studentId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete student')
+      }
+
+      // Reload class data to refresh student list
+      await loadClassData()
+      alert(`${studentName} has been deleted successfully`)
+    } catch (error) {
+      console.error('Failed to delete student:', error)
+      alert('Failed to delete student. Please try again.')
+    } finally {
+      setDeleting(null)
+    }
+  }
+
+  const handleDeleteClass = async () => {
+    setShowDeleteClassConfirm(false)
+    setDeleting('class')
+
+    try {
+      const response = await fetch(`/api/teacher/class/${classId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete class')
+      }
+
+      alert(`Class "${classData?.name}" has been deleted successfully`)
+      router.push('/teacher/dashboard')
+    } catch (error) {
+      console.error('Failed to delete class:', error)
+      alert('Failed to delete class. Please try again.')
+      setDeleting(null)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -154,13 +204,24 @@ export default function ClassDetailPage() {
                 <span>{students.length} students</span>
               </div>
             </div>
-            <Button
-              onClick={() => router.push('/teacher/dashboard')}
-              variant="optional"
-              size="md"
-            >
-              ← Back
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setShowDeleteClassConfirm(true)}
+                variant="optional"
+                size="md"
+                className="bg-red-100 text-red-700 hover:bg-red-200 border-red-300"
+                disabled={deleting === 'class'}
+              >
+                {deleting === 'class' ? '⏳ Deleting...' : '🗑️ Delete Class'}
+              </Button>
+              <Button
+                onClick={() => router.push('/teacher/dashboard')}
+                variant="optional"
+                size="md"
+              >
+                ← Back
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -243,25 +304,50 @@ export default function ClassDetailPage() {
                       <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
                         Last Active
                       </th>
+                      <th className="px-6 py-4 text-left text-child-sm font-bold text-gray-700">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {students.map((student) => (
                       <tr
                         key={student.id}
-                        className="hover:bg-secondary-50 cursor-pointer"
-                        onClick={() => router.push(`/teacher/student/${student.id}`)}
+                        className="hover:bg-secondary-50"
                       >
-                        <td className="px-6 py-4 text-child-sm text-gray-800">
+                        <td
+                          className="px-6 py-4 text-child-sm text-gray-800 cursor-pointer"
+                          onClick={() => router.push(`/teacher/student/${student.id}`)}
+                        >
                           {student.name}
                         </td>
-                        <td className="px-6 py-4 text-child-sm text-gray-600">
+                        <td
+                          className="px-6 py-4 text-child-sm text-gray-600 cursor-pointer"
+                          onClick={() => router.push(`/teacher/student/${student.id}`)}
+                        >
                           {student.attempts_count}
                         </td>
-                        <td className="px-6 py-4 text-child-sm text-gray-600">
+                        <td
+                          className="px-6 py-4 text-child-sm text-gray-600 cursor-pointer"
+                          onClick={() => router.push(`/teacher/student/${student.id}`)}
+                        >
                           {student.last_active
                             ? new Date(student.last_active).toLocaleDateString()
                             : 'Never'}
+                        </td>
+                        <td className="px-6 py-4">
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeleteStudent(student.id, student.name)
+                            }}
+                            variant="optional"
+                            size="sm"
+                            className="bg-red-100 text-red-700 hover:bg-red-200 border-red-300"
+                            disabled={deleting === student.id}
+                          >
+                            {deleting === student.id ? '⏳' : '🗑️'}
+                          </Button>
                         </td>
                       </tr>
                     ))}
@@ -272,6 +358,56 @@ export default function ClassDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Class Confirmation Modal */}
+      {showDeleteClassConfirm && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setShowDeleteClassConfirm(false)}
+          />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-child shadow-2xl z-50 p-8 max-w-md w-full mx-4">
+            <div className="text-center space-y-4">
+              <div className="text-6xl">⚠️</div>
+              <h3 className="text-child-lg font-display font-bold text-gray-800">
+                Delete Class?
+              </h3>
+              <p className="text-child-sm text-gray-600">
+                Are you sure you want to delete <strong>{classData?.name}</strong>?
+              </p>
+              <p className="text-child-sm text-red-600 font-medium">
+                This will permanently delete:
+              </p>
+              <ul className="text-child-xs text-gray-700 text-left space-y-1">
+                <li>• All {students.length} students in this class</li>
+                <li>• All lesson attempts and responses</li>
+                <li>• All lesson unlocks</li>
+              </ul>
+              <p className="text-child-xs text-red-700 font-bold">
+                This action cannot be undone!
+              </p>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={() => setShowDeleteClassConfirm(false)}
+                  variant="optional"
+                  size="md"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleDeleteClass}
+                  variant="secondary"
+                  size="md"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white border-red-700"
+                >
+                  Delete Class
+                </Button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
