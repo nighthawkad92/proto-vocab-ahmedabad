@@ -37,10 +37,18 @@ export default function StudentDashboard() {
 
   const loadLessons = async (classId: string) => {
     try {
-      const response = await fetch(`/api/student/lessons?classId=${classId}`)
+      const response = await fetch(`/api/student/lessons?classId=${classId}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      })
       const data = await response.json()
 
       if (response.ok) {
+        console.log('📚 Loaded lessons:', data.lessons?.length || 0)
+        console.log('🔓 Loaded unlocks:', data.unlocks?.length || 0, data.unlocks)
         setLessons(data.lessons)
 
         // Create unlock map
@@ -48,6 +56,7 @@ export default function StudentDashboard() {
         data.unlocks.forEach((unlock: { lesson_id: string }) => {
           unlockMap[unlock.lesson_id] = true
         })
+        console.log('🗺️ Unlock map:', unlockMap)
         setUnlocks(unlockMap)
       }
     } catch (error) {
