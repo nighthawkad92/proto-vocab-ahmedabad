@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types'
 
 // Mark this route as dynamic since it uses request parameters
 export const dynamic = 'force-dynamic'
@@ -15,6 +16,12 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Create a fresh Supabase client for this request
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
 
     // Get all lessons for grade 4
     const { data: lessons, error: lessonsError } = await supabase
@@ -33,7 +40,6 @@ export async function GET(request: NextRequest) {
 
     // Get unlocked lessons for this class
     console.log('🔍 Querying unlocks for class:', classId)
-    // @ts-ignore
     const { data: unlocks, error: unlocksError } = await supabase
       .from('lesson_unlocks')
       .select('lesson_id')
