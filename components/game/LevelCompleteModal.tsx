@@ -106,7 +106,7 @@ export default function LevelCompleteModal({
         </div>
 
         <div className="space-y-3">
-          {!stoppedEarly && (
+          {!stoppedEarly && nextLevel !== undefined && (
             <Button
               onClick={() => {
                 playSoundEffect(SoundEffect.TAP)
@@ -125,7 +125,7 @@ export default function LevelCompleteModal({
               playSoundEffect(SoundEffect.TAP)
               onFinish()
             }}
-            variant="optional"
+            variant={!stoppedEarly && nextLevel !== undefined ? "optional" : "primary"}
             size="lg"
             className="w-full"
           >
