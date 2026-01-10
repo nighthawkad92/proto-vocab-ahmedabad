@@ -178,12 +178,19 @@ export default function StudentDetailPage() {
     // Load responses for this attempt
     setLoadingDetails(attemptId)
     try {
-      // Get responses
-      const { data: responsesData } = await supabase
+      // Get responses - try both level_number (new schema) and block_number (old schema)
+      const { data: responsesData, error: responsesError } = await supabase
         .from('responses')
-        .select('question_id, question_type, level_number, student_answer, is_correct, answered_at')
+        .select('*')
         .eq('attempt_id', attemptId)
         .order('answered_at', { ascending: true })
+
+      if (responsesError) {
+        console.error('Error fetching responses:', responsesError)
+        throw responsesError
+      }
+
+      console.log('Raw responses from DB:', responsesData)
 
       // Get the attempt to find the lesson
       const currentAttempt = attempts.find((a) => a.id === attemptId)
@@ -222,6 +229,8 @@ export default function StudentDetailPage() {
         const questionDetails = questionMap.get(response.question_id)
         return {
           ...response,
+          // Handle both level_number (new) and block_number (old) column names
+          level_number: response.level_number ?? response.block_number ?? 0,
           question_prompt: questionDetails?.prompt || 'Question not found',
           correct_answer: questionDetails?.correctAnswer || '',
         }
