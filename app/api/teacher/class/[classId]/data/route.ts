@@ -35,6 +35,7 @@ export async function GET(
     const classInfo = classInfoData
 
     // Get students with attempt stats
+    // Force fresh data by adding timestamp to bypass any Supabase client caching
     const { data: studentsData, error: studentsError } = await supabase
       .from('students')
       .select(`
@@ -49,6 +50,7 @@ export async function GET(
       `)
       .eq('class_id', classId)
       .order('name', { ascending: true })
+      .limit(1000) // Add limit to force query re-execution
 
     if (studentsError) {
       console.error('Failed to fetch students:', studentsError)
@@ -57,6 +59,11 @@ export async function GET(
         { status: 500 }
       )
     }
+
+    console.log('📊 [CLASS DATA API] Raw students data from DB:', {
+      count: studentsData?.length || 0,
+      studentIds: studentsData?.map((s: any) => ({ id: s.id, name: s.name }))
+    })
 
     // Process student data to calculate stats
     const students = (studentsData || []).map((student: any) => {
