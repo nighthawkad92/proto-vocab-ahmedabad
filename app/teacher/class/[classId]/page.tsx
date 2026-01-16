@@ -42,6 +42,8 @@ export default function ClassDetailPage() {
     try {
       // Use API route with fresh Supabase client to avoid caching
       const timestamp = Date.now()
+      console.log('🔄 [TEACHER DASHBOARD] Loading class data...', { classId, timestamp })
+
       const response = await fetch(`/api/teacher/class/${classId}/data?t=${timestamp}`, {
         cache: 'no-store',
         headers: {
@@ -55,6 +57,12 @@ export default function ClassDetailPage() {
       }
 
       const data = await response.json()
+
+      console.log('📥 [TEACHER DASHBOARD] Data received:', {
+        studentsCount: data.students?.length || 0,
+        lessonsCount: data.lessons?.length || 0,
+        lessons: data.lessons?.map((l: Lesson) => ({ id: l.id, title: l.title, is_unlocked: l.is_unlocked }))
+      })
 
       setClassData(data.classInfo)
       setStudents(data.students)
@@ -72,6 +80,8 @@ export default function ClassDetailPage() {
 
       if (!session) return
 
+      console.log('🔄 [TEACHER DASHBOARD] Toggling lesson:', { lessonId, currentState: isUnlocked ? 'unlocked' : 'locked', action: isUnlocked ? 'locking' : 'unlocking' })
+
       if (isUnlocked) {
         // Remove unlock via API
         const response = await fetch(
@@ -80,9 +90,11 @@ export default function ClassDetailPage() {
         )
 
         if (!response.ok) {
+          const errorData = await response.json()
+          console.error('❌ Failed to lock lesson:', errorData)
           throw new Error('Failed to lock lesson')
         }
-        console.log('✅ Lesson locked')
+        console.log('✅ Lesson locked successfully')
       } else {
         // Add unlock via API
         const response = await fetch('/api/teacher/lesson-unlock', {
@@ -96,12 +108,15 @@ export default function ClassDetailPage() {
         })
 
         if (!response.ok) {
+          const errorData = await response.json()
+          console.error('❌ Failed to unlock lesson:', errorData)
           throw new Error('Failed to unlock lesson')
         }
-        console.log('✅ Lesson unlocked')
+        console.log('✅ Lesson unlocked successfully')
       }
 
       // Reload lessons with fresh data
+      console.log('🔄 [TEACHER DASHBOARD] Reloading class data after toggle...')
       await loadClassData()
     } catch (error) {
       console.error('Failed to toggle lesson:', error)
@@ -115,14 +130,20 @@ export default function ClassDetailPage() {
     }
 
     setDeleting(studentId)
+    console.log('🗑️ [TEACHER DASHBOARD] Deleting student:', { studentId, studentName })
+
     try {
       const response = await fetch(`/api/teacher/student/${studentId}`, {
         method: 'DELETE',
       })
 
       if (!response.ok) {
+        const errorData = await response.json()
+        console.error('❌ Failed to delete student:', errorData)
         throw new Error('Failed to delete student')
       }
+
+      console.log('✅ Student deleted successfully, reloading class data...')
 
       // Reload class data to refresh student list
       await loadClassData()
