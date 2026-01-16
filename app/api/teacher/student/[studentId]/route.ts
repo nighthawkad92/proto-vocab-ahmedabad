@@ -18,10 +18,14 @@ export async function DELETE(
       )
     }
 
-    // Create fresh Supabase client
+    // Create fresh Supabase client with cache disabled
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+      db: { schema: 'public' },
+      auth: { persistSession: false },
+      global: { headers: { 'cache-control': 'no-cache' } }
+    })
 
     // Delete in correct order: responses -> attempts -> student
 
