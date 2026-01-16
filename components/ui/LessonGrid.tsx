@@ -21,11 +21,15 @@ export function LessonGrid({ lessons, unlocks, onStartLesson }: LessonGridProps)
     return null
   }
 
+  console.log('🎯 LessonGrid - Total lessons:', lessons.length)
+  console.log('🎯 LessonGrid - Unlocks map:', unlocks)
+
   return (
     <div className="w-full max-w-6xl mx-auto px-6 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
         {lessons.map((lesson) => {
           const isUnlocked = unlocks[lesson.id]
+          console.log(`🎯 Lesson ${lesson.order} (${lesson.id}): ${isUnlocked ? 'UNLOCKED' : 'LOCKED'}`)
 
           return (
             <div
