@@ -39,6 +39,9 @@ export default function ClassDetailPage() {
 
   const loadClassData = async () => {
     try {
+      // Force Next.js to bypass router cache
+      router.refresh()
+
       // Use API route with fresh Supabase client to avoid caching
       const timestamp = Date.now()
       console.log('🔄 [TEACHER DASHBOARD] Loading class data...', { classId, timestamp })
