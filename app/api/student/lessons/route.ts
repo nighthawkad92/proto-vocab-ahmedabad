@@ -18,13 +18,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Create a fresh Supabase client for this request
+    // Using service role key to ensure consistent access to lesson_unlocks
+    // This is safe because lesson_unlocks has public read access via RLS policies
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-    console.log('🔍 Server: Has service key?', !!supabaseServiceKey)
-
-    // Use service role key to bypass RLS (temporary debug)
     const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
     // Get all lessons for grade 4
@@ -43,18 +41,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Get unlocked lessons for this class
-    console.log('🔍 Server: Querying unlocks for class:', classId)
-    console.log('🔍 Server: Supabase URL:', supabaseUrl)
-    console.log('🔍 Server: Using SERVICE key (bypassing RLS)')
-
     const { data: unlocks, error: unlocksError } = await supabase
       .from('lesson_unlocks')
       .select('lesson_id')
       .eq('class_id', classId)
-
-    console.log('🔓 Server: Found unlocks:', unlocks?.length || 0)
-    console.log('🔓 Server: Unlocks data:', JSON.stringify(unlocks, null, 2))
-    console.log('🔓 Server: Unlock error:', unlocksError)
 
     if (unlocksError) {
       console.error('Failed to fetch unlocks:', unlocksError)

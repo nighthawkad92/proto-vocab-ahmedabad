@@ -37,7 +37,6 @@ export default function StudentDashboard() {
 
   const loadLessons = async (classId: string) => {
     try {
-      console.log('🎓 Student class ID:', classId)
       // Add timestamp to prevent any caching
       const timestamp = Date.now()
       const response = await fetch(`/api/student/lessons?classId=${classId}&t=${timestamp}`, {
@@ -50,20 +49,15 @@ export default function StudentDashboard() {
       const data = await response.json()
 
       if (response.ok) {
-        console.log('📚 Loaded lessons:', data.lessons?.length || 0)
-        console.log('🔓 Loaded unlocks:', data.unlocks?.length || 0)
-        console.log('🔓 Raw unlocks data:', JSON.stringify(data.unlocks, null, 2))
         setLessons(data.lessons)
 
         // Create unlock map
         const unlockMap: Record<string, boolean> = {}
         if (data.unlocks && Array.isArray(data.unlocks)) {
           data.unlocks.forEach((unlock: { lesson_id: string }) => {
-            console.log('  Adding unlock for lesson:', unlock.lesson_id)
             unlockMap[unlock.lesson_id] = true
           })
         }
-        console.log('🗺️ Final unlock map:', JSON.stringify(unlockMap, null, 2))
         setUnlocks(unlockMap)
       } else {
         console.error('Failed to load lessons:', data)
