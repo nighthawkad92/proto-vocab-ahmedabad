@@ -95,15 +95,48 @@ export default function ClassDetailPage() {
         throw new Error('Failed to delete student')
       }
 
-      console.log('✅ Student deleted successfully, reloading class data...')
+      console.log('✅ Student deleted successfully, polling to verify deletion...')
 
       // Clear state first to force fresh render
       setStudents([])
 
-      // Wait briefly for database replication before reloading
-      await new Promise(resolve => setTimeout(resolve, 500))
+      // Poll every 200ms to check if student is actually deleted
+      const maxAttempts = 20 // Max 4 seconds (20 * 200ms)
+      let attempts = 0
+      let studentStillExists = true
 
-      // Reload class data to refresh student list
+      while (studentStillExists && attempts < maxAttempts) {
+        attempts++
+        await new Promise(resolve => setTimeout(resolve, 200))
+
+        // Check if student still exists
+        const timestamp = Date.now()
+        const response = await fetch(`/api/teacher/class/${classId}/data?t=${timestamp}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          const studentExists = data.students.some((s: Student) => s.id === studentId)
+
+          if (!studentExists) {
+            studentStillExists = false
+            console.log(`✅ Deletion confirmed after ${attempts * 200}ms`)
+          } else {
+            console.log(`⏳ Student still exists, polling... (attempt ${attempts}/${maxAttempts})`)
+          }
+        }
+      }
+
+      if (studentStillExists) {
+        console.warn('⚠️ Max polling attempts reached, reloading anyway')
+      }
+
+      // Final reload to update UI
       await loadClassData()
       alert(`${studentName} has been deleted successfully`)
     } catch (error) {
