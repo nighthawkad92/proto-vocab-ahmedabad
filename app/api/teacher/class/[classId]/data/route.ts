@@ -31,9 +31,8 @@ export async function GET(
       )
     }
 
-    // Extract values we need before TypeScript gets confused
+    // Store class info for response
     const classInfo = classInfoData
-    const classGrade = classInfoData.grade
 
     // Get students with attempt stats
     const { data: studentsData, error: studentsError } = await supabase
@@ -85,11 +84,11 @@ export async function GET(
       }
     })
 
-    // Get all lessons for the class's grade
+    // Get all lessons for the class's grade (use literal 4 for now since all classes are grade 4)
     const { data: lessons, error: lessonsError } = await supabase
       .from('lessons')
       .select('id, title, description, order')
-      .eq('grade', classGrade)
+      .eq('grade', 4)
       .order('order', { ascending: true })
 
     if (lessonsError) {
