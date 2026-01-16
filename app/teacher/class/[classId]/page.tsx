@@ -117,6 +117,8 @@ export default function ClassDetailPage() {
 
       // Reload lessons with fresh data
       console.log('🔄 [TEACHER DASHBOARD] Reloading class data after toggle...')
+      // Add small delay to ensure database operation completes
+      await new Promise(resolve => setTimeout(resolve, 500))
       await loadClassData()
     } catch (error) {
       console.error('Failed to toggle lesson:', error)
