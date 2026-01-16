@@ -99,42 +99,16 @@ export async function GET(
       )
     }
 
-    // Get unlocked lessons
-    console.log('🔍 [CLASS DATA API] Fetching unlocks for class:', classId)
-    const { data: unlocks, error: unlocksError } = await supabase
-      .from('lesson_unlocks')
-      .select('lesson_id')
-      .eq('class_id', classId)
-
-    console.log('🔓 [CLASS DATA API] Unlocks fetched:', {
-      count: unlocks?.length || 0,
-      unlocks: unlocks || [],
-      error: unlocksError
-    })
-
-    if (unlocksError) {
-      console.error('Failed to fetch unlocks:', unlocksError)
-      return NextResponse.json(
-        { error: 'Failed to fetch unlocks' },
-        { status: 500 }
-      )
-    }
-
-    // Create unlock map
-    const unlockedIds = new Set((unlocks || []).map((u: any) => u.lesson_id))
-    console.log('🗺️ [CLASS DATA API] Unlocked IDs set:', Array.from(unlockedIds))
-
-    // Add is_unlocked flag to lessons
+    // All lessons are unlocked by default
     const lessonsWithStatus = (lessons || []).map((lesson: any) => ({
       ...lesson,
-      is_unlocked: unlockedIds.has(lesson.id),
+      is_unlocked: true, // All lessons always unlocked
     }))
 
-    console.log('📚 [CLASS DATA API] Lessons with status:', lessonsWithStatus.map((l: any) => ({
-      id: l.id,
-      title: l.title,
-      is_unlocked: l.is_unlocked
-    })))
+    console.log('📚 [CLASS DATA API] Lessons with status:', {
+      count: lessonsWithStatus.length,
+      note: 'All lessons unlocked by default'
+    })
 
     return NextResponse.json(
       {

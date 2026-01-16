@@ -258,7 +258,7 @@ export default function ClassDetailPage() {
           <div className="space-y-4">
             <div className="bg-blue-50 border-2 border-blue-200 rounded-child p-4">
               <p className="text-child-sm text-blue-800">
-                💡 Toggle lessons on/off to control what students can access
+                💡 All lessons are available to students
               </p>
             </div>
 
@@ -274,14 +274,9 @@ export default function ClassDetailPage() {
                   <p className="text-child-sm text-gray-600">{lesson.description}</p>
                 </div>
 
-                <Button
-                  onClick={() => handleToggleLesson(lesson.id, lesson.is_unlocked)}
-                  variant="optional"
-                  size="md"
-                  className={lesson.is_unlocked ? 'bg-secondary-100 text-secondary-700 hover:bg-secondary-200 border-secondary-300' : ''}
-                >
-                  {lesson.is_unlocked ? '✅ Unlocked' : '🔒 Locked'}
-                </Button>
+                <div className="text-child-sm text-secondary-600 font-semibold">
+                  ✅ Available
+                </div>
               </div>
             ))}
           </div>

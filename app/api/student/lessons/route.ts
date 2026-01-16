@@ -39,49 +39,21 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get unlocked lessons for this class
-    console.log('🔍 [STUDENT LESSONS API] Query start:', {
-      timestamp: new Date().toISOString(),
-      classId,
-      supabaseUrl,
-      usingServiceRole: !!supabaseServiceKey
-    })
-
-    const { data: unlocks, error: unlocksError, count } = await supabase
-      .from('lesson_unlocks')
-      .select('lesson_id, unlocked_at, unlocked_by', { count: 'exact' })
-      .eq('class_id', classId)
-
-    console.log('🔓 [STUDENT LESSONS API] Query result:', {
-      timestamp: new Date().toISOString(),
-      count,
-      unlocksLength: unlocks?.length || 0,
-      unlocks: unlocks || [],
-      error: unlocksError
-    })
-
-    if (unlocksError) {
-      console.error('Failed to fetch unlocks:', unlocksError)
-      return NextResponse.json(
-        { error: 'Failed to fetch unlocks' },
-        { status: 500 }
-      )
-    }
-
-    // Map unlocks to only include lesson_id for the response
-    const unlocksResponse = (unlocks || []).map((u: any) => ({ lesson_id: u.lesson_id }))
+    // All lessons are unlocked by default - create unlock entries for all lessons
+    const allLessonsUnlocked = (lessons || []).map((lesson: any) => ({
+      lesson_id: lesson.id
+    }))
 
     const responseData = {
       lessons: lessons || [],
-      unlocks: unlocksResponse,
+      unlocks: allLessonsUnlocked,
     }
 
     console.log('📤 [STUDENT LESSONS API] Response being sent:', {
       timestamp: new Date().toISOString(),
       lessonsCount: responseData.lessons.length,
       unlocksCount: responseData.unlocks.length,
-      unlockIds: responseData.unlocks.map(u => u.lesson_id),
-      rawUnlocksData: unlocks // Log the full data from DB for debugging
+      note: 'All lessons unlocked by default'
     })
 
     return NextResponse.json(
