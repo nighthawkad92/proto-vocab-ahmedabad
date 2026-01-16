@@ -21,15 +21,13 @@ export async function POST(request: NextRequest) {
     const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
     // Insert unlock
-    const insertData: Database['public']['Tables']['lesson_unlocks']['Insert'] = {
-      class_id: classId,
-      lesson_id: lessonId,
-      unlocked_by: teacherId,
-    }
-
     const { data, error } = await supabase
       .from('lesson_unlocks')
-      .insert(insertData)
+      .insert({
+        class_id: classId,
+        lesson_id: lessonId,
+        unlocked_by: teacherId,
+      } as any)
       .select()
 
     if (error) {
