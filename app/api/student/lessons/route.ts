@@ -40,10 +40,25 @@ export async function GET(request: NextRequest) {
     }
 
     // Get unlocked lessons for this class
-    const { data: unlocks, error: unlocksError } = await supabase
+    console.log('🔍 [STUDENT LESSONS API] Query start:', {
+      timestamp: new Date().toISOString(),
+      classId,
+      supabaseUrl,
+      usingServiceRole: !!supabaseServiceKey
+    })
+
+    const { data: unlocks, error: unlocksError, count } = await supabase
       .from('lesson_unlocks')
-      .select('lesson_id')
+      .select('lesson_id, unlocked_at, unlocked_by', { count: 'exact' })
       .eq('class_id', classId)
+
+    console.log('🔓 [STUDENT LESSONS API] Query result:', {
+      timestamp: new Date().toISOString(),
+      count,
+      unlocksLength: unlocks?.length || 0,
+      unlocks: unlocks || [],
+      error: unlocksError
+    })
 
     if (unlocksError) {
       console.error('Failed to fetch unlocks:', unlocksError)
@@ -53,11 +68,20 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    const responseData = {
+      lessons: lessons || [],
+      unlocks: unlocks || [],
+    }
+
+    console.log('📤 [STUDENT LESSONS API] Response being sent:', {
+      timestamp: new Date().toISOString(),
+      lessonsCount: responseData.lessons.length,
+      unlocksCount: responseData.unlocks.length,
+      unlockIds: responseData.unlocks.map(u => u.lesson_id)
+    })
+
     return NextResponse.json(
-      {
-        lessons: lessons || [],
-        unlocks: unlocks || [],
-      },
+      responseData,
       {
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
