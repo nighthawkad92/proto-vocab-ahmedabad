@@ -21,11 +21,14 @@ export function LessonGrid({ lessons, unlocks, onStartLesson }: LessonGridProps)
     return null
   }
 
+  console.log('🎨 [LESSON GRID] Rendering with unlocks:', unlocks)
+
   return (
     <div className="w-full max-w-6xl mx-auto px-6 py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
         {lessons.map((lesson) => {
           const isUnlocked = unlocks[lesson.id]
+          console.log(`🔒 [LESSON GRID] Lesson "${lesson.title}" (${lesson.id}): ${isUnlocked ? 'UNLOCKED' : 'LOCKED'}`)
 
           return (
             <div

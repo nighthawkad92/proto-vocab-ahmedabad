@@ -49,6 +49,12 @@ export default function StudentDashboard() {
       const data = await response.json()
 
       if (response.ok) {
+        console.log('📥 [STUDENT DASHBOARD] API Response received:', {
+          lessonsCount: data.lessons?.length || 0,
+          unlocksCount: data.unlocks?.length || 0,
+          unlocks: data.unlocks
+        })
+
         setLessons(data.lessons)
 
         // Create unlock map
@@ -58,6 +64,8 @@ export default function StudentDashboard() {
             unlockMap[unlock.lesson_id] = true
           })
         }
+
+        console.log('🗺️ [STUDENT DASHBOARD] Unlock map created:', unlockMap)
         setUnlocks(unlockMap)
       } else {
         console.error('Failed to load lessons:', data)
