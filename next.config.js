@@ -117,6 +117,10 @@ const withPWA = require('next-pwa')({
         const pathname = url.pathname
         // Exclude /api/auth/callback/* to fix OAuth workflow
         if (pathname.startsWith('/api/auth/')) return false
+        // Exclude /api/student/lessons to prevent caching unlock status
+        if (pathname.startsWith('/api/student/lessons')) return false
+        // Exclude /api/teacher/ routes to prevent caching class data
+        if (pathname.startsWith('/api/teacher/')) return false
         if (pathname.startsWith('/api/')) return true
         return false
       },
