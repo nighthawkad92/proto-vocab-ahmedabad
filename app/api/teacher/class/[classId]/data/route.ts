@@ -117,7 +117,7 @@ export async function GET(
     const unlockedIds = new Set((unlocks || []).map((u: any) => u.lesson_id))
 
     // Add is_unlocked flag to lessons
-    const lessonsWithStatus = (lessons || []).map(lesson => ({
+    const lessonsWithStatus = (lessons || []).map((lesson: any) => ({
       ...lesson,
       is_unlocked: unlockedIds.has(lesson.id),
     }))
