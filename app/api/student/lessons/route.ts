@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Map unlocks to only include lesson_id for the response
-    const unlocksResponse = (unlocks || []).map(u => ({ lesson_id: u.lesson_id }))
+    const unlocksResponse = (unlocks || []).map((u: any) => ({ lesson_id: u.lesson_id }))
 
     const responseData = {
       lessons: lessons || [],
