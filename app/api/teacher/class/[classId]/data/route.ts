@@ -17,19 +17,22 @@ export async function GET(
     const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
     // Get class info
-    const { data: classInfo, error: classError } = await supabase
+    const { data: classInfoData, error: classError } = await supabase
       .from('classes')
       .select('*')
       .eq('id', classId)
       .single()
 
-    if (classError || !classInfo) {
+    if (classError || !classInfoData) {
       console.error('Failed to fetch class:', classError)
       return NextResponse.json(
         { error: 'Failed to fetch class' },
         { status: 500 }
       )
     }
+
+    // TypeScript now knows classInfoData is not null
+    const classInfo = classInfoData
 
     // Get students with attempt stats
     const { data: studentsData, error: studentsError } = await supabase
