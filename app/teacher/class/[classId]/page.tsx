@@ -97,6 +97,9 @@ export default function ClassDetailPage() {
 
       console.log('✅ Student deleted successfully, reloading class data...')
 
+      // Clear state first to force fresh render
+      setStudents([])
+
       // Reload class data to refresh student list
       await loadClassData()
       alert(`${studentName} has been deleted successfully`)
