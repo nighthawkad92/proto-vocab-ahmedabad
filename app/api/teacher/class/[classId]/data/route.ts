@@ -23,7 +23,7 @@ export async function GET(
       .eq('id', classId)
       .single()
 
-    if (classError) {
+    if (classError || !classInfo) {
       console.error('Failed to fetch class:', classError)
       return NextResponse.json(
         { error: 'Failed to fetch class' },
