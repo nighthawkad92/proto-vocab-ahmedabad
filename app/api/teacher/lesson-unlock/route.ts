@@ -8,6 +8,8 @@ export async function POST(request: NextRequest) {
   try {
     const { classId, lessonId, teacherId } = await request.json()
 
+    console.log('🔓 [UNLOCK API] Unlock request:', { classId, lessonId, teacherId })
+
     if (!classId || !lessonId || !teacherId) {
       return NextResponse.json(
         { error: 'Missing required fields' },
@@ -31,13 +33,14 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (error) {
-      console.error('Failed to unlock lesson:', error)
+      console.error('❌ [UNLOCK API] Failed to unlock lesson:', error)
       return NextResponse.json(
         { error: 'Failed to unlock lesson' },
         { status: 500 }
       )
     }
 
+    console.log('✅ [UNLOCK API] Lesson unlocked successfully:', data)
     return NextResponse.json({ success: true, data })
   } catch (error) {
     console.error('Error unlocking lesson:', error)
@@ -53,6 +56,8 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const classId = searchParams.get('classId')
     const lessonId = searchParams.get('lessonId')
+
+    console.log('🔒 [LOCK API] Lock request:', { classId, lessonId })
 
     if (!classId || !lessonId) {
       return NextResponse.json(
@@ -74,13 +79,14 @@ export async function DELETE(request: NextRequest) {
       .eq('lesson_id', lessonId)
 
     if (error) {
-      console.error('Failed to lock lesson:', error)
+      console.error('❌ [LOCK API] Failed to lock lesson:', error)
       return NextResponse.json(
         { error: 'Failed to lock lesson' },
         { status: 500 }
       )
     }
 
+    console.log('✅ [LOCK API] Lesson locked successfully')
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error locking lesson:', error)
