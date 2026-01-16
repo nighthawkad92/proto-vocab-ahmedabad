@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import { TeacherSessionManager } from '@/lib/teacherSession'
 import { Button } from '@/components/ui/Button'
 
@@ -41,57 +40,25 @@ export default function ClassDetailPage() {
 
   const loadClassData = async () => {
     try {
-      // Get class info
-      const { data: classInfo } = await supabase
-        .from('classes')
-        .select('*')
-        .eq('id', classId)
-        .single()
+      // Use API route with fresh Supabase client to avoid caching
+      const timestamp = Date.now()
+      const response = await fetch(`/api/teacher/class/${classId}/data?t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      })
 
-      setClassData(classInfo)
+      if (!response.ok) {
+        throw new Error('Failed to fetch class data')
+      }
 
-      // Get students
-      const { data: studentsData } = await supabase
-        .from('students')
-        .select(`
-          id,
-          name,
-          last_active,
-          attempts(count)
-        `)
-        .eq('class_id', classId)
-        .order('name')
+      const data = await response.json()
 
-      const studentsWithStats = studentsData?.map((student: any) => ({
-        id: student.id,
-        name: student.name,
-        last_active: student.last_active,
-        attempts_count: student.attempts?.[0]?.count || 0,
-        avg_accuracy: 0, // We'll calculate this separately if needed
-      }))
-
-      setStudents(studentsWithStats || [])
-
-      // Get lessons and unlock status
-      const { data: lessonsData } = await supabase
-        .from('lessons')
-        .select('id, title, description, order')
-        .eq('grade', 4)
-        .order('order')
-
-      const { data: unlocksData } = await supabase
-        .from('lesson_unlocks')
-        .select('lesson_id')
-        .eq('class_id', classId)
-
-      const unlockedIds = new Set(unlocksData?.map((u: any) => u.lesson_id) || [])
-
-      const lessonsWithUnlocks = lessonsData?.map((lesson: any) => ({
-        ...lesson,
-        is_unlocked: unlockedIds.has(lesson.id),
-      }))
-
-      setLessons(lessonsWithUnlocks || [])
+      setClassData(data.classInfo)
+      setStudents(data.students)
+      setLessons(data.lessons)
     } catch (error) {
       console.error('Failed to load class data:', error)
     } finally {
@@ -106,35 +73,35 @@ export default function ClassDetailPage() {
       if (!session) return
 
       if (isUnlocked) {
-        // Remove unlock
-        const { error: deleteError } = await supabase
-          .from('lesson_unlocks')
-          .delete()
-          .eq('class_id', classId)
-          .eq('lesson_id', lessonId)
+        // Remove unlock via API
+        const response = await fetch(
+          `/api/teacher/lesson-unlock?classId=${classId}&lessonId=${lessonId}`,
+          { method: 'DELETE' }
+        )
 
-        if (deleteError) {
-          console.error('Error removing unlock:', deleteError)
-          throw deleteError
+        if (!response.ok) {
+          throw new Error('Failed to lock lesson')
         }
-        console.log('✅ Lesson unlocked removed')
+        console.log('✅ Lesson locked')
       } else {
-        // Add unlock
-        // @ts-ignore - Supabase types are strict when env vars aren't set
-        const { data, error: insertError } = await supabase.from('lesson_unlocks').insert({
-          class_id: classId,
-          lesson_id: lessonId,
-          unlocked_by: session.teacherId,
-        }).select()
+        // Add unlock via API
+        const response = await fetch('/api/teacher/lesson-unlock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            classId,
+            lessonId,
+            teacherId: session.teacherId,
+          }),
+        })
 
-        if (insertError) {
-          console.error('Error adding unlock:', insertError)
-          throw insertError
+        if (!response.ok) {
+          throw new Error('Failed to unlock lesson')
         }
-        console.log('✅ Lesson unlocked:', data)
+        console.log('✅ Lesson unlocked')
       }
 
-      // Reload lessons
+      // Reload lessons with fresh data
       await loadClassData()
     } catch (error) {
       console.error('Failed to toggle lesson:', error)
