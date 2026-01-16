@@ -99,22 +99,15 @@ export async function GET(
       )
     }
 
-    // All lessons are unlocked by default
-    const lessonsWithStatus = (lessons || []).map((lesson: any) => ({
-      ...lesson,
-      is_unlocked: true, // All lessons always unlocked
-    }))
-
-    console.log('📚 [CLASS DATA API] Lessons with status:', {
-      count: lessonsWithStatus.length,
-      note: 'All lessons unlocked by default'
+    console.log('📚 [CLASS DATA API] Lessons fetched:', {
+      count: lessons?.length || 0
     })
 
     return NextResponse.json(
       {
         classInfo,
         students,
-        lessons: lessonsWithStatus,
+        lessons: lessons || [],
       },
       {
         headers: {

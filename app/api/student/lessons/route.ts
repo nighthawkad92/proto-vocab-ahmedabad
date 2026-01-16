@@ -39,25 +39,13 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // All lessons are unlocked by default - create unlock entries for all lessons
-    const allLessonsUnlocked = (lessons || []).map((lesson: any) => ({
-      lesson_id: lesson.id
-    }))
-
-    const responseData = {
-      lessons: lessons || [],
-      unlocks: allLessonsUnlocked,
-    }
-
     console.log('📤 [STUDENT LESSONS API] Response being sent:', {
       timestamp: new Date().toISOString(),
-      lessonsCount: responseData.lessons.length,
-      unlocksCount: responseData.unlocks.length,
-      note: 'All lessons unlocked by default'
+      lessonsCount: lessons?.length || 0
     })
 
     return NextResponse.json(
-      responseData,
+      { lessons: lessons || [] },
       {
         headers: {
           'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',

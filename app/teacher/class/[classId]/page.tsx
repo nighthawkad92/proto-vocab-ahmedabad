@@ -18,7 +18,6 @@ interface Lesson {
   title: string
   description: string
   order: number
-  is_unlocked: boolean
 }
 
 export default function ClassDetailPage() {
@@ -61,7 +60,7 @@ export default function ClassDetailPage() {
       console.log('📥 [TEACHER DASHBOARD] Data received:', {
         studentsCount: data.students?.length || 0,
         lessonsCount: data.lessons?.length || 0,
-        lessons: data.lessons?.map((l: Lesson) => ({ id: l.id, title: l.title, is_unlocked: l.is_unlocked }))
+        lessons: data.lessons?.map((l: Lesson) => ({ id: l.id, title: l.title }))
       })
 
       setClassData(data.classInfo)
@@ -71,58 +70,6 @@ export default function ClassDetailPage() {
       console.error('Failed to load class data:', error)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleToggleLesson = async (lessonId: string, isUnlocked: boolean) => {
-    try {
-      const session = TeacherSessionManager.get()
-
-      if (!session) return
-
-      console.log('🔄 [TEACHER DASHBOARD] Toggling lesson:', { lessonId, currentState: isUnlocked ? 'unlocked' : 'locked', action: isUnlocked ? 'locking' : 'unlocking' })
-
-      if (isUnlocked) {
-        // Remove unlock via API
-        const response = await fetch(
-          `/api/teacher/lesson-unlock?classId=${classId}&lessonId=${lessonId}`,
-          { method: 'DELETE' }
-        )
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.error('❌ Failed to lock lesson:', errorData)
-          throw new Error('Failed to lock lesson')
-        }
-        console.log('✅ Lesson locked successfully')
-      } else {
-        // Add unlock via API
-        const response = await fetch('/api/teacher/lesson-unlock', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            classId,
-            lessonId,
-            teacherId: session.teacherId,
-          }),
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.error('❌ Failed to unlock lesson:', errorData)
-          throw new Error('Failed to unlock lesson')
-        }
-        console.log('✅ Lesson unlocked successfully')
-      }
-
-      // Reload lessons with fresh data
-      console.log('🔄 [TEACHER DASHBOARD] Reloading class data after toggle...')
-      // Add small delay to ensure database operation completes
-      await new Promise(resolve => setTimeout(resolve, 500))
-      await loadClassData()
-    } catch (error) {
-      console.error('Failed to toggle lesson:', error)
-      alert('Failed to update lesson status')
     }
   }
 

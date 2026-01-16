@@ -16,7 +16,7 @@ export async function DELETE(
     }
 
     // Delete class (cascade will handle related records)
-    // Order: responses -> attempts -> lesson_unlocks -> student_badges -> student_stats -> students -> class
+    // Order: responses -> attempts -> student_badges -> student_stats -> students -> class
 
     // Get all students in this class
     const { data: students } = await supabase
@@ -61,17 +61,6 @@ export async function DELETE(
       if (deleteAttemptsError) {
         console.error('Error deleting attempts:', deleteAttemptsError)
         throw deleteAttemptsError
-      }
-
-      // Delete lesson unlocks
-      const { error: unlocksError } = await supabase
-        .from('lesson_unlocks')
-        .delete()
-        .eq('class_id', classId)
-
-      if (unlocksError) {
-        console.error('Error deleting lesson unlocks:', unlocksError)
-        throw unlocksError
       }
 
       // Delete student badges (gamification)

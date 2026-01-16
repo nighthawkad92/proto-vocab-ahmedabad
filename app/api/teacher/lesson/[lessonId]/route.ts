@@ -15,7 +15,7 @@ export async function DELETE(
       )
     }
 
-    // Delete in correct order: responses -> attempts -> lesson_unlocks -> lesson
+    // Delete in correct order: responses -> attempts -> lesson
     // Note: Database CASCADE constraints will handle related records
 
     // Get all attempts for this lesson
@@ -39,12 +39,6 @@ export async function DELETE(
         .delete()
         .in('id', attemptIds)
     }
-
-    // Delete lesson unlocks for this lesson
-    await supabase
-      .from('lesson_unlocks')
-      .delete()
-      .eq('lesson_id', lessonId)
 
     // Delete the lesson
     const { error } = await supabase

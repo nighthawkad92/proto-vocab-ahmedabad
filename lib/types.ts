@@ -100,13 +100,6 @@ export interface StudentProgress {
   averageAccuracy: number
 }
 
-export interface LessonUnlock {
-  lessonId: string
-  lessonTitle: string
-  isUnlocked: boolean
-  unlockedAt?: string
-}
-
 // Inline feedback state for question components
 export interface FeedbackState {
   type: 'correct' | 'incorrect' | null

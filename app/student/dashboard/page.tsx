@@ -21,7 +21,6 @@ export default function StudentDashboard() {
   const router = useRouter()
   const [session, setSession] = useState<StudentSession | null>(null)
   const [lessons, setLessons] = useState<Lesson[]>([])
-  const [unlocks, setUnlocks] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -50,23 +49,10 @@ export default function StudentDashboard() {
 
       if (response.ok) {
         console.log('📥 [STUDENT DASHBOARD] API Response received:', {
-          lessonsCount: data.lessons?.length || 0,
-          unlocksCount: data.unlocks?.length || 0,
-          unlocks: data.unlocks
+          lessonsCount: data.lessons?.length || 0
         })
 
         setLessons(data.lessons)
-
-        // Create unlock map
-        const unlockMap: Record<string, boolean> = {}
-        if (data.unlocks && Array.isArray(data.unlocks)) {
-          data.unlocks.forEach((unlock: { lesson_id: string }) => {
-            unlockMap[unlock.lesson_id] = true
-          })
-        }
-
-        console.log('🗺️ [STUDENT DASHBOARD] Unlock map created:', unlockMap)
-        setUnlocks(unlockMap)
       } else {
         console.error('Failed to load lessons:', data)
       }
@@ -122,7 +108,6 @@ export default function StudentDashboard() {
         ) : (
           <LessonGrid
             lessons={lessons}
-            unlocks={unlocks}
             onStartLesson={handleStartLesson}
           />
         )}
