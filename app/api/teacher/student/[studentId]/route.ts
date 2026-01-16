@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types'
 
 export async function DELETE(
   request: NextRequest,
@@ -8,12 +9,19 @@ export async function DELETE(
   try {
     const { studentId } = params
 
+    console.log('🗑️ [DELETE STUDENT API] Delete request:', { studentId })
+
     if (!studentId) {
       return NextResponse.json(
         { error: 'Student ID is required' },
         { status: 400 }
       )
     }
+
+    // Create fresh Supabase client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
     // Delete in correct order: responses -> attempts -> student
 
@@ -40,19 +48,27 @@ export async function DELETE(
       .eq('student_id', studentId)
 
     // Delete the student
-    const { error } = await supabase
+    const { data: deletedStudent, error, count } = await supabase
       .from('students')
-      .delete()
+      .delete({ count: 'exact' })
       .eq('id', studentId)
+      .select()
+
+    console.log('✅ [DELETE STUDENT API] Delete result:', {
+      deletedCount: count,
+      deletedStudent,
+      error
+    })
 
     if (error) throw error
 
     return NextResponse.json({
       success: true,
-      message: 'Student and all related data deleted successfully'
+      message: 'Student and all related data deleted successfully',
+      deletedCount: count
     })
   } catch (error) {
-    console.error('Error deleting student:', error)
+    console.error('❌ [DELETE STUDENT API] Error deleting student:', error)
     return NextResponse.json(
       { error: 'Failed to delete student' },
       { status: 500 }
