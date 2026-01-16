@@ -163,7 +163,7 @@ export async function evaluateBadgeCriteria(
         // @ts-ignore
         ...badge,
         imageUrl: `/badges/${badgeKey}.svg`
-      } as Badge
+      } as unknown as Badge
       newBadges.push(newBadge)
     }
   }
