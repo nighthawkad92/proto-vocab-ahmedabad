@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Force Cleanup - Service Worker Removal</title>
+    <style>
+        body {
+            font-family: system-ui;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #d32f2f; }
+        button {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #b71c1c;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            background: #f5f5f5;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .step {
+            background: #e3f2fd;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #2196f3;
+            border-radius: 4px;
+        }
+        .important {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Emergency Service Worker Cleanup</h1>
+
+        <div class="important">
+            <strong>⚠️ IMPORTANT:</strong> If the button below doesn't work, follow the manual steps at the bottom.
+        </div>
+
+        <p><strong>Current Status:</strong></p>
+        <div id="current-status" class="status">Checking...</div>
+
+        <div style="margin: 30px 0;">
+            <button onclick="automaticCleanup()">🗑️ AUTOMATIC CLEANUP</button>
+            <button onclick="location.reload()" style="background: #666;">🔄 Refresh Page</button>
+        </div>
+
+        <div id="status"></div>
+
+        <div class="important" style="margin-top: 30px;">
+            <h3>Manual Cleanup (If button doesn't work):</h3>
+
+            <div class="step">
+                <strong>Step 1: Open Developer Tools</strong><br>
+                Press <code>F12</code> or <code>Cmd+Option+I</code> (Mac) / <code>Ctrl+Shift+I</code> (Windows/Linux)
+            </div>
+
+            <div class="step">
+                <strong>Step 2: Go to Application Tab</strong><br>
+                Click on "Application" tab at the top
+            </div>
+
+            <div class="step">
+                <strong>Step 3: Service Workers</strong><br>
+                In the left sidebar, find and click "Service Workers"<br>
+                Click "Unregister" next to any service workers you see
+            </div>
+
+            <div class="step">
+                <strong>Step 4: Clear Storage</strong><br>
+                In the left sidebar, click "Storage" or "Clear storage"<br>
+                Check ALL boxes and click "Clear site data"
+            </div>
+
+            <div class="step">
+                <strong>Step 5: Console Cleanup</strong><br>
+                Go to "Console" tab and paste this code:
+                <pre>
+navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+        registration.unregister();
+        console.log('Unregistered:', registration.scope);
+    }
+});
+
+caches.keys().then(function(names) {
+    for(let name of names) {
+        caches.delete(name);
+        console.log('Deleted cache:', name);
+    }
+});
+
+localStorage.clear();
+sessionStorage.clear();
+console.log('All storage cleared!');
+                </pre>
+                Press Enter to run it.
+            </div>
+
+            <div class="step">
+                <strong>Step 6: Hard Refresh</strong><br>
+                Press <code>Cmd+Shift+R</code> (Mac) or <code>Ctrl+Shift+R</code> (Windows/Linux)<br>
+                OR close ALL browser windows and reopen
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            try {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                const cacheNames = await caches.keys();
+
+                let html = '<strong>Service Workers:</strong> ' + registrations.length + '<br>';
+                if (registrations.length > 0) {
+                    registrations.forEach(reg => {
+                        html += '  - ' + reg.scope + '<br>';
+                    });
+                }
+                html += '<strong>Caches:</strong> ' + cacheNames.length + '<br>';
+                if (cacheNames.length > 0) {
+                    cacheNames.forEach(name => {
+                        html += '  - ' + name + '<br>';
+                    });
+                }
+
+                document.getElementById('current-status').innerHTML = html;
+                document.getElementById('current-status').className =
+                    (registrations.length > 0 || cacheNames.length > 0) ? 'status warning' : 'status success';
+            } catch (error) {
+                document.getElementById('current-status').innerHTML =
+                    'Error checking status: ' + error.message;
+                document.getElementById('current-status').className = 'status error';
+            }
+        }
+
+        async function automaticCleanup() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<div class="status">Working... Please wait...</div>';
+
+            let results = [];
+
+            try {
+                // Step 1: Unregister all service workers
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                results.push(`Found ${registrations.length} service worker(s)`);
+
+                for (let registration of registrations) {
+                    await registration.unregister();
+                    results.push(`✓ Unregistered: ${registration.scope}`);
+                }
+
+                // Step 2: Clear all caches
+                const cacheNames = await caches.keys();
+                results.push(`Found ${cacheNames.length} cache(s)`);
+
+                for (let cacheName of cacheNames) {
+                    await caches.delete(cacheName);
+                    results.push(`✓ Deleted cache: ${cacheName}`);
+                }
+
+                // Step 3: Clear local storage
+                localStorage.clear();
+                results.push('✓ Cleared localStorage');
+
+                // Step 4: Clear session storage
+                sessionStorage.clear();
+                results.push('✓ Cleared sessionStorage');
+
+                statusDiv.innerHTML = `
+                    <div class="status success">
+                        <strong>✓ Cleanup Complete!</strong><br><br>
+                        ${results.join('<br>')}
+                        <br><br>
+                        <strong style="color: #d32f2f;">⚠️ CRITICAL NEXT STEPS:</strong><br>
+                        1. Close this tab<br>
+                        2. Close ALL other tabs of this site<br>
+                        3. Close the browser completely<br>
+                        4. Reopen browser and test your app<br><br>
+                        <strong>Why?</strong> Service workers remain active until the browser is completely closed.
+                    </div>
+                `;
+
+                // Auto-refresh status after 3 seconds
+                setTimeout(checkStatus, 3000);
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>✗ Error during cleanup:</strong><br>
+                        ${error.message}<br><br>
+                        Please use the manual steps below.
+                    </div>
+                `;
+            }
+        }
+
+        // Check status on load
+        window.addEventListener('load', checkStatus);
+    </script>
+</body>
+</html>
