@@ -71,12 +71,33 @@ export async function DELETE(request: NextRequest) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
-    // Delete unlock
-    const { error } = await supabase
+    // First, check what rows exist before deleting
+    const { data: existingUnlocks, error: queryError } = await supabase
       .from('lesson_unlocks')
-      .delete()
+      .select('*')
       .eq('class_id', classId)
       .eq('lesson_id', lessonId)
+
+    console.log('🔍 [LOCK API] Existing unlocks before delete:', {
+      classId,
+      lessonId,
+      existingUnlocks,
+      queryError
+    })
+
+    // Delete unlock
+    const { data: deletedData, error, count } = await supabase
+      .from('lesson_unlocks')
+      .delete({ count: 'exact' })
+      .eq('class_id', classId)
+      .eq('lesson_id', lessonId)
+      .select()
+
+    console.log('🗑️ [LOCK API] Delete result:', {
+      deletedCount: count,
+      deletedData,
+      error
+    })
 
     if (error) {
       console.error('❌ [LOCK API] Failed to lock lesson:', error)
@@ -87,7 +108,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     console.log('✅ [LOCK API] Lesson locked successfully')
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, deletedCount: count })
   } catch (error) {
     console.error('Error locking lesson:', error)
     return NextResponse.json(
