@@ -19,7 +19,7 @@ export async function GET(
     // Get class info
     const { data: classInfoData, error: classError } = await supabase
       .from('classes')
-      .select('*')
+      .select('id, name, grade, teacher_id, class_code, created_at')
       .eq('id', classId)
       .single()
 
@@ -31,7 +31,7 @@ export async function GET(
       )
     }
 
-    // TypeScript now knows classInfoData is not null
+    // TypeScript now knows classInfoData is not null and has proper types
     const classInfo = classInfoData
 
     // Get students with attempt stats
