@@ -8,7 +8,7 @@ import { Header } from '@/components/navigation/Header'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Loader } from '@/components/ui/Loader'
 import { LessonGrid } from '@/components/ui/LessonGrid'
-import type { StudentSession, LessonUnlock } from '@/lib/types'
+import type { StudentSession } from '@/lib/types'
 
 interface Lesson {
   id: string
