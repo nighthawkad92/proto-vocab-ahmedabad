@@ -38,9 +38,20 @@ export async function GET(
     // Store class info for response
     const classInfo = classInfoData
 
-    // Get students with attempt stats
-    // Force fresh data by adding timestamp to bypass any Supabase client caching
-    const { data: studentsData, error: studentsError } = await supabase
+    // Get students - create NEW Supabase client for each query to bypass connection pooling
+    const timestamp = Date.now()
+    const freshSupabase = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+      db: { schema: 'public' },
+      auth: { persistSession: false },
+      global: {
+        headers: {
+          'cache-control': 'no-cache',
+          'x-request-id': `students-${timestamp}` // Unique ID to prevent caching
+        }
+      }
+    })
+
+    const { data: studentsData, error: studentsError } = await freshSupabase
       .from('students')
       .select(`
         id,
@@ -54,7 +65,6 @@ export async function GET(
       `)
       .eq('class_id', classId)
       .order('name', { ascending: true })
-      .limit(1000) // Add limit to force query re-execution
 
     if (studentsError) {
       console.error('Failed to fetch students:', studentsError)
