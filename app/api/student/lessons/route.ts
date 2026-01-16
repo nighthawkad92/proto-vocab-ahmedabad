@@ -18,11 +18,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Create a fresh Supabase client for this request
-    // Testing with anon key after updating @supabase/supabase-js to 2.90.1
+    // Using service role key as anon key has caching issues on Vercel
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-    const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey)
 
     // Get all lessons for grade 4
     const { data: lessons, error: lessonsError } = await supabase
