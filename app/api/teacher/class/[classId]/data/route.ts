@@ -31,8 +31,9 @@ export async function GET(
       )
     }
 
-    // TypeScript now knows classInfoData is not null and has proper types
+    // Extract values we need before TypeScript gets confused
     const classInfo = classInfoData
+    const classGrade = classInfoData.grade
 
     // Get students with attempt stats
     const { data: studentsData, error: studentsError } = await supabase
@@ -85,11 +86,10 @@ export async function GET(
     })
 
     // Get all lessons for the class's grade
-    const grade = classInfo.grade as number
     const { data: lessons, error: lessonsError } = await supabase
       .from('lessons')
       .select('id, title, description, order')
-      .eq('grade', grade)
+      .eq('grade', classGrade)
       .order('order', { ascending: true })
 
     if (lessonsError) {
