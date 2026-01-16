@@ -39,14 +39,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Get unlocked lessons for this class
-    console.log('🔍 Querying unlocks for class:', classId)
+    console.log('🔍 Server: Querying unlocks for class:', classId)
+    console.log('🔍 Server: Supabase URL:', supabaseUrl)
+    console.log('🔍 Server: Using anon key:', supabaseAnonKey?.substring(0, 20) + '...')
+
     const { data: unlocks, error: unlocksError } = await supabase
       .from('lesson_unlocks')
       .select('lesson_id')
       .eq('class_id', classId)
 
-    console.log('🔓 Found unlocks:', unlocks?.length || 0, unlocks)
-    console.log('🔓 Unlock error:', unlocksError)
+    console.log('🔓 Server: Found unlocks:', unlocks?.length || 0)
+    console.log('🔓 Server: Unlocks data:', JSON.stringify(unlocks, null, 2))
+    console.log('🔓 Server: Unlock error:', unlocksError)
 
     if (unlocksError) {
       console.error('Failed to fetch unlocks:', unlocksError)
