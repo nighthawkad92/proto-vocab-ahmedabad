@@ -100,6 +100,9 @@ export default function ClassDetailPage() {
       // Clear state first to force fresh render
       setStudents([])
 
+      // Wait briefly for database replication before reloading
+      await new Promise(resolve => setTimeout(resolve, 500))
+
       // Reload class data to refresh student list
       await loadClassData()
       alert(`${studentName} has been deleted successfully`)
