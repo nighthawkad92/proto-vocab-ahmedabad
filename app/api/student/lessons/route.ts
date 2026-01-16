@@ -68,16 +68,20 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Map unlocks to only include lesson_id for the response
+    const unlocksResponse = (unlocks || []).map(u => ({ lesson_id: u.lesson_id }))
+
     const responseData = {
       lessons: lessons || [],
-      unlocks: unlocks || [],
+      unlocks: unlocksResponse,
     }
 
     console.log('📤 [STUDENT LESSONS API] Response being sent:', {
       timestamp: new Date().toISOString(),
       lessonsCount: responseData.lessons.length,
       unlocksCount: responseData.unlocks.length,
-      unlockIds: responseData.unlocks.map(u => u.lesson_id)
+      unlockIds: responseData.unlocks.map(u => u.lesson_id),
+      rawUnlocksData: unlocks // Log the full data from DB for debugging
     })
 
     return NextResponse.json(
