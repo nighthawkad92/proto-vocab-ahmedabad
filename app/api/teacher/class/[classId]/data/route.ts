@@ -85,10 +85,11 @@ export async function GET(
     })
 
     // Get all lessons for the class's grade
+    const grade = classInfo.grade as number
     const { data: lessons, error: lessonsError } = await supabase
       .from('lessons')
       .select('id, title, description, order')
-      .eq('grade', classInfo.grade)
+      .eq('grade', grade)
       .order('order', { ascending: true })
 
     if (lessonsError) {
